@@ -1,0 +1,15 @@
+[
+	{
+	  "modid": "technicalities",
+	  "name": "Technicalities",
+	  "description": "A new take on tech mods",
+	  "version": "${version}",
+	  "mcversion": "${mcversion}",
+	  "url": "",
+	  "updateUrl": "",
+	  "authorList": ["amadornes"],
+	  "logoFile": "",
+	  "screenshots": [],
+	  "dependencies": []
+	}
+]
