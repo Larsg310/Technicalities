@@ -1,0 +1,16 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"textures": {
+			"side": "technicalities:blocks/crate_side",
+			"diag": "technicalities:blocks/crate_diag",
+			"particle": "technicalities:blocks/crate_side"
+		},
+		"model": "technicalities:crate",
+		"transform": "forge:default-block"
+	},
+	"variants": {
+        "normal": [{ }],
+        "inventory": [{ }]
+    }
+}

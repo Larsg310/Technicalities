@@ -26,6 +26,7 @@ public class Technicalities {
 
         // Load submodules and log them
         modules = new TKModuleManager();
+        modules.initProxies();
         modules.save();
         log.info("Loaded " + modules.getModules().size() + " submodules: "
                 + modules.getModules().stream().map(TKModuleManager::getName).collect(Collectors.toList()));
