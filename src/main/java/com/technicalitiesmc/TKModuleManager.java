@@ -15,9 +15,14 @@ import com.google.gson.JsonPrimitive;
 import com.technicalitiesmc.lib.module.ModuleManager;
 import com.technicalitiesmc.lib.util.JSONUtils;
 
+/**
+ * Technicalities' module manager.<br/>
+ * Finds and loads all enabled submodules.
+ */
 public class TKModuleManager extends ModuleManager<ITKModule> {
 
     private static final File configFile = new File("./config/" + Technicalities.MODID + "/modules.json");
+    // Lazy-loaded config file
     private static final Supplier<JsonObject> config = Suppliers.memoize(() -> {
         if (configFile.exists()) {
             try {
@@ -33,6 +38,9 @@ public class TKModuleManager extends ModuleManager<ITKModule> {
         super(ITKModule.class, TKModule.class, TKModuleManager::test, TKModuleManager::compare, TKModule::value, TKModule::dependencies);
     }
 
+    /**
+     * Saves the modules config file to disk.
+     */
     public void save() {
         try {
             JsonObject cfg = config.get();
@@ -47,6 +55,9 @@ public class TKModuleManager extends ModuleManager<ITKModule> {
         }
     }
 
+    /**
+     * Checks the config file to see if a module should be loaded or not.
+     */
     private static boolean test(Class<? extends ITKModule> type, TKModule annotation) {
         JsonObject cfg = config.get();
         if (cfg.has(annotation.value())) {
@@ -57,6 +68,9 @@ public class TKModuleManager extends ModuleManager<ITKModule> {
         return enabled;
     }
 
+    /**
+     * Compares two modules. Used for dependency sorting. Crashes if a circular dependency is found.
+     */
     private static int compare(Pair<Class<? extends ITKModule>, TKModule> modA, Pair<Class<? extends ITKModule>, TKModule> modB) {
         TKModule a = modA.getValue(), b = modB.getValue();
         if (ArrayUtils.contains(a.dependencies(), a.value()) || ArrayUtils.contains(a.after(), a.value())) {
@@ -73,6 +87,9 @@ public class TKModuleManager extends ModuleManager<ITKModule> {
         return aBefore ? -1 : bBefore ? 1 : 0;
     }
 
+    /**
+     * Gets the internal name of a module.
+     */
     static String getName(ITKModule module) {
         return module.getClass().getAnnotation(TKModule.class).value();
     }
