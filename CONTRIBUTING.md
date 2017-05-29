@@ -41,9 +41,12 @@ But you **must NOT**:
 When adding or modifying an asset you **must**:
 * Keep file naming consistent, using `snake_case` and lowercase extensions.
 * Always use 100% transparent backgrounds on your assets. Not using them results in rather ugly looking... things.
+* Limit your palette if you can. Gradients look nice in high-res images, but not in 16x16 textures, so pick colors wisely.
+
+And you **can**:
 * Compress the file as much as possible without losing quality.
 * Remove file metadata using a program like [PNG Stripper](http://www.steelbytes.com/?mid=30)
-* Limit your palette if you can. Gradients look nice in high-res images, but not in 16x16 textures, so pick colors wisely.
+This is not required and we will probably get the buildscript to do it automatically.
 
 But you **must NOT**:
 * Use semitransparent pixels on an item texture. Never do this. It's bad and it will haunt you for life.
