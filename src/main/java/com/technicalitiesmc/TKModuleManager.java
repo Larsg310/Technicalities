@@ -59,6 +59,9 @@ public class TKModuleManager extends ModuleManager<ITKModule> {
      * Checks the config file to see if a module should be loaded or not.
      */
     private static boolean test(Class<? extends ITKModule> type, TKModule annotation) {
+        if (!annotation.canBeDisabled()) {
+            return true;
+        }
         JsonObject cfg = config.get();
         if (cfg.has(annotation.value())) {
             return cfg.get(annotation.value()).getAsBoolean();

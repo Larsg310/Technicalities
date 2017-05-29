@@ -35,4 +35,9 @@ public @interface TKModule {
      */
     boolean enabledByDefault() default true;
 
+    /**
+     * Gets whether this module can be disabled.
+     */
+    boolean canBeDisabled() default true;
+
 }
