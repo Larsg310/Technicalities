@@ -55,7 +55,7 @@ public class BlockBarrel extends BlockBase implements ITileEntityProvider {
 
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
-        return new TileBarrel(32);
+        return new TileBarrel();
     }
 
     @Override
@@ -120,7 +120,7 @@ public class BlockBarrel extends BlockBase implements ITileEntityProvider {
 
     @Override
     protected boolean canBreak(World world, BlockPos pos, EntityPlayer player) {
-        if (player.isSneaking()) {
+        if (player.isSneaking() || !player.capabilities.isCreativeMode) {
             return true;
         }
 

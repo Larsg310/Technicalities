@@ -6,16 +6,27 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-public class TileBarrel extends TileBase implements IItemHandler {
+public class TileBarrel extends TileBase implements IItemHandler, IFluidHandler {
 
     private ItemStack type = ItemStack.EMPTY;
     private int amount, maxStacks;
+    private final FluidTank tank;
 
-    public TileBarrel(int maxStacks) {
+    private TileBarrel(int maxStacks) {
         this.maxStacks = maxStacks;
+        this.tank = new FluidTank(maxStacks * Fluid.BUCKET_VOLUME);
+    }
+
+    public TileBarrel() {
+        this(32);
     }
 
     public ItemStack getType() {
@@ -44,6 +55,9 @@ public class TileBarrel extends TileBase implements IItemHandler {
 
     @Override
     public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+        if (tank.getFluidAmount() > 0) {
+            return stack;
+        }
         if (type.isEmpty()) {
             type = stack.copy();
             type.setCount(1);
@@ -84,6 +98,29 @@ public class TileBarrel extends TileBase implements IItemHandler {
     }
 
     @Override
+    public IFluidTankProperties[] getTankProperties() {
+        return tank.getTankProperties();
+    }
+
+    @Override
+    public int fill(FluidStack resource, boolean doFill) {
+        if (amount > 0) {
+            return 0;
+        }
+        return tank.fill(resource, doFill);
+    }
+
+    @Override
+    public FluidStack drain(FluidStack resource, boolean doDrain) {
+        return tank.drain(resource, doDrain);
+    }
+
+    @Override
+    public FluidStack drain(int maxDrain, boolean doDrain) {
+        return tank.drain(maxDrain, doDrain);
+    }
+
+    @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return true;
@@ -105,6 +142,7 @@ public class TileBarrel extends TileBase implements IItemHandler {
         tag = super.writeToNBT(tag);
         tag.setTag("type", type.writeToNBT(new NBTTagCompound()));
         tag.setInteger("amount", amount);
+        tag.setTag("tank", tank.writeToNBT(new NBTTagCompound()));
         return tag;
     }
 
@@ -113,6 +151,7 @@ public class TileBarrel extends TileBase implements IItemHandler {
         super.readFromNBT(tag);
         type = new ItemStack(tag.getCompoundTag("type"));
         amount = tag.getInteger("amount");
+        tank.readFromNBT(tag.getCompoundTag("tank"));
     }
 
 }

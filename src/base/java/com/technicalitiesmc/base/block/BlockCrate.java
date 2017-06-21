@@ -26,7 +26,7 @@ public class BlockCrate extends BlockBase implements ITileEntityProvider {
 
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
-        return new TileCrate(32);
+        return new TileCrate();
     }
 
     @Override
@@ -64,7 +64,7 @@ public class BlockCrate extends BlockBase implements ITileEntityProvider {
 
     @Override
     protected boolean canBreak(World world, BlockPos pos, EntityPlayer player) {
-        if (player.isSneaking()) {
+        if (player.isSneaking() || !player.capabilities.isCreativeMode) {
             return true;
         }
 
@@ -90,7 +90,7 @@ public class BlockCrate extends BlockBase implements ITileEntityProvider {
 
     @Override
     protected boolean isFull(IBlockState state) {
-        return false;
+        return true;
     }
 
 }

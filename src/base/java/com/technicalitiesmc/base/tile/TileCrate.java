@@ -12,8 +12,12 @@ public class TileCrate extends TileBase {
 
     private final SimpleItemHandler inventory;
 
-    public TileCrate(int slots) {
+    private TileCrate(int slots) {
         this.inventory = new SimpleItemHandler(slots, this::markDirty);
+    }
+
+    public TileCrate() {
+        this(32);
     }
 
     public SimpleItemHandler getInventory() {
