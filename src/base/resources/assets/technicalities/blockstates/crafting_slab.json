@@ -1,0 +1,26 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"textures": {
+			"side": "technicalities:blocks/crafting_slab_side",
+			"top": "technicalities:blocks/crafting_slab_top_directional",
+			"bottom": "technicalities:blocks/crafting_slab_bottom",
+			"particle": "technicalities:blocks/crafting_slab_top"
+		},
+		"model": "technicalities:crafting_slab",
+		"transform": "forge:default-block"
+	},
+	"variants": {
+        "front": {
+        	"north": { "y": 180 },
+        	"south": { "y": 0   },
+        	"west":  { "y": 90  },
+        	"east":  { "y": 270 }
+        },
+        "locked": {
+        	"true":  { "textures": { "top": "technicalities:blocks/crafting_slab_top"             } },
+        	"false": { "textures": { "top": "technicalities:blocks/crafting_slab_top_directional" } }
+        },
+        "inventory": [{ }]
+    }
+}
