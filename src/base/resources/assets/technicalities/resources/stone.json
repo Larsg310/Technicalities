@@ -1,0 +1,12 @@
+{
+	"tint": {
+		"color": "666666",
+		"specular": 0.25
+	},
+	"#dust": {
+		"tint": {
+			"color": "999999",
+			"specular": 0.1
+		}
+	}
+}

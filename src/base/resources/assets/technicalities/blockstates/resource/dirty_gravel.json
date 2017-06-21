@@ -1,0 +1,15 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"textures": {
+			"layer0": "technicalities:items/resource/gravel_dirty",
+			"layer1": "technicalities:items/resource/gravel_dirty_spec",
+			"layer2": "technicalities:items/resource/gravel_dirty_overlay"
+		},
+		"model": "forge:item-layer",
+		"transform": "forge:default-item"
+	},
+	"variants": {
+		"inventory": [{ }]
+	}
+}

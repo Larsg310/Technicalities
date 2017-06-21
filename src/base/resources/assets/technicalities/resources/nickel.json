@@ -1,0 +1,18 @@
+{
+	"tint": {
+		"color": "f3bb5a",
+		"specular": 0.75
+	},
+	"#ore_dense": {
+		"tint": {
+			"color": "f3bb5a",
+			"specular": 0.9
+		}
+	},
+	"#ore_sparse": {
+		"tint": {
+			"color": "f3bb5a",
+			"specular": 0.9
+		}
+	}
+}
