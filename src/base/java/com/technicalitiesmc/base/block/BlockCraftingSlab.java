@@ -71,6 +71,11 @@ public class BlockCraftingSlab extends BlockBase implements ITileEntityProvider 
     }
 
     @Override
+    protected boolean isFull(IBlockState state) {
+        return false;
+    }
+
+    @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         return BOX;
     }
