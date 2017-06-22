@@ -63,8 +63,8 @@ public class TKBaseResources {
         Type.IRON.with(providersIronGold);
         Type.GOLD.with(providersIronGold);
 
-        ResourceProvider<?>[] providers = new ResourceProvider[] { Provider.INGOT, Provider.NUGGET, Provider.PLATE, Provider.DIRTY_GRAVEL,
-                Provider.CLEAN_GRAVEL, Provider.PEBBLES, Provider.DUST, Provider.FINE_DUST, hammer };
+        ResourceProvider<?>[] providers = new ResourceProvider[] { Provider.ORE, Provider.INGOT, Provider.NUGGET, Provider.PLATE,
+                Provider.DIRTY_GRAVEL, Provider.CLEAN_GRAVEL, Provider.PEBBLES, Provider.DUST, Provider.FINE_DUST, hammer };
 
         copper.with(providers);
         lead.with(providers);

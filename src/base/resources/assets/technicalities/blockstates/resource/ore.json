@@ -1,0 +1,15 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"textures": {
+			"layer0": "technicalities:blocks/ore",
+			"layer1": "technicalities:blocks/ore_spec"
+		},
+		"model": "technicalities:ore",
+		"transform": "forge:default-block"
+	},
+	"variants": {
+		"normal": [{ }],
+		"inventory": [{ }]
+	}
+}

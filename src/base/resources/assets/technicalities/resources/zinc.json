@@ -3,12 +3,7 @@
 		"color": "bcc479",
 		"specular": 0.5
 	},
-	"#ore_dense": {
-		"tint": {
-			"specular": 0.375
-		}
-	},
-	"#ore_sparse": {
+	"#ore": {
 		"tint": {
 			"color": "bcc479",
 			"specular": 0.375
