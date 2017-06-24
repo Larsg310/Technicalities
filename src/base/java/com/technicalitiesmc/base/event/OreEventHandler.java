@@ -61,12 +61,12 @@ public class OreEventHandler {
     private void handleStack(ItemStack stack, Consumer<ItemStack> ifDirtyGravel, Consumer<ItemStack> ifOre) {
         if (stack.getItem() instanceof ItemResource) {
             ResourceEntry<ItemStack> entry = ((ItemResource) stack.getItem()).getResources()[stack.getMetadata()];
-            if (entry.getProvider() == TKLib.Resource.Provider.DIRTY_GRAVEL) {
+            if (entry != null && entry.getProvider() == TKLib.Resource.Provider.DIRTY_GRAVEL) {
                 ifDirtyGravel.accept(stack);
             }
         } else if (stack.getItem() instanceof ItemBlockResource) {
             ResourceEntry<IBlockState> entry = ((ItemBlockResource) stack.getItem()).getResources()[stack.getMetadata()];
-            if (entry.getProvider() == TKLib.Resource.Provider.ORE) {
+            if (entry != null && entry.getProvider() == TKLib.Resource.Provider.ORE) {
                 ifOre.accept(stack);
             }
         } else {

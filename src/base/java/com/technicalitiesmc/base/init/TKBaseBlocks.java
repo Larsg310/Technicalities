@@ -1,5 +1,6 @@
 package com.technicalitiesmc.base.init;
 
+import com.technicalitiesmc.Technicalities;
 import com.technicalitiesmc.base.TKBase;
 import com.technicalitiesmc.base.block.BlockBarrel;
 import com.technicalitiesmc.base.block.BlockCraftingSlab;
@@ -26,20 +27,20 @@ public class TKBaseBlocks {
     }
 
     public static void register() {
-        GameRegistry.register(crate.setRegistryName("crate"));
-        GameRegistry.register(new ItemBlockBase(crate));
+        Technicalities.register(crate.setRegistryName("crate"));
+        Technicalities.register(new ItemBlockBase(crate))
+                .accept(() -> TKBase.proxy.registerItemModel(crate, 0, new ModelResourceLocation(crate.getRegistryName(), "inventory")));
         GameRegistry.registerTileEntity(TileCrate.class, "crate");
-        TKBase.proxy.registerItemModel(crate, 0, new ModelResourceLocation(crate.getRegistryName(), "inventory"));
 
-        GameRegistry.register(barrel.setRegistryName("barrel"));
-        GameRegistry.register(new ItemBlockBase(barrel));
+        Technicalities.register(barrel.setRegistryName("barrel"));
+        Technicalities.register(new ItemBlockBase(barrel))
+                .accept(() -> TKBase.proxy.registerItemModel(barrel, 0, new ModelResourceLocation(barrel.getRegistryName(), "inventory")));
         GameRegistry.registerTileEntity(TileBarrel.class, "barrel");
-        TKBase.proxy.registerItemModel(barrel, 0, new ModelResourceLocation(barrel.getRegistryName(), "inventory"));
 
-        GameRegistry.register(crafting_slab.setRegistryName("crafting_slab"));
-        GameRegistry.register(new ItemBlockBase(crafting_slab));
+        Technicalities.register(crafting_slab.setRegistryName("crafting_slab"));
+        Technicalities.register(new ItemBlockBase(crafting_slab)).accept(() -> TKBase.proxy.registerItemModel(crafting_slab, 0,
+                new ModelResourceLocation(crafting_slab.getRegistryName(), "inventory")));
         GameRegistry.registerTileEntity(TileCraftingSlab.class, "crafting_slab");
-        TKBase.proxy.registerItemModel(crafting_slab, 0, new ModelResourceLocation(crafting_slab.getRegistryName(), "inventory"));
     }
 
 }

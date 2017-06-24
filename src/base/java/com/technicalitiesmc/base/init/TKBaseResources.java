@@ -6,12 +6,10 @@ import com.technicalitiesmc.Technicalities;
 import com.technicalitiesmc.base.item.ItemHammer;
 import com.technicalitiesmc.lib.TKLib.Resource.Provider;
 import com.technicalitiesmc.lib.TKLib.Resource.Type;
-import com.technicalitiesmc.lib.resource.ResourceManager;
 import com.technicalitiesmc.lib.resource.ResourceProvider;
 import com.technicalitiesmc.lib.resource.ResourceType;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class TKBaseResources {
 
@@ -41,19 +39,17 @@ public class TKBaseResources {
     }
 
     public static void register() {
-        GameRegistry.register(copper.setRegistryName("copper"));
-        GameRegistry.register(lead.setRegistryName("lead"));
-        GameRegistry.register(nickel.setRegistryName("nickel"));
-        GameRegistry.register(platinum.setRegistryName("platinum"));
-        GameRegistry.register(silver.setRegistryName("silver"));
-        GameRegistry.register(tin.setRegistryName("tin"));
-        GameRegistry.register(zinc.setRegistryName("zinc"));
+        Technicalities.register(copper.setRegistryName("copper"));
+        Technicalities.register(lead.setRegistryName("lead"));
+        Technicalities.register(nickel.setRegistryName("nickel"));
+        Technicalities.register(platinum.setRegistryName("platinum"));
+        Technicalities.register(silver.setRegistryName("silver"));
+        Technicalities.register(tin.setRegistryName("tin"));
+        Technicalities.register(zinc.setRegistryName("zinc"));
 
-        GameRegistry.register(hammer.setRegistryName("hammer"));
+        Technicalities.register(hammer.setRegistryName("hammer"));
 
         registerMetals();
-
-        ResourceManager.INSTANCE.completeRegistration();
     }
 
     private static void registerMetals() {
