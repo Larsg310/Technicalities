@@ -12,9 +12,9 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import com.technicalitiesmc.lib.resource.ResourceManager;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -23,7 +23,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
-@EventBusSubscriber
 @Mod(modid = Technicalities.MODID, name = Technicalities.NAME, version = Technicalities.VERSION, dependencies = "required-after:tklib")
 public class Technicalities {
 
@@ -32,6 +31,10 @@ public class Technicalities {
     public static Logger log;
 
     private TKModuleManager modules;
+
+    public Technicalities() {
+        MinecraftForge.EVENT_BUS.register(this);
+    }
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -42,6 +45,7 @@ public class Technicalities {
         modules = new TKModuleManager();
         modules.initProxies();
         modules.save();
+        modules.forEach(ITKModule::initRegistries);
         log.info("Loaded " + modules.getModules().size() + " submodules: "
                 + modules.getModules().stream().map(TKModuleManager::getName).collect(Collectors.toList()));
 
@@ -68,7 +72,6 @@ public class Technicalities {
             .arrayListValues().build();
 
     public static Consumer<Runnable> register(IForgeRegistryEntry<?> object) {
-        System.out.println(">>>   Adding " + object.getRegistryName() + " (" + object.getRegistryType().getSimpleName() + ")");
         List<Runnable> list = new ArrayList<>();
         registryObjects.put(object.getRegistryType(), Pair.of(object, list));
         return list::add;
@@ -76,11 +79,9 @@ public class Technicalities {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @SubscribeEvent
-    public static void onRegistryEvent(RegistryEvent.Register event) {
+    public void onRegistryEvent(RegistryEvent.Register event) {
         IForgeRegistry reg = event.getRegistry();
         for (Pair<IForgeRegistryEntry<?>, List<Runnable>> pair : registryObjects.get(reg.getRegistrySuperType())) {
-            System.out.println(
-                    ">>>   Registering " + pair.getKey().getRegistryName() + " (" + pair.getKey().getRegistryType().getSimpleName() + ")");
             reg.register(pair.getKey());
             pair.getValue().forEach(Runnable::run);
         }

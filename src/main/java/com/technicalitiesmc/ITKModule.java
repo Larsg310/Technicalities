@@ -7,6 +7,8 @@ import com.technicalitiesmc.lib.module.IModule;
  */
 public interface ITKModule extends IModule {
 
+    public void initRegistries();
+
     /**
      * Called on mod pre-initialization.
      */
