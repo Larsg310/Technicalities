@@ -1,0 +1,13 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"textures": {
+			"layer0": "technicalities:items/reed_stick"
+		},
+		"model": "forge:item-layer",
+		"transform": "forge:default-item"
+	},
+	"variants": {
+		"inventory": [{ }]
+	}
+}

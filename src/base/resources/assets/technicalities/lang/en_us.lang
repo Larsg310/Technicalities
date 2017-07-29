@@ -11,3 +11,5 @@ res.technicalities:type.platinum.name=Platinum
 res.technicalities:type.silver.name=Silver
 res.technicalities:type.tin.name=Tin
 res.technicalities:type.zinc.name=Zinc
+
+item.technicalities:reed_stick.name=Sugar Cane

@@ -5,6 +5,7 @@ import com.technicalitiesmc.ModuleProxy;
 import com.technicalitiesmc.TKModule;
 import com.technicalitiesmc.base.event.OreEventHandler;
 import com.technicalitiesmc.base.init.TKBaseBlocks;
+import com.technicalitiesmc.base.init.TKBaseItems;
 import com.technicalitiesmc.base.init.TKBaseResources;
 
 import net.minecraftforge.common.MinecraftForge;
@@ -21,6 +22,10 @@ public class TKBase implements ITKModule {
         // Initialize and register blocks
         TKBaseBlocks.initialize();
         TKBaseBlocks.register();
+
+        // Initialize and register items
+        TKBaseItems.initialize();
+        TKBaseItems.register();
 
         // Initialize and register resources
         TKBaseResources.initialize();
