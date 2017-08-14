@@ -1,0 +1,14 @@
+{
+	"textures": {
+		"caps2": "technicalities:blocks/pipe_caps2"
+	},
+	"elements": [
+		{
+			"from": [ 4, 0, 4 ],
+			"to":   [ 12, 5, 12 ],
+			"faces": {
+				"up": { "texture": "#caps2" }
+			}
+		}
+	]
+}

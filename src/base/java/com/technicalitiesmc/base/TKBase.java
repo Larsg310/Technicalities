@@ -19,6 +19,9 @@ public class TKBase implements ITKModule {
 
     @Override
     public void preInit() {
+        // Pre-init the proxy
+        proxy.preInit();
+
         // Initialize and register blocks
         TKBaseBlocks.initialize();
         TKBaseBlocks.register();

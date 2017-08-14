@@ -1,0 +1,19 @@
+{
+	"textures": {
+		"side": "minecraft:blocks/cobblestone"
+	},
+	"elements": [
+		{
+			"from": [ 3.5,  0, 3.5 ],
+			"to":   [ 12.5, 4, 12.5 ],
+			"faces": {
+				"down":  { "texture": "#side" },
+				"up":    { "texture": "#side" },
+				"north": { "texture": "#side" },
+				"south": { "texture": "#side" },
+				"west":  { "texture": "#side" },
+				"east":  { "texture": "#side" }
+			}
+		}
+	]
+}

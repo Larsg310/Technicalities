@@ -6,6 +6,10 @@ import net.minecraft.item.Item;
 
 public class TKBaseCommonProxy {
 
+    public void preInit() {
+
+    }
+
     public void registerItemModel(Item item, int meta, ModelResourceLocation location) {
     }
 

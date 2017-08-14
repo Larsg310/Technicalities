@@ -1,0 +1,20 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"textures": {
+			"pipe": "technicalities:blocks/pipe",
+			"pipe_s": "technicalities:blocks/pipe_straight",
+			"caps": "technicalities:blocks/pipe_caps",
+			"caps2": "technicalities:blocks/pipe_caps2",
+			"glass": "technicalities:blocks/pipe_glass",
+			"glass_s": "technicalities:blocks/pipe_glass_straight",
+			"particle": "technicalities:blocks/pipe"
+		},
+		"transform": "forge:default-block",
+		"uvlock": true
+	},
+	"variants": {
+		"inventory": [{ "model": "technicalities:tube/straight" }],
+		"normal":    [{ "model": "technicalities:empty" }]
+	}
+}

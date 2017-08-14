@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
+import com.technicalitiesmc.lib.network.GuiHandler;
 import com.technicalitiesmc.lib.resource.ResourceManager;
 
 import net.minecraftforge.common.MinecraftForge;
@@ -20,6 +21,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
@@ -29,6 +31,7 @@ public class Technicalities {
     public static final String MODID = "technicalities", NAME = "Technicalities", VERSION = "%VERSION%";
 
     public static Logger log;
+    public static final GuiHandler guiHandler = new GuiHandler();
 
     private TKModuleManager modules;
 
@@ -60,6 +63,9 @@ public class Technicalities {
     public void init(FMLInitializationEvent event) {
         // Initialize modules
         modules.forEach(ITKModule::init);
+
+        // Register GUI Handler
+        NetworkRegistry.INSTANCE.registerGuiHandler(this, guiHandler);
     }
 
     @EventHandler

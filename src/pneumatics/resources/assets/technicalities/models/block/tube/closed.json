@@ -1,0 +1,42 @@
+{
+	"textures": {
+		"pipe": "technicalities:blocks/pipe",
+		"glass": "technicalities:blocks/pipe_glass"
+	},
+	"elements": [
+		{
+			"from": [ 4, 4, 4 ],
+			"to": [ 12, 5, 12 ],
+			"faces": {
+				"down": { "texture": "#pipe" },
+				"up": { "texture": "#pipe" }
+			}
+		},
+		{
+			"from": [ 10, 5, 10 ],
+			"to": [ 6, 4, 6 ],
+			"faces": {
+				"north": { "texture": "#pipe" },
+				"south": { "texture": "#pipe" },
+				"west":  { "texture": "#pipe" },
+				"east":  { "texture": "#pipe" }
+			}
+		},
+		{
+			"from": [ 4.5, 4.5, 4.5 ],
+			"to": [ 11.5, 4.5, 11.5 ],
+			"faces": {
+				"down": { "texture": "#glass" },
+				"up": { "texture": "#glass" }
+			}
+		},
+		{
+			"from": [ 11.5, 4.5, 11.5 ],
+			"to": [ 4.5, 4.5, 4.5 ],
+			"faces": {
+				"down": { "texture": "#glass" },
+				"up": { "texture": "#glass" }
+			}
+		}
+	]
+}
