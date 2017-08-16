@@ -97,7 +97,16 @@ public class BlockWorkbench extends BlockBase implements ITileEntityProvider {
             IItemHandler inventory = te.getInventory();
             IItemHandler grid = te.getCraftingGrid();
 
-            SimpleContainer container = new SimpleContainer();
+            SimpleContainer container = new SimpleContainer() {
+
+                @Override
+                public boolean canMergeSlot(ItemStack stack, Slot slot) {
+                    if (slot instanceof SlotItemHandler && ((SlotItemHandler) slot).getItemHandler() == grid && slot.getSlotIndex() == 9) {
+                        return false;
+                    }
+                    return super.canMergeSlot(stack, slot);
+                }
+            };
 
             container.addSlotToContainer(new SlotItemHandler(grid, 9, 125, 36) {
 
