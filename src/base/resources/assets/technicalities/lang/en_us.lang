@@ -1,6 +1,7 @@
 tile.technicalities:crate.name=Wooden Crate
 tile.technicalities:barrel.name=Wooden Barrel
 tile.technicalities:crafting_slab.name=Crafting Slab
+tile.technicalities:workbench.name=Workbench
 
 res.technicalities:provider.hammer.name=%s Hammer
 
@@ -13,3 +14,8 @@ res.technicalities:type.tin.name=Tin
 res.technicalities:type.zinc.name=Zinc
 
 item.technicalities:reed_stick.name=Sugar Cane
+item.technicalities:recipe_book.name=Recipe Book
+
+gui.technicalities:tip.workbench.required=Required
+gui.technicalities:tip.workbench.missing=Missing
+gui.technicalities:tip.workbench.info=Hold shift to see item info
