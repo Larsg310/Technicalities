@@ -51,7 +51,7 @@ public class TileCrate extends TileBase {
     @Override
     public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
-        inventory.deserializeNBT(tag);
+        inventory.deserializeNBT(tag.getCompoundTag("inventory"));
     }
 
 }
