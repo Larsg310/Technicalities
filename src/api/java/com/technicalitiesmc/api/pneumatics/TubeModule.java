@@ -5,10 +5,9 @@ import java.util.function.Consumer;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.technicalitiesmc.lib.inventory.SimpleContainer;
-
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
@@ -123,7 +122,7 @@ public abstract class TubeModule {
             super(tube, side);
         }
 
-        public abstract SimpleContainer createContainer(EntityPlayer player);
+        public abstract Container createContainer(EntityPlayer player);
 
         @SideOnly(Side.CLIENT)
         public abstract GuiContainer createGUI(EntityPlayer player);
