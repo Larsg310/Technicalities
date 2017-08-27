@@ -9,8 +9,6 @@ import java.util.Set;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.technicalitiesmc.Technicalities;
-import com.technicalitiesmc.lib.TKLib;
-import com.technicalitiesmc.lib.capability.SimpleCapability;
 import com.technicalitiesmc.pneumatics.TKPneumatics;
 import com.technicalitiesmc.pneumatics.network.PacketStackJoinNetwork;
 import com.technicalitiesmc.pneumatics.network.PacketStackLeaveNetwork;
@@ -18,6 +16,7 @@ import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeBase;
 import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeClient;
 import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeServer;
 import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeServer.Neighbor;
+import com.technicalitiesmc.util.simple.SimpleCapability;
 
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
@@ -172,7 +171,7 @@ public class TubeTicker {
 
     @SubscribeEvent
     public void onClientTick(ClientTickEvent event) {
-        if (event.phase == Phase.START || TKLib.proxy.isGamePaused()) {
+        if (event.phase == Phase.START || Technicalities.proxy.isGamePaused()) {
             return;
         }
 

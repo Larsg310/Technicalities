@@ -3,8 +3,8 @@ package com.technicalitiesmc.pneumatics.item;
 import java.util.List;
 
 import com.technicalitiesmc.api.pneumatics.TubeModule;
-import com.technicalitiesmc.lib.item.ItemBase;
 import com.technicalitiesmc.pneumatics.tube.module.ModuleManager;
+import com.technicalitiesmc.util.item.ItemBase;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;

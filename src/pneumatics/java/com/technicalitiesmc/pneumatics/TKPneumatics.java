@@ -11,9 +11,6 @@ import com.technicalitiesmc.ModuleProxy;
 import com.technicalitiesmc.TKModule;
 import com.technicalitiesmc.Technicalities;
 import com.technicalitiesmc.api.pneumatics.TubeModule;
-import com.technicalitiesmc.lib.TKLib;
-import com.technicalitiesmc.lib.network.NetworkHandler;
-import com.technicalitiesmc.lib.reflect.ReflectionUtils;
 import com.technicalitiesmc.pneumatics.init.TKPneumaticsBlocks;
 import com.technicalitiesmc.pneumatics.init.TKPneumaticsItems;
 import com.technicalitiesmc.pneumatics.init.TKTubeModules;
@@ -24,6 +21,8 @@ import com.technicalitiesmc.pneumatics.network.PacketStackPickRoute;
 import com.technicalitiesmc.pneumatics.network.PacketStackUpdate;
 import com.technicalitiesmc.pneumatics.network.TKPGuiHandler;
 import com.technicalitiesmc.pneumatics.tube.TubeTicker;
+import com.technicalitiesmc.util.ReflectionUtils;
+import com.technicalitiesmc.util.network.NetworkHandler;
 
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayer;
@@ -39,7 +38,7 @@ public class TKPneumatics implements ITKModule {
             clientSide = "com.technicalitiesmc.pneumatics.client.TKPClientProxy")
     public static TKPCommonProxy proxy;
 
-    public static final NetworkHandler NETWORK_HANDLER = new NetworkHandler(TKLib.MODID + ".pneumatics");
+    public static final NetworkHandler NETWORK_HANDLER = new NetworkHandler(Technicalities.MODID + ".pneumatics");
 
     @Override
     public void preInit() {

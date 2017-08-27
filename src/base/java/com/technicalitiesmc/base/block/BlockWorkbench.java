@@ -5,11 +5,11 @@ import com.technicalitiesmc.base.client.gui.GuiWorkbench;
 import com.technicalitiesmc.base.item.ItemRecipeBook;
 import com.technicalitiesmc.base.item.ItemRecipeBook.Recipe;
 import com.technicalitiesmc.base.tile.TileWorkbench;
-import com.technicalitiesmc.lib.block.BlockBase;
-import com.technicalitiesmc.lib.inventory.InsertingSlotItemHandler;
-import com.technicalitiesmc.lib.inventory.SimpleContainer;
-import com.technicalitiesmc.lib.inventory.SimpleItemHandler;
-import com.technicalitiesmc.lib.network.GuiHandler;
+import com.technicalitiesmc.util.block.BlockBase;
+import com.technicalitiesmc.util.inventory.InsertingSlotItemHandler;
+import com.technicalitiesmc.util.inventory.SimpleContainer;
+import com.technicalitiesmc.util.inventory.SimpleItemHandler;
+import com.technicalitiesmc.util.network.GuiHandler;
 
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;

@@ -3,10 +3,8 @@ package com.technicalitiesmc.base.tile;
 import java.io.IOException;
 
 import com.technicalitiesmc.base.client.render.TESRCraftingSlab;
-import com.technicalitiesmc.lib.block.TileBase;
-import com.technicalitiesmc.lib.client.SpecialRenderer;
-import com.technicalitiesmc.lib.sync.NBTSaveable;
-import com.technicalitiesmc.lib.sync.SyncedField;
+import com.technicalitiesmc.util.block.TileBase;
+import com.technicalitiesmc.util.client.SpecialRenderer;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -22,16 +20,20 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.registries.IForgeRegistry;
 
 // FIXME: Grid offsets for recipes smaller than 3x3
 // A bucket aligned to the bottom will have the crafting items placed at the top
 @SpecialRenderer(TESRCraftingSlab.class)
 public class TileCraftingSlab extends TileBase {
+
+    private static final IForgeRegistry<IRecipe> recipeRegistry = GameRegistry.findRegistry(IRecipe.class);
 
     private static final int DELAY = 5;
 
@@ -50,15 +52,9 @@ public class TileCraftingSlab extends TileBase {
     };
     private final InventoryCrafting grid = new InventoryCrafting(dummyContainer, 3, 3);
     private final NonNullList<ItemStack> outputStacks = NonNullList.create();
-    @NBTSaveable(INBTSerializable.class)
-    @SyncedField(INBTSerializable.class)
     private final ItemStackHandler recipeItems = new ItemStackHandler(9);
 
-    @NBTSaveable
-    @SyncedField
     private IRecipe recipe = null;
-    @NBTSaveable
-    @SyncedField
     private boolean locked = false;
 
     public ItemStack getGridItem(int x, int y) {
@@ -184,6 +180,12 @@ public class TileCraftingSlab extends TileBase {
         }
         tag.setTag("out", out);
 
+        tag.setTag("recipeItems", recipeItems.serializeNBT());
+        if (recipe != null) {
+            tag.setString("recipe", recipe.getRegistryName().toString());
+        }
+        tag.setBoolean("locked", locked);
+
         return tag;
     }
 
@@ -201,44 +203,18 @@ public class TileCraftingSlab extends TileBase {
         for (int i = 0; i < out.tagCount(); i++) {
             outputStacks.add(new ItemStack(out.getCompoundTagAt(i)));
         }
+
+        recipeItems.deserializeNBT(tag.getCompoundTag("recipeItems"));
+        if (tag.hasKey("recipe")) {
+            recipe = recipeRegistry.getValue(new ResourceLocation(tag.getString("recipe")));
+        } else {
+            recipe = null;
+        }
+        locked = tag.getBoolean("locked");
     }
 
     @Override
-    public NBTTagCompound writeDescription(NBTTagCompound tag) {
-        tag = super.writeDescription(tag);
-
-        NBTTagList grid = new NBTTagList();
-        for (int i = 0; i < 9; i++) {
-            grid.appendTag(this.grid.getStackInSlot(i).writeToNBT(new NBTTagCompound()));
-        }
-        tag.setTag("grid", grid);
-
-        if (!outputStacks.isEmpty()) {
-            tag.setTag("out", outputStacks.get(0).writeToNBT(new NBTTagCompound()));
-        }
-
-        return tag;
-    }
-
-    @Override
-    public void readDescription(NBTTagCompound tag) {
-        super.readDescription(tag);
-
-        NBTTagList grid = tag.getTagList("grid", NBT.TAG_COMPOUND);
-        for (int i = 0; i < 9; i++) {
-            this.grid.setInventorySlotContents(i, new ItemStack(grid.getCompoundTagAt(i)));
-        }
-
-        outputStacks.clear();
-        if (tag.hasKey("out")) {
-            outputStacks.add(new ItemStack(tag.getCompoundTag("out")));
-        }
-    }
-
-    @Override
-    public void writeUpdateExtra(PacketBuffer buf) {
-        super.writeUpdateExtra(buf);
-
+    public void writeDescription(PacketBuffer buf) {
         for (int i = 0; i < 9; i++) {
             buf.writeItemStack(grid.getStackInSlot(i));
         }
@@ -249,12 +225,19 @@ public class TileCraftingSlab extends TileBase {
         } else {
             buf.writeBoolean(false);
         }
+
+        buf.writeCompoundTag(recipeItems.serializeNBT());
+        if (recipe != null) {
+            buf.writeBoolean(true);
+            buf.writeString(recipe.getRegistryName().toString());
+        } else {
+            buf.writeBoolean(false);
+        }
+        buf.writeBoolean(locked);
     }
 
     @Override
-    public void readUpdateExtra(PacketBuffer buf) {
-        super.readUpdateExtra(buf);
-
+    public void readDescription(PacketBuffer buf) throws IOException {
         for (int i = 0; i < 9; i++) {
             try {
                 grid.setInventorySlotContents(i, buf.readItemStack());
@@ -270,6 +253,14 @@ public class TileCraftingSlab extends TileBase {
             } catch (IOException e) {
             }
         }
+
+        recipeItems.deserializeNBT(buf.readCompoundTag());
+        if (buf.readBoolean()) {
+            recipe = recipeRegistry.getValue(new ResourceLocation(buf.readString(128)));
+        } else {
+            recipe = null;
+        }
+        locked = buf.readBoolean();
     }
 
 }

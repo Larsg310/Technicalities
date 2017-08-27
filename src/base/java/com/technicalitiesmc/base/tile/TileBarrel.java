@@ -1,6 +1,6 @@
 package com.technicalitiesmc.base.tile;
 
-import com.technicalitiesmc.lib.block.TileBase;
+import com.technicalitiesmc.util.block.TileBase;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

@@ -7,9 +7,8 @@ import com.technicalitiesmc.Technicalities;
 import com.technicalitiesmc.base.event.OreEventHandler;
 import com.technicalitiesmc.base.init.TKBaseBlocks;
 import com.technicalitiesmc.base.init.TKBaseItems;
-import com.technicalitiesmc.base.init.TKBaseResources;
 import com.technicalitiesmc.base.network.PacketGuiButton;
-import com.technicalitiesmc.lib.network.NetworkHandler;
+import com.technicalitiesmc.util.network.NetworkHandler;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.Side;
@@ -35,10 +34,6 @@ public class TKBase implements ITKModule {
         // Initialize and register items
         TKBaseItems.initialize();
         TKBaseItems.register();
-
-        // Initialize and register resources
-        TKBaseResources.initialize();
-        TKBaseResources.register();
 
         // Register event handlers
         MinecraftForge.EVENT_BUS.register(new OreEventHandler());

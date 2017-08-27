@@ -10,7 +10,7 @@ import com.technicalitiesmc.base.tile.TileBarrel;
 import com.technicalitiesmc.base.tile.TileCraftingSlab;
 import com.technicalitiesmc.base.tile.TileCrate;
 import com.technicalitiesmc.base.tile.TileWorkbench;
-import com.technicalitiesmc.lib.item.ItemBlockBase;
+import com.technicalitiesmc.util.item.ItemBlockBase;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;

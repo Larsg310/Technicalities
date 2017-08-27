@@ -1,6 +1,6 @@
 package com.technicalitiesmc.api.mechanical;
 
-import com.technicalitiesmc.lib.funcint.ObjFloatConsumer;
+import com.technicalitiesmc.api.util.ObjFloatConsumer;
 
 public interface IKineticNode {
 

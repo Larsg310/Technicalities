@@ -2,9 +2,9 @@ package com.technicalitiesmc.pneumatics.network;
 
 import java.io.IOException;
 
-import com.technicalitiesmc.lib.network.Packet;
 import com.technicalitiesmc.pneumatics.tube.TubeStack;
 import com.technicalitiesmc.pneumatics.tube.TubeTicker;
+import com.technicalitiesmc.util.network.Packet;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;

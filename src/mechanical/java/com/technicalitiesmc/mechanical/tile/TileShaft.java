@@ -2,10 +2,10 @@ package com.technicalitiesmc.mechanical.tile;
 
 import com.technicalitiesmc.api.mechanical.IKineticNode;
 import com.technicalitiesmc.api.mechanical.IShaftAttachable;
-import com.technicalitiesmc.lib.block.TileBase;
-import com.technicalitiesmc.lib.funcint.ObjFloatConsumer;
+import com.technicalitiesmc.api.util.ObjFloatConsumer;
 import com.technicalitiesmc.mechanical.kinesis.KineticManager;
 import com.technicalitiesmc.mechanical.kinesis.KineticNode;
+import com.technicalitiesmc.util.block.TileBase;
 
 import net.minecraft.block.BlockRotatedPillar;
 import net.minecraft.tileentity.TileEntity;

@@ -14,12 +14,12 @@ import com.google.common.base.Suppliers;
 import com.google.common.base.Throwables;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.technicalitiesmc.lib.TKLib;
-import com.technicalitiesmc.lib.funcint.LambdaUtils;
-import com.technicalitiesmc.lib.module.ModuleManager;
-import com.technicalitiesmc.lib.util.JSONUtils;
+import com.technicalitiesmc.util.JSONUtils;
+import com.technicalitiesmc.util.funcint.LambdaUtils;
+import com.technicalitiesmc.util.module.ModuleManager;
 
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -42,8 +42,12 @@ public class TKModuleManager extends ModuleManager<ITKModule> {
         return new JsonObject();
     });
 
-    TKModuleManager() {
-        super(ITKModule.class, TKModule.class, TKModuleManager::test, TKModuleManager::compare, TKModule::value, TKModule::dependencies);
+    private final ASMDataTable asmTable;
+
+    TKModuleManager(ASMDataTable asmTable) {
+        super(asmTable, ITKModule.class, TKModule.class, TKModuleManager::test, TKModuleManager::compare, TKModule::value,
+                TKModule::dependencies);
+        this.asmTable = asmTable;
     }
 
     /**
@@ -110,7 +114,7 @@ public class TKModuleManager extends ModuleManager<ITKModule> {
      */
     void initProxies() {
         List<String> loadedModules = getModules().stream().map(TKModuleManager::getName).collect(Collectors.toList());
-        TKLib.asmTable.getAll(ModuleProxy.class.getName())//
+        asmTable.getAll(ModuleProxy.class.getName())//
                 .stream()//
                 .filter(d -> loadedModules.contains(d.getAnnotationInfo().get("module")))//
                 .forEach(LambdaUtils.safeConsumer(this::initProxy));

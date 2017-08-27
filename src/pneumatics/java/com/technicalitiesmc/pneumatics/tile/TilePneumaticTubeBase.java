@@ -10,10 +10,10 @@ import org.apache.commons.lang3.tuple.Triple;
 
 import com.technicalitiesmc.api.pneumatics.IPneumaticTube;
 import com.technicalitiesmc.api.pneumatics.TubeModule;
-import com.technicalitiesmc.lib.block.TileBase;
-import com.technicalitiesmc.lib.capability.SimpleCapability;
 import com.technicalitiesmc.pneumatics.tube.TubeStack;
 import com.technicalitiesmc.pneumatics.tube.module.ModuleManager;
+import com.technicalitiesmc.util.block.TileBase;
+import com.technicalitiesmc.util.simple.SimpleCapability;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -147,57 +147,7 @@ public abstract class TilePneumaticTubeBase extends TileBase implements IPneumat
     }
 
     @Override
-    public NBTTagCompound writeDescription(NBTTagCompound tag) {
-        tag = super.writeDescription(tag);
-
-        NBTTagList modules = new NBTTagList();
-        for (EnumFacing face : EnumFacing.VALUES) {
-            NBTTagCompound t = new NBTTagCompound();
-            Triple<TubeModule.Type<?>, TubeModule, TubeModule> module = this.modules.get(face);
-            if (module != null) {
-                t.setInteger("__type", ModuleManager.INSTANCE.getID(module.getLeft()));
-                t.setBoolean("__pair", module.getRight() != null && module.getRight() != module.getMiddle());
-                t = module.getMiddle().writeToNBT(t);
-            }
-            modules.appendTag(t);
-        }
-        tag.setTag("modules", modules);
-
-        return tag;
-    }
-
-    @Override
-    public void readDescription(NBTTagCompound tag) {
-        super.readDescription(tag);
-
-        NBTTagList modules = tag.getTagList("modules", NBT.TAG_COMPOUND);
-        for (EnumFacing face : EnumFacing.VALUES) {
-            NBTTagCompound t = modules.getCompoundTagAt(face.ordinal());
-            if (t.hasKey("__type")) {
-                TubeModule.Type<?> currentType = getModuleType(face);
-                if (currentType != null && ModuleManager.INSTANCE.getID(currentType) == t.getInteger("__type")) {
-                    TubeModule module = getModule(face);
-                    module.readFromNBT(t);
-                } else {
-                    TubeModule.Type<?> type = ModuleManager.INSTANCE.get(t.getInteger("__type"));
-                    TubeModule module = type.instantiate(this, face);
-                    module.readFromNBT(t);
-                    this.modules.put(face, Triple.of(type, module, t.getBoolean("__pair") ? module : null));
-                }
-            } else {
-                this.modules.remove(face);
-            }
-        }
-
-        if (getWorld() != null) {
-            getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
-        }
-    }
-
-    @Override
-    public void writeUpdateExtra(PacketBuffer buf) {
-        super.writeUpdateExtra(buf);
-
+    public void writeDescription(PacketBuffer buf) {
         for (EnumFacing face : EnumFacing.VALUES) {
             Triple<TubeModule.Type<?>, TubeModule, TubeModule> module = this.modules.get(face);
             if (module != null) {
@@ -212,9 +162,7 @@ public abstract class TilePneumaticTubeBase extends TileBase implements IPneumat
     }
 
     @Override
-    public void readUpdateExtra(PacketBuffer buf) {
-        super.readUpdateExtra(buf);
-
+    public void readDescription(PacketBuffer buf) {
         for (EnumFacing face : EnumFacing.VALUES) {
             if (!buf.readBoolean()) {
                 this.modules.remove(face);

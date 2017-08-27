@@ -2,10 +2,10 @@ package com.technicalitiesmc.pneumatics.init;
 
 import com.technicalitiesmc.Technicalities;
 import com.technicalitiesmc.base.TKBase;
-import com.technicalitiesmc.lib.item.ItemBlockBase;
 import com.technicalitiesmc.pneumatics.block.BlockPneumaticTube;
 import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeClient;
 import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeServer;
+import com.technicalitiesmc.util.item.ItemBlockBase;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;

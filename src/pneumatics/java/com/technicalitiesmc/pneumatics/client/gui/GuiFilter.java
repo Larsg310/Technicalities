@@ -5,8 +5,8 @@ import java.io.IOException;
 import org.lwjgl.input.Mouse;
 
 import com.technicalitiesmc.Technicalities;
-import com.technicalitiesmc.lib.util.Tint;
 import com.technicalitiesmc.pneumatics.tube.module.TMFilter;
+import com.technicalitiesmc.util.Tint;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;

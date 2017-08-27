@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.technicalitiesmc.Technicalities;
 import com.technicalitiesmc.api.pneumatics.TubeModule;
-import com.technicalitiesmc.lib.registry.SimpleRegistry;
+import com.technicalitiesmc.util.simple.SimpleRegistry;
 
 import net.minecraftforge.registries.ForgeRegistry;
 

@@ -10,13 +10,16 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
-import com.technicalitiesmc.lib.network.GuiHandler;
-import com.technicalitiesmc.lib.resource.ResourceManager;
+import com.technicalitiesmc.util.network.GuiHandler;
+import com.technicalitiesmc.util.simple.SimpleCapabilityManager;
+import com.technicalitiesmc.util.simple.SimpleRegistryManager;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -25,10 +28,13 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
-@Mod(modid = Technicalities.MODID, name = Technicalities.NAME, version = Technicalities.VERSION, dependencies = "required-after:tklib")
+@Mod(modid = Technicalities.MODID, name = Technicalities.NAME, version = Technicalities.VERSION)
 public class Technicalities {
 
     public static final String MODID = "technicalities", NAME = "Technicalities", VERSION = "%VERSION%";
+
+    @SidedProxy(serverSide = "com.technicalitiesmc.TKCommonProxy", clientSide = "com.technicalitiesmc.TKClientProxy")
+    public static TKCommonProxy proxy;
 
     public static Logger log;
     public static final GuiHandler guiHandler = new GuiHandler();
@@ -41,22 +47,24 @@ public class Technicalities {
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        // Initialize log
+        // Initialize log and load ASM table
         log = event.getModLog();
+        ASMDataTable asmTable = event.getAsmData();
 
         // Load submodules and log them
-        modules = new TKModuleManager();
+        modules = new TKModuleManager(asmTable);
         modules.initProxies();
         modules.save();
         modules.forEach(ITKModule::initRegistries);
         log.info("Loaded " + modules.getModules().size() + " submodules: "
                 + modules.getModules().stream().map(TKModuleManager::getName).collect(Collectors.toList()));
 
+        // Init capabilities
+        SimpleCapabilityManager.INSTANCE.init(asmTable);
+        SimpleRegistryManager.INSTANCE.init(asmTable);
+
         // Pre-initialize modules
         modules.forEach(ITKModule::preInit);
-
-        // Complete resource registration
-        ResourceManager.INSTANCE.completeRegistration(Technicalities::register);
     }
 
     @EventHandler

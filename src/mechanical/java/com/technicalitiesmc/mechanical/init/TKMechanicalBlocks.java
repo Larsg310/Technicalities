@@ -2,11 +2,11 @@ package com.technicalitiesmc.mechanical.init;
 
 import com.technicalitiesmc.Technicalities;
 import com.technicalitiesmc.base.TKBase;
-import com.technicalitiesmc.lib.item.ItemBlockBase;
 import com.technicalitiesmc.mechanical.block.BlockKineticTest;
 import com.technicalitiesmc.mechanical.block.BlockShaft;
 import com.technicalitiesmc.mechanical.tile.TileKineticTest;
 import com.technicalitiesmc.mechanical.tile.TileShaft;
+import com.technicalitiesmc.util.item.ItemBlockBase;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;

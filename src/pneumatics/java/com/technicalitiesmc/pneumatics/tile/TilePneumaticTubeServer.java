@@ -9,13 +9,12 @@ import org.apache.commons.lang3.tuple.Triple;
 import com.technicalitiesmc.api.pneumatics.EnumTubeDirection;
 import com.technicalitiesmc.api.pneumatics.ITubeStack;
 import com.technicalitiesmc.api.pneumatics.TubeModule;
-import com.technicalitiesmc.lib.inventory.SimpleItemHandler;
 import com.technicalitiesmc.pneumatics.tube.TubeStack;
 import com.technicalitiesmc.pneumatics.tube.TubeTicker;
+import com.technicalitiesmc.util.inventory.SimpleItemHandler;
 
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -186,21 +185,8 @@ public class TilePneumaticTubeServer extends TilePneumaticTubeBase {
     }
 
     @Override
-    public NBTTagCompound writeDescription(NBTTagCompound tag) {
-        tag = super.writeDescription(tag);
-
-        int connections = 0;
-        for (EnumFacing f : neighbors.keySet()) {
-            connections |= 1 << f.ordinal();
-        }
-        tag.setInteger("connections", connections);
-
-        return tag;
-    }
-
-    @Override
-    public void writeUpdateExtra(PacketBuffer buf) {
-        super.writeUpdateExtra(buf);
+    public void writeDescription(PacketBuffer buf) {
+        super.writeDescription(buf);
 
         int connections = 0;
         for (EnumFacing face : neighbors.keySet()) {

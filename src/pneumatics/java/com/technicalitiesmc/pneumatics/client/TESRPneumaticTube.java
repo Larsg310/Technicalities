@@ -3,10 +3,10 @@ package com.technicalitiesmc.pneumatics.client;
 import static net.minecraft.client.renderer.GlStateManager.*;
 
 import com.technicalitiesmc.Technicalities;
-import com.technicalitiesmc.lib.client.RenderHelper;
-import com.technicalitiesmc.lib.util.Tint;
 import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeClient;
 import com.technicalitiesmc.pneumatics.tube.TubeStack;
+import com.technicalitiesmc.util.Tint;
+import com.technicalitiesmc.util.client.RenderHelper;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;

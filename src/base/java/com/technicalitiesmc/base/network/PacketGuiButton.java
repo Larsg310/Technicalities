@@ -1,7 +1,7 @@
 package com.technicalitiesmc.base.network;
 
 import com.technicalitiesmc.base.TKBase;
-import com.technicalitiesmc.lib.network.LocatedPacket;
+import com.technicalitiesmc.util.network.LocatedPacket;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;

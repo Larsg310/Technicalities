@@ -5,8 +5,8 @@ import java.util.List;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.technicalitiesmc.base.tile.TileBarrel;
-import com.technicalitiesmc.lib.block.BlockBase;
-import com.technicalitiesmc.lib.math.RayTraceHelper;
+import com.technicalitiesmc.util.RayTraceHelper;
+import com.technicalitiesmc.util.block.BlockBase;
 
 import net.minecraft.block.BlockRotatedPillar;
 import net.minecraft.block.ITileEntityProvider;

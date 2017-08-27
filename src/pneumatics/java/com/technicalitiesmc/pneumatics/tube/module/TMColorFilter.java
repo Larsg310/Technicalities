@@ -9,7 +9,7 @@ import com.technicalitiesmc.api.pneumatics.EnumTubeDirection;
 import com.technicalitiesmc.api.pneumatics.IPneumaticTube;
 import com.technicalitiesmc.api.pneumatics.ITubeStack;
 import com.technicalitiesmc.api.pneumatics.TubeModule;
-import com.technicalitiesmc.lib.util.Tint;
+import com.technicalitiesmc.util.Tint;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;

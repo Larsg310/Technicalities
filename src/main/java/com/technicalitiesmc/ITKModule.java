@@ -1,6 +1,6 @@
 package com.technicalitiesmc;
 
-import com.technicalitiesmc.lib.module.IModule;
+import com.technicalitiesmc.util.module.IModule;
 
 /**
  * Base interface for all Technicalities modules. Must be annotated with {@link TKModule} to be detected.

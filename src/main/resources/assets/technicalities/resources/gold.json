@@ -1,0 +1,24 @@
+{
+	"tint": {
+		"color": "FFFF00",
+		"specular": 0.125
+	},
+	"#plate": {
+		"tint": {
+			"color": "FFFF00",
+			"specular": 0.375
+		}
+	},
+	"#ore_dense": {
+		"tint": {
+			"color": "FFFF00",
+			"specular": 0.625
+		}
+	},
+	"#ore_sparse": {
+		"tint": {
+			"color": "FFFF00",
+			"specular": 0.625
+		}
+	}
+}

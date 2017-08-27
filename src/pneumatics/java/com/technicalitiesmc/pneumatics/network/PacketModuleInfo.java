@@ -1,7 +1,7 @@
 package com.technicalitiesmc.pneumatics.network;
 
-import com.technicalitiesmc.lib.network.LocatedPacket;
 import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeBase;
+import com.technicalitiesmc.util.network.LocatedPacket;
 
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayer;

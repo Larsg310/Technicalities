@@ -10,8 +10,8 @@ import com.technicalitiesmc.base.init.TKBaseBlocks;
 import com.technicalitiesmc.base.item.ItemRecipeBook.Recipe;
 import com.technicalitiesmc.base.network.PacketGuiButton;
 import com.technicalitiesmc.base.tile.TileWorkbench;
-import com.technicalitiesmc.lib.client.gui.GuiButton16;
-import com.technicalitiesmc.lib.stack.StackList;
+import com.technicalitiesmc.util.client.gui.GuiButton16;
+import com.technicalitiesmc.util.stack.StackList;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;

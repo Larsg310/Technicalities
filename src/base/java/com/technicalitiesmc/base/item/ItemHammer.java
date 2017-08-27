@@ -1,13 +1,10 @@
 package com.technicalitiesmc.base.item;
 
-import com.technicalitiesmc.lib.item.ItemResource;
-import com.technicalitiesmc.lib.resource.ResourceEntry;
-
-import net.minecraft.item.ItemStack;
+import com.technicalitiesmc.util.item.ItemResource;
 
 public class ItemHammer extends ItemResource {
 
-    public ItemHammer(ResourceEntry<ItemStack>[] resources) {
+    public ItemHammer(IResource[] resources) {
         super(resources);
     }
 

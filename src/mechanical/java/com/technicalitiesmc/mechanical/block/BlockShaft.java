@@ -1,7 +1,7 @@
 package com.technicalitiesmc.mechanical.block;
 
-import com.technicalitiesmc.lib.block.BlockBase;
 import com.technicalitiesmc.mechanical.tile.TileShaft;
+import com.technicalitiesmc.util.block.BlockBase;
 
 import net.minecraft.block.BlockRotatedPillar;
 import net.minecraft.block.ITileEntityProvider;

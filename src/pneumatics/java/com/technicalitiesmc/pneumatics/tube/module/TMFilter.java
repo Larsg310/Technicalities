@@ -12,9 +12,9 @@ import com.technicalitiesmc.api.pneumatics.EnumTubeDirection;
 import com.technicalitiesmc.api.pneumatics.IPneumaticTube;
 import com.technicalitiesmc.api.pneumatics.ITubeStack;
 import com.technicalitiesmc.api.pneumatics.TubeModule;
-import com.technicalitiesmc.lib.inventory.GhostSlotItemHandler;
-import com.technicalitiesmc.lib.inventory.SimpleContainer;
 import com.technicalitiesmc.pneumatics.client.gui.GuiFilter;
+import com.technicalitiesmc.util.inventory.GhostSlotItemHandler;
+import com.technicalitiesmc.util.inventory.SimpleContainer;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;

@@ -1,0 +1,42 @@
+{
+	"tint": {
+		"color": "fff4f0",
+		"specular": 0.125
+	},
+	"#gravel_dirty": {
+		"tint": {
+			"color": "fff4f0",
+			"specular": 0.125
+		}
+	},
+	"#gravel_clean": {
+		"tint": {
+			"color": "fff4f0",
+			"specular": 0.0625
+		}
+	},
+	"#pebble": {
+		"tint": {
+			"color": "fff4f0",
+			"specular": 0.0625
+		}
+	},
+	"#dust_fine": {
+		"tint": {
+			"color": "fff4f0",
+			"specular": 0.0625
+		}
+	},
+	"#ore_dense": {
+		"tint": {
+			"color": "d8af93",
+			"specular": 0.375
+		}
+	},
+	"#ore_sparse": {
+		"tint": {
+			"color": "d8af93",
+			"specular": 0.375
+		}
+	}
+}

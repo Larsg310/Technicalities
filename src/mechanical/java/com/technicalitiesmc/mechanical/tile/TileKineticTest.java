@@ -2,10 +2,10 @@ package com.technicalitiesmc.mechanical.tile;
 
 import com.technicalitiesmc.api.mechanical.IKineticNode;
 import com.technicalitiesmc.api.mechanical.IShaftAttachable;
-import com.technicalitiesmc.lib.block.TileBase;
-import com.technicalitiesmc.lib.funcint.ObjFloatConsumer;
+import com.technicalitiesmc.api.util.ObjFloatConsumer;
 import com.technicalitiesmc.mechanical.kinesis.KineticManager;
 import com.technicalitiesmc.mechanical.kinesis.KineticNode;
+import com.technicalitiesmc.util.block.TileBase;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -82,7 +82,7 @@ public class TileKineticTest extends TileBase {
         public float getAppliedPower() {
             TileEntity te = getWorld().getTileEntity(getPos().up());
             if (te != null && te.hasCapability(IShaftAttachable.CAPABILITY, EnumFacing.DOWN)) {
-                return 200;
+                return 5;
             }
             return 0;
         }

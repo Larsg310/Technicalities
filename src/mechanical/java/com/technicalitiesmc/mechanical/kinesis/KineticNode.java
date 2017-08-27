@@ -1,7 +1,7 @@
 package com.technicalitiesmc.mechanical.kinesis;
 
 import com.technicalitiesmc.api.mechanical.IKineticNode;
-import com.technicalitiesmc.lib.funcint.ObjFloatConsumer;
+import com.technicalitiesmc.api.util.ObjFloatConsumer;
 
 public class KineticNode implements IKineticNode {
 

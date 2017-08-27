@@ -9,9 +9,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import com.technicalitiesmc.base.init.TKBaseItems;
 import com.technicalitiesmc.base.item.ItemRecipeBook;
 import com.technicalitiesmc.base.item.ItemRecipeBook.Recipe;
-import com.technicalitiesmc.lib.block.TileBase;
-import com.technicalitiesmc.lib.inventory.SimpleItemHandler;
-import com.technicalitiesmc.lib.stack.StackList;
+import com.technicalitiesmc.util.block.TileBase;
+import com.technicalitiesmc.util.inventory.SimpleItemHandler;
+import com.technicalitiesmc.util.stack.StackList;
 
 import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;

@@ -4,14 +4,14 @@ import java.util.List;
 import java.util.Random;
 
 import com.technicalitiesmc.api.pneumatics.TubeModule;
-import com.technicalitiesmc.lib.block.BlockBase;
-import com.technicalitiesmc.lib.math.IndexedAABB;
-import com.technicalitiesmc.lib.property.UnlistedProperty;
 import com.technicalitiesmc.pneumatics.init.TKPneumaticsItems;
 import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeBase;
 import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeClient;
 import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeServer;
 import com.technicalitiesmc.pneumatics.tube.module.ModuleManager;
+import com.technicalitiesmc.util.IndexedAABB;
+import com.technicalitiesmc.util.UnlistedProperty;
+import com.technicalitiesmc.util.block.BlockBase;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
