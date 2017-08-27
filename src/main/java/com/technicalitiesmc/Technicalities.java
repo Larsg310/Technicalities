@@ -47,6 +47,7 @@ public class Technicalities {
     public static final NetworkHandler networkHandler = new NetworkHandler(MODID);
     public static final GuiHandler guiHandler = new GuiHandler();
 
+    private ASMDataTable asmTable;
     private TKModuleManager modules;
 
     public Technicalities() {
@@ -57,7 +58,7 @@ public class Technicalities {
     public void preInit(FMLPreInitializationEvent event) {
         // Initialize log and load ASM table
         log = event.getModLog();
-        ASMDataTable asmTable = event.getAsmData();
+        asmTable = event.getAsmData();
 
         // Load submodules and log them
         modules = new TKModuleManager(asmTable);
@@ -82,6 +83,9 @@ public class Technicalities {
     public void init(FMLInitializationEvent event) {
         // Initialize modules
         modules.forEach(ITKModule::init);
+
+        // Register TESRs
+        proxy.bindSpecialRenderers(asmTable);
 
         // Register GUI Handler
         NetworkRegistry.INSTANCE.registerGuiHandler(this, guiHandler);
