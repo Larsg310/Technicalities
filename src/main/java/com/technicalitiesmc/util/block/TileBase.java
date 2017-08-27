@@ -1,8 +1,12 @@
 package com.technicalitiesmc.util.block;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.google.common.base.Throwables;
+import com.technicalitiesmc.Technicalities;
+import com.technicalitiesmc.util.network.PacketTileUpdate;
 
 import io.netty.buffer.Unpooled;
 import net.minecraft.nbt.NBTTagCompound;
@@ -12,6 +16,8 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 
 public class TileBase extends TileEntity {
+
+    private static final Set<TileBase> tiles = new HashSet<>();
 
     public void save() {
         super.markDirty();
@@ -25,7 +31,7 @@ public class TileBase extends TileEntity {
 
     public void sync() {
         if (getWorld() != null && getPos() != null && !getWorld().isRemote) {
-            // TODO: Add sync packet
+            tiles.add(this);
         }
     }
 
@@ -77,6 +83,13 @@ public class TileBase extends TileEntity {
         } catch (IOException e) {
             throw Throwables.propagate(e);
         }
+    }
+
+    public static void sendSyncPackets() {
+        for (TileBase te : tiles) {
+            Technicalities.networkHandler.sendToAllAround(new PacketTileUpdate(te), te.getWorld());
+        }
+        tiles.clear();
     }
 
 }

@@ -10,7 +10,10 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
+import com.technicalitiesmc.util.block.TileBase;
 import com.technicalitiesmc.util.network.GuiHandler;
+import com.technicalitiesmc.util.network.NetworkHandler;
+import com.technicalitiesmc.util.network.PacketTileUpdate;
 import com.technicalitiesmc.util.simple.SimpleCapabilityManager;
 import com.technicalitiesmc.util.simple.SimpleRegistryManager;
 
@@ -24,7 +27,10 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
@@ -37,6 +43,8 @@ public class Technicalities {
     public static TKCommonProxy proxy;
 
     public static Logger log;
+
+    public static final NetworkHandler networkHandler = new NetworkHandler(MODID);
     public static final GuiHandler guiHandler = new GuiHandler();
 
     private TKModuleManager modules;
@@ -62,6 +70,9 @@ public class Technicalities {
         // Init capabilities
         SimpleCapabilityManager.INSTANCE.init(asmTable);
         SimpleRegistryManager.INSTANCE.init(asmTable);
+
+        // Register packets
+        networkHandler.registerPacket(PacketTileUpdate.class, Side.CLIENT);
 
         // Pre-initialize modules
         modules.forEach(ITKModule::preInit);
@@ -98,6 +109,13 @@ public class Technicalities {
         for (Pair<IForgeRegistryEntry<?>, List<Runnable>> pair : registryObjects.get(reg.getRegistrySuperType())) {
             reg.register(pair.getKey());
             pair.getValue().forEach(Runnable::run);
+        }
+    }
+
+    @SubscribeEvent
+    public void onServerTick(ServerTickEvent event) {
+        if (event.phase == Phase.END) {
+            TileBase.sendSyncPackets();
         }
     }
 
