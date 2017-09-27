@@ -39,7 +39,27 @@ public class ItemRecipeBook extends ItemBase {
         }
         NBTTagList recipes = tag.getTagList("recipes", NBT.TAG_COMPOUND);
         if (recipes.tagCount() < 32) {
-            recipes.appendTag(recipe.serializeNBT());
+            NBTTagCompound nbt = recipe.serializeNBT();
+            for (int i = 0; i < recipes.tagCount(); i++) {
+                if (recipes.getCompoundTagAt(i).equals(nbt)) {
+                    return false;
+                }
+            }
+            recipes.appendTag(nbt);
+            tag.setTag("recipes", recipes);
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean removeRecipe(ItemStack book, int recipe) {
+        NBTTagCompound tag = book.getTagCompound();
+        if (tag == null) {
+            book.setTagCompound(tag = new NBTTagCompound());
+        }
+        NBTTagList recipes = tag.getTagList("recipes", NBT.TAG_COMPOUND);
+        if (recipes.tagCount() > recipe) {
+            recipes.removeTag(recipe);
             tag.setTag("recipes", recipes);
             return true;
         }

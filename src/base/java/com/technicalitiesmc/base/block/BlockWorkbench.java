@@ -57,14 +57,15 @@ public class BlockWorkbench extends BlockBase implements ITileEntityProvider {
             if (param == -1) {
                 SimpleItemHandler inv = te.getInventory();
                 ItemStack book = inv.getStackInSlot(TileWorkbench.BOOK_START).copy();
-                ItemStack paper = inv.extractItem(TileWorkbench.BOOK_START + 1, 1, true);
-                ItemStack ink = inv.extractItem(TileWorkbench.BOOK_START + 2, 1, true);
-                if (!book.isEmpty() && !paper.isEmpty() && !ink.isEmpty()
-                        && ItemRecipeBook.addRecipe(book, Recipe.fromGrid(te.getGrid(), world))) {
+                if (!book.isEmpty() && te.consumeInk(true) && ItemRecipeBook.addRecipe(book, Recipe.fromGrid(te.getGrid(), world))) {
                     inv.setStackInSlot(TileWorkbench.BOOK_START, book);
-                    inv.extractItem(TileWorkbench.BOOK_START + 1, 1, false);
-                    inv.extractItem(TileWorkbench.BOOK_START + 2, 1, false);
+                    te.consumeInk(false);
                 }
+            } else if (param >= 100) {
+                SimpleItemHandler inv = te.getInventory();
+                ItemStack book = inv.getStackInSlot(TileWorkbench.BOOK_START).copy();
+                ItemRecipeBook.removeRecipe(book, param - 100);
+                inv.setStackInSlot(TileWorkbench.BOOK_START, book);
             } else if (param >= 0 && param < 32) {
                 boolean pulledAll = true;
                 for (int i = 0; i < 9; i++) {
@@ -123,8 +124,7 @@ public class BlockWorkbench extends BlockBase implements ITileEntityProvider {
             }
 
             container.addSlotToContainer(new InsertingSlotItemHandler(inventory, TileWorkbench.BOOK_START, 8, 36));
-            container.addSlotToContainer(new InsertingSlotItemHandler(inventory, TileWorkbench.BOOK_START + 1, 152, 36));
-            container.addSlotToContainer(new InsertingSlotItemHandler(inventory, TileWorkbench.BOOK_START + 2, 152, 54));
+            container.addSlotToContainer(new InsertingSlotItemHandler(inventory, TileWorkbench.BOOK_START + 1, 152, 54));
 
             for (int i = 0; i < 2; ++i) {
                 for (int j = 0; j < 9; ++j) {

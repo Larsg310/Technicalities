@@ -1,5 +1,6 @@
 package com.technicalitiesmc.base.tile;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,6 +20,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -29,9 +31,9 @@ import net.minecraftforge.items.ItemHandlerHelper;
 public class TileWorkbench extends TileBase {
 
     public static final int INV_START = 0, INV_SIZE = 2 * 9;
-    public static final int BOOK_START = INV_START + INV_SIZE, BOOK_SIZE = 1 + 2;
-    public static final int GRID_START = BOOK_START + BOOK_SIZE, GRID_SIZE = 3 * 3 + 1;
-    public static final int INVENTORY_SIZE = GRID_START + GRID_SIZE;
+    public static final int GRID_START = INV_START + INV_SIZE, GRID_SIZE = 3 * 3 + 1;
+    public static final int BOOK_START = GRID_START + GRID_SIZE, BOOK_SIZE = 1 + 1;
+    public static final int INVENTORY_SIZE = BOOK_START + BOOK_SIZE;
 
     private final SimpleItemHandler inventory = new SimpleItemHandler(INVENTORY_SIZE, this::onInventoryUpdate);
     private final ExposedInventory exposedInventory = new ExposedInventory();
@@ -41,10 +43,11 @@ public class TileWorkbench extends TileBase {
 
     private final List<Pair<Recipe, StackList>> recipes = new LinkedList<>();
 
+    private int ink = 0;
+
     public TileWorkbench() {
         inventory.withFilter(TKBaseItems.recipe_book, BOOK_START);
-        inventory.withFilter(Items.PAPER, BOOK_START + 1);
-        inventory.withFilter(new ItemStack(Items.DYE, 1, 0), BOOK_START + 2);
+        inventory.withFilter(new ItemStack(Items.DYE, 1, 0), BOOK_START + 1);
     }
 
     public SimpleItemHandler getInventory() {
@@ -65,6 +68,32 @@ public class TileWorkbench extends TileBase {
 
     public List<Pair<Recipe, StackList>> getRecipes() {
         return recipes;
+    }
+
+    public int getInk() {
+        return ink;
+    }
+
+    public boolean consumeInk(boolean simulated) {
+        if (ink == 0) {
+            ItemStack stack = inventory.getStackInSlot(BOOK_START + 1);
+            if (!stack.isEmpty()) {
+                if (simulated) {
+                    return true;
+                } else {
+                    stack.shrink(1);
+                    ink = 12;
+                }
+            }
+        }
+        if (ink == 0) {
+            return false;
+        }
+        if (!simulated) {
+            ink--;
+            sync();
+        }
+        return true;
     }
 
     private void onInventoryUpdate(int slot) {
@@ -160,6 +189,7 @@ public class TileWorkbench extends TileBase {
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {
         tag = super.writeToNBT(tag);
         tag.setTag("inventory", inventory.serializeNBT());
+        tag.setInteger("ink", ink);
         return tag;
     }
 
@@ -167,6 +197,7 @@ public class TileWorkbench extends TileBase {
     public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
         inventory.deserializeNBT(tag.getCompoundTag("inventory"));
+        ink = tag.getInteger("ink");
 
         updateRecipeBook();
 
@@ -174,6 +205,18 @@ public class TileWorkbench extends TileBase {
             inventoryCrafting.stackList.set(i, inventory.getStackInSlot(i));
         }
         refreshRecipe();
+    }
+
+    @Override
+    public void writeDescription(PacketBuffer buf) throws IOException {
+        super.writeDescription(buf);
+        buf.writeInt(ink);
+    }
+
+    @Override
+    public void readDescription(PacketBuffer buf) throws IOException {
+        super.readDescription(buf);
+        ink = buf.readInt();
     }
 
     public class ExposedInventory implements IItemHandler, Iterable<ItemStack> {

@@ -41,7 +41,7 @@ public class GuiWorkbench extends GuiContainer {
     public void initGui() {
         super.initGui();
 
-        addButton(new GuiButton16(0, guiLeft + 152, guiTop + 18, 16, ""));
+        addButton(new GuiButton16(0, guiLeft + 152, guiTop + 17, 16, ""));
     }
 
     @Override
@@ -97,7 +97,12 @@ public class GuiWorkbench extends GuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         this.mc.getTextureManager().bindTexture(new ResourceLocation(Technicalities.MODID, "textures/gui/workbench.png"));
-        this.drawTexturedModalRect(152, 18, xSize, 0, 16, 16);
+        // Book icon
+        this.drawTexturedModalRect(152, 17, xSize, 0, 16, 16);
+
+        // Ink meter
+        int inkAmt = tile.getInk();
+        this.drawTexturedModalRect(152, 35 + 15 - inkAmt, xSize, 16 + 15 - inkAmt, 16, 16);
 
         String s = TKBaseBlocks.workbench.getLocalizedName();
         this.fontRenderer.drawString(s, this.xSize / 2 - this.fontRenderer.getStringWidth(s) / 2, 6, 4210752);
@@ -164,7 +169,11 @@ public class GuiWorkbench extends GuiContainer {
         for (Pair<Recipe, StackList> pair : tile.getRecipes()) {
             int x = -110 + (index % 4) * 24, y = 15 + (index / 4) * 22;
             if (pair.getValue().isEmpty() && isInArea(mouseX - guiLeft, mouseY - guiTop, x, y, 20, 20)) {
-                PacketGuiButton.send(tile.getPos(), index);
+                if (mouseButton == 0) {
+                    PacketGuiButton.send(tile.getPos(), index);
+                } else if (mouseButton == 2 && isShiftKeyDown() && isCtrlKeyDown()) {
+                    PacketGuiButton.send(tile.getPos(), index + 100);
+                }
                 return;
             }
             index++;
