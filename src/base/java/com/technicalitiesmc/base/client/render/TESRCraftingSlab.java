@@ -115,7 +115,7 @@ public class TESRCraftingSlab extends TileEntitySpecialRenderer<TileCraftingSlab
             pushMatrix();
             color(1.0F, 1.0F, 1.0F, 1.0F);
             enableRescaleNormal();
-            TileEntityItemStackRenderer.instance.func_192838_a(stack, alpha);
+            TileEntityItemStackRenderer.instance.renderByItem(stack, alpha);
             popMatrix();
         } else {
             int color = 0xFFFFFF | ((int) (alpha * 255) << 24);
@@ -147,7 +147,7 @@ public class TESRCraftingSlab extends TileEntitySpecialRenderer<TileCraftingSlab
             BakedQuad bakedquad = quads.get(i);
             int k = color;
             if (flag && bakedquad.hasTintIndex()) {
-                k = Minecraft.getMinecraft().getItemColors().getColorFromItemstack(stack, bakedquad.getTintIndex());
+                k = Minecraft.getMinecraft().getItemColors().colorMultiplier(stack, bakedquad.getTintIndex());
                 if (EntityRenderer.anaglyphEnable) {
                     k = TextureUtil.anaglyphColor(k);
                 }

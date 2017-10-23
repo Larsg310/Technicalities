@@ -4,6 +4,7 @@ import com.technicalitiesmc.ITKModule;
 import com.technicalitiesmc.TKModule;
 import com.technicalitiesmc.api.mechanical.IGearAttachable;
 import com.technicalitiesmc.api.mechanical.IShaftAttachable;
+import com.technicalitiesmc.api.mechanical.conveyor.IConveyorBelt;
 import com.technicalitiesmc.mechanical.init.TKMechanicalBlocks;
 import com.technicalitiesmc.mechanical.kinesis.KineticManager;
 import com.technicalitiesmc.util.simple.SimpleCapability;
@@ -14,6 +15,10 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 
 @TKModule("mechanical")
 public class TKMechanical implements ITKModule {
+
+    @SimpleCapability
+    @CapabilityInject(IConveyorBelt.class)
+    public static final Capability<IConveyorBelt> CAPABILITY = null;
 
     // Used to register simple capabilities
     @SimpleCapability
