@@ -1,0 +1,10 @@
+rootProject.name = 'Technicalities'
+
+// Project addition helper that automatically targets the right directory
+def addProject(name) {
+    include ":${name}"
+    project(":${name}").projectDir = file("projects/${name}")
+}
+
+addProject 'mechanical'
+addProject 'pneumatics'

@@ -1,20 +1,18 @@
 package com.technicalitiesmc.pneumatics.client;
 
-import static net.minecraft.client.renderer.GlStateManager.*;
-
-import com.technicalitiesmc.Technicalities;
+import com.technicalitiesmc.pneumatics.TKPneumatics;
 import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeClient;
 import com.technicalitiesmc.pneumatics.tube.TubeStack;
 import com.technicalitiesmc.util.Tint;
 import com.technicalitiesmc.util.client.RenderHelper;
-
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.GlStateManager.DestFactor;
-import net.minecraft.client.renderer.GlStateManager.SourceFactor;
+import net.minecraft.client.renderer.GlStateManager.*;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+
+import static net.minecraft.client.renderer.GlStateManager.*;
 
 public class TESRPneumaticTube extends TileEntitySpecialRenderer<TilePneumaticTubeClient> {
 
@@ -53,7 +51,7 @@ public class TESRPneumaticTube extends TileEntitySpecialRenderer<TilePneumaticTu
                     enableBlend();
                     blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 
-                    bindTexture(new ResourceLocation(Technicalities.MODID, "textures/blocks/tube_stack_border.png"));
+                    bindTexture(new ResourceLocation(TKPneumatics.MODID, "textures/blocks/tube_stack_border.png"));
 
                     // Render corners outside
                     color(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F);

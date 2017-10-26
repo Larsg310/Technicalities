@@ -1,16 +1,5 @@
 package com.technicalitiesmc.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Vector3f;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -20,11 +9,20 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonWriter;
-
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
+
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector3f;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Utility class for anything json-related.
@@ -80,7 +78,7 @@ public final class JSONUtils {
         return as(element, type, "Attempted to parse value as a " + type.getName() + " but found %s");
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T> T as(JsonElement element, Class<T> type, String unexpectedTypeException) throws JsonParseException {
         if (type == JsonElement.class) {
             return (T) element;
@@ -203,17 +201,17 @@ public final class JSONUtils {
                     Matrix4f rotationMatrix = new Matrix4f();
                     rotationMatrix.setIdentity();
                     switch (axis) {
-                    case X:
-                        rotationMatrix.rotX((float) Math.toRadians(amount));
-                        break;
-                    case Y:
-                        rotationMatrix.rotY((float) Math.toRadians(amount));
-                        break;
-                    case Z:
-                        rotationMatrix.rotZ((float) Math.toRadians(amount));
-                        break;
-                    default:
-                        break;
+                        case X:
+                            rotationMatrix.rotX((float) Math.toRadians(amount));
+                            break;
+                        case Y:
+                            rotationMatrix.rotY((float) Math.toRadians(amount));
+                            break;
+                        case Z:
+                            rotationMatrix.rotZ((float) Math.toRadians(amount));
+                            break;
+                        default:
+                            break;
                     }
                     matrix.mul(rotationMatrix);
                 }
@@ -249,17 +247,17 @@ public final class JSONUtils {
         Matrix4f rotation = new Matrix4f();
         rotation.setIdentity();
         switch (axis) {
-        case X:
-            rotation.rotX((float) Math.toRadians(angle));
-            break;
-        case Y:
-            rotation.rotY((float) Math.toRadians(angle));
-            break;
-        case Z:
-            rotation.rotZ((float) Math.toRadians(angle));
-            break;
-        default:
-            break;
+            case X:
+                rotation.rotX((float) Math.toRadians(angle));
+                break;
+            case Y:
+                rotation.rotY((float) Math.toRadians(angle));
+                break;
+            case Z:
+                rotation.rotZ((float) Math.toRadians(angle));
+                break;
+            default:
+                break;
         }
         matrix.mul(rotation);
 

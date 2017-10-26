@@ -1,7 +1,6 @@
 package com.technicalitiesmc.base.client;
 
 import com.technicalitiesmc.base.TKBaseCommonProxy;
-
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;

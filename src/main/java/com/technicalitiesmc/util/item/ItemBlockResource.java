@@ -2,7 +2,6 @@ package com.technicalitiesmc.util.item;
 
 import com.technicalitiesmc.Technicalities;
 import com.technicalitiesmc.util.item.ItemResource.IResource;
-
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;

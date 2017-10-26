@@ -1,14 +1,13 @@
 package com.technicalitiesmc.pneumatics.item;
 
-import java.util.List;
-
 import com.technicalitiesmc.api.pneumatics.TubeModule;
 import com.technicalitiesmc.pneumatics.tube.module.ModuleManager;
 import com.technicalitiesmc.util.item.ItemBase;
-
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
+
+import java.util.Set;
 
 public class ItemTubeModule extends ItemBase {
 
@@ -19,7 +18,7 @@ public class ItemTubeModule extends ItemBase {
 
     @Override
     protected String getVariantName(ItemStack stack) {
-        return ModuleManager.INSTANCE.get(stack.getMetadata()).getRegistryName().getResourcePath();
+        return ModuleManager.INSTANCE.getRegistryEntry(stack.getMetadata()).getRegistryName().getResourcePath();
     }
 
     @Override
@@ -27,11 +26,13 @@ public class ItemTubeModule extends ItemBase {
         if (!isInCreativeTab(tab)) {
             return;
         }
-        List<TubeModule.Type<?>> types = ModuleManager.INSTANCE.getModuleTypes();
-        for (int i = 0; i < types.size(); i++) {
-            if (types.get(i) != null) {
+        Set<TubeModule.Type<?>> types = ModuleManager.INSTANCE.getModuleTypes();
+        int i = 0;// TODO: Use registry IDs to avoid remapping issues
+        for (TubeModule.Type<?> t : types) {
+            if (t != null) {
                 items.add(new ItemStack(this, 1, i));
             }
+            i++;
         }
     }
 

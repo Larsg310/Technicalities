@@ -1,18 +1,18 @@
 package com.technicalitiesmc.util.simple;
 
-import static java.lang.annotation.ElementType.*;
-import static java.lang.annotation.RetentionPolicy.*;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import net.minecraftforge.registries.IForgeRegistryEntry;
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.RetentionPolicy.*;
 
 /**
  * Marks a class for automatic creation of a registry.
  */
 @Retention(RUNTIME)
-@Target({ TYPE, FIELD })
+@Target({TYPE, FIELD})
 public @interface SimpleRegistry {
 
     /**

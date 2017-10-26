@@ -1,7 +1,6 @@
 package com.technicalitiesmc.util.item;
 
 import com.technicalitiesmc.Technicalities;
-
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;

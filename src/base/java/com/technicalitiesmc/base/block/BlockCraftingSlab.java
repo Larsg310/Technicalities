@@ -1,10 +1,7 @@
 package com.technicalitiesmc.base.block;
 
-import java.util.Random;
-
 import com.technicalitiesmc.base.tile.TileCraftingSlab;
 import com.technicalitiesmc.util.block.BlockBase;
-
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -24,6 +21,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.items.ItemHandlerHelper;
+
+import java.util.Random;
 
 public class BlockCraftingSlab extends BlockBase implements ITileEntityProvider {
 
@@ -60,7 +59,7 @@ public class BlockCraftingSlab extends BlockBase implements ITileEntityProvider 
 
     @Override
     public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta,
-            EntityLivingBase placer, EnumHand hand) {
+                                            EntityLivingBase placer, EnumHand hand) {
         return getDefaultState().withProperty(PROPERTY_FACING, placer.getHorizontalFacing().getOpposite());
     }
 
@@ -82,7 +81,7 @@ public class BlockCraftingSlab extends BlockBase implements ITileEntityProvider 
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing,
-            float hitX, float hitY, float hitZ) {
+                                    float hitX, float hitY, float hitZ) {
         int x = hitX > 4 / 16F && hitX < 6 / 16F ? 0 : hitX > 7 / 16F && hitX < 9 / 16F ? 1 : hitX > 10 / 16F && hitX < 12 / 16F ? 2 : -1;
         int z = hitZ > 4 / 16F && hitZ < 6 / 16F ? 0 : hitZ > 7 / 16F && hitZ < 9 / 16F ? 1 : hitZ > 10 / 16F && hitZ < 12 / 16F ? 2 : -1;
 
@@ -103,25 +102,25 @@ public class BlockCraftingSlab extends BlockBase implements ITileEntityProvider 
         }
 
         switch (state.getValue(PROPERTY_FACING)) {
-        case NORTH:
-            x = 2 - x;
-            z = 2 - z;
-            break;
-        case SOUTH:
-            // NO-OP
-            break;
-        case WEST:
-            int v1 = 2 - x;
-            x = z;
-            z = v1;
-            break;
-        case EAST:
-            int v2 = 2 - z;
-            z = x;
-            x = v2;
-            break;
-        default:
-            break;
+            case NORTH:
+                x = 2 - x;
+                z = 2 - z;
+                break;
+            case SOUTH:
+                // NO-OP
+                break;
+            case WEST:
+                int v1 = 2 - x;
+                x = z;
+                z = v1;
+                break;
+            case EAST:
+                int v2 = 2 - z;
+                z = x;
+                x = v2;
+                break;
+            default:
+                break;
         }
 
         if (tile.getStack(x, z).isEmpty()) {

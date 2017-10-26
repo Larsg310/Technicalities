@@ -1,19 +1,11 @@
 package com.technicalitiesmc.base.tile;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.technicalitiesmc.base.init.TKBaseItems;
 import com.technicalitiesmc.base.item.ItemRecipeBook;
 import com.technicalitiesmc.base.item.ItemRecipeBook.Recipe;
 import com.technicalitiesmc.util.block.TileBase;
 import com.technicalitiesmc.util.inventory.SimpleItemHandler;
 import com.technicalitiesmc.util.stack.StackList;
-
 import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -27,6 +19,12 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 public class TileWorkbench extends TileBase {
 

@@ -6,19 +6,16 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+@Mod.EventBusSubscriber
 public class ItemBlockBase extends ItemBlock {
 
-    static {
-        MinecraftForge.EVENT_BUS.register(ItemBlockBase.class);
-    }
 
     public ItemBlockBase(Block block) {
         super(block);
-        setRegistryName(block.getRegistryName());
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.technicalitiesmc.base.tile;
 
 import com.technicalitiesmc.util.block.TileBase;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;

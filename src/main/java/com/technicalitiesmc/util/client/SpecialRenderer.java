@@ -1,13 +1,13 @@
 package com.technicalitiesmc.util.client;
 
-import static java.lang.annotation.ElementType.*;
-import static java.lang.annotation.RetentionPolicy.*;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.tileentity.TileEntity;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.tileentity.TileEntity;
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.RetentionPolicy.*;
 
 /**
  * Marker for {@link TileEntity TileEntities} that automatically binds a {@link TileEntitySpecialRenderer} to them.

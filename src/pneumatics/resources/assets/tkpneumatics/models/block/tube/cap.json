@@ -1,6 +1,6 @@
 {
 	"textures": {
-		"caps2": "technicalities:blocks/pipe_caps2"
+		"caps2": "tkpneumatics:blocks/pipe_caps2"
 	},
 	"elements": [
 		{

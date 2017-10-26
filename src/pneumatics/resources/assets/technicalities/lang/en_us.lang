@@ -1,7 +1,0 @@
-tile.technicalities:pneumatic_tube.name=Pneumatic Tube
-
-item.technicalities:tube_module.color_filter.name=Pneumatic Color Filter
-item.technicalities:tube_module.membrane.name=Pneumatic Membrane
-item.technicalities:tube_module.plug.name=Pneumatic Tube Plug
-item.technicalities:tube_module.filter.name=Pneumatic Filter
-item.technicalities:tube_module.sorter.name=Pneumatic Sorter

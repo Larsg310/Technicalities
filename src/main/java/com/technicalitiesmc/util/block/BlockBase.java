@@ -1,10 +1,6 @@
 package com.technicalitiesmc.util.block;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.technicalitiesmc.util.IndexedAABB;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -22,6 +18,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BlockBase extends Block {
 
@@ -66,7 +65,7 @@ public class BlockBase extends Block {
 
     @Override
     public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox,
-            List<AxisAlignedBB> collidingBoxes, Entity entityIn, boolean p_185477_7_) {
+                                      List<AxisAlignedBB> collidingBoxes, Entity entityIn, boolean p_185477_7_) {
         entityBox = entityBox.offset(new BlockPos(0, 0, 0).subtract(pos));
         List<AxisAlignedBB> list = new ArrayList<>();
         addCollisionBoxes(state, world, pos, list);
@@ -105,7 +104,7 @@ public class BlockBase extends Block {
     @Deprecated
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing,
-            float hitX, float hitY, float hitZ) {
+                                    float hitX, float hitY, float hitZ) {
         RayTraceResult hit = rayTrace(state, world, pos, player);
         if (hit == null) {
             return false;

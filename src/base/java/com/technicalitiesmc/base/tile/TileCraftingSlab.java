@@ -1,11 +1,8 @@
 package com.technicalitiesmc.base.tile;
 
-import java.io.IOException;
-
 import com.technicalitiesmc.base.client.render.TESRCraftingSlab;
 import com.technicalitiesmc.util.block.TileBase;
 import com.technicalitiesmc.util.client.SpecialRenderer;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -27,6 +24,8 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.registries.IForgeRegistry;
+
+import java.io.IOException;
 
 // FIXME: Grid offsets for recipes smaller than 3x3
 // A bucket aligned to the bottom will have the crafting items placed at the top

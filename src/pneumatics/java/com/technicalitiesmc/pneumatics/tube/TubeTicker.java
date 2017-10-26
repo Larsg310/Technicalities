@@ -1,13 +1,5 @@
 package com.technicalitiesmc.pneumatics.tube;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.technicalitiesmc.Technicalities;
 import com.technicalitiesmc.pneumatics.TKPneumatics;
 import com.technicalitiesmc.pneumatics.network.PacketStackJoinNetwork;
@@ -17,7 +9,6 @@ import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeClient;
 import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeServer;
 import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeServer.Neighbor;
 import com.technicalitiesmc.util.simple.SimpleCapability;
-
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import net.minecraft.block.Block;
@@ -39,13 +30,20 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
 import net.minecraftforge.items.ItemHandlerHelper;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 @SimpleCapability // TODO: Replace with a proper capability registration method (to save to the world)
 public class TubeTicker {
 
     @CapabilityInject(TubeTicker.class)
     public static final Capability<TubeTicker> CAPABILITY = null;
-    private static final ResourceLocation CAP_NAME = new ResourceLocation(Technicalities.MODID, "pneumatics.tube_ticker");
+    private static final ResourceLocation CAP_NAME = new ResourceLocation(TKPneumatics.MODID, "tube_ticker");
 
     @SubscribeEvent
     public static void onWorldCreate(AttachCapabilitiesEvent<World> event) {

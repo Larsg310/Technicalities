@@ -1,8 +1,8 @@
 package com.technicalitiesmc.util;
 
-import java.lang.reflect.Field;
-
 import com.google.common.base.Throwables;
+
+import java.lang.reflect.Field;
 
 public class ReflectionUtils {
 

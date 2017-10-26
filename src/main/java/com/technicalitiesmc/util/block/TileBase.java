@@ -1,19 +1,18 @@
 package com.technicalitiesmc.util.block;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
-
 import com.google.common.base.Throwables;
 import com.technicalitiesmc.Technicalities;
 import com.technicalitiesmc.util.network.PacketTileUpdate;
-
 import io.netty.buffer.Unpooled;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class TileBase extends TileEntity {
 

@@ -1,7 +1,7 @@
 {
 	"textures": {
-		"pipe": "technicalities:blocks/pipe",
-		"glass": "technicalities:blocks/pipe_glass"
+		"pipe": "tkpneumatics:blocks/pipe",
+		"glass": "tkpneumatics:blocks/pipe_glass"
 	},
 	"elements": [
 		{

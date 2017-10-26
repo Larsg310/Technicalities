@@ -1,7 +1,6 @@
 package com.technicalitiesmc.util.client.gui;
 
 import com.technicalitiesmc.Technicalities;
-
 import net.minecraft.util.ResourceLocation;
 
 public class GuiButton16 extends GuiButtonResized {

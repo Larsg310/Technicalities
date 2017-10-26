@@ -1,9 +1,5 @@
 package com.technicalitiesmc.util.client;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.function.UnaryOperator;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -13,6 +9,10 @@ import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumType;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.function.UnaryOperator;
 
 /**
  * Utility class that allows the transformation of {@link IBakedModel}s and {@link BakedQuad}s through the use of an
@@ -46,7 +46,7 @@ public class ModelTransformer {
      */
     @SuppressWarnings("unchecked")
     public static IBakedModel transform(IBakedModel model, IBlockState state, long rand, IModelTransformer transformer,
-            UnaryOperator<VertexFormat> remapper) {
+                                        UnaryOperator<VertexFormat> remapper) {
         List<BakedQuad>[] quads = new List[7];
         for (EnumFacing f : EnumFacing.VALUES) {
             quads[f.ordinal()] = new LinkedList<>(model.getQuads(state, f, rand));

@@ -1,11 +1,11 @@
 package com.technicalitiesmc.util;
 
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.property.IUnlistedProperty;
+
 import java.util.function.Function;
 import java.util.function.IntPredicate;
 import java.util.function.Predicate;
-
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.property.IUnlistedProperty;
 
 /**
  * Generic implementation of {@link IUnlistedProperty} to avoid creating a subclass for each property.

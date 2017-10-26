@@ -1,10 +1,5 @@
 package com.technicalitiesmc.base.client.gui;
 
-import java.io.IOException;
-import java.util.List;
-
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.technicalitiesmc.Technicalities;
 import com.technicalitiesmc.base.init.TKBaseBlocks;
 import com.technicalitiesmc.base.item.ItemRecipeBook.Recipe;
@@ -12,7 +7,6 @@ import com.technicalitiesmc.base.network.PacketGuiButton;
 import com.technicalitiesmc.base.tile.TileWorkbench;
 import com.technicalitiesmc.util.client.gui.GuiButton16;
 import com.technicalitiesmc.util.stack.StackList;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -25,6 +19,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.config.GuiUtils;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.io.IOException;
+import java.util.List;
 
 public class GuiWorkbench extends GuiContainer {
 

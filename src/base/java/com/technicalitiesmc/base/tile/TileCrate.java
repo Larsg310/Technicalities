@@ -2,7 +2,6 @@ package com.technicalitiesmc.base.tile;
 
 import com.technicalitiesmc.util.block.TileBase;
 import com.technicalitiesmc.util.inventory.SimpleItemHandler;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;

@@ -1,7 +1,7 @@
 {
 	"textures": {
-		"side": "technicalities:blocks/tube/color_filter/side",
-		"glass": "technicalities:blocks/tube/color_filter/glass"
+		"side": "tkpneumatics:blocks/tube/color_filter/side",
+		"glass": "tkpneumatics:blocks/tube/color_filter/glass"
 	},
 	"elements": [
 		{

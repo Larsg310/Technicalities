@@ -1,14 +1,14 @@
 package com.technicalitiesmc.util.inventory;
 
-import java.util.function.BooleanSupplier;
-import java.util.function.IntConsumer;
-import java.util.function.Predicate;
-
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
+
+import java.util.function.BooleanSupplier;
+import java.util.function.IntConsumer;
+import java.util.function.Predicate;
 
 public class SimpleItemHandler extends ItemStackHandler {
 

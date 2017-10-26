@@ -1,12 +1,12 @@
 package com.technicalitiesmc.util.funcint;
 
+import com.google.common.base.Throwables;
+
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-
-import com.google.common.base.Throwables;
 
 /**
  * Class with various utilities for use with lambdas.

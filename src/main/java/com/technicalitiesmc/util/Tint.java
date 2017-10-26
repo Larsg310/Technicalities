@@ -1,14 +1,15 @@
 package com.technicalitiesmc.util;
 
-import java.awt.Color;
+import net.minecraft.item.EnumDyeColor;
+
+import java.awt.*;
 import java.util.EnumMap;
 import java.util.Map;
-
-import net.minecraft.item.EnumDyeColor;
 
 public class Tint {
 
     private static final Map<EnumDyeColor, Color> COLORS = new EnumMap<>(EnumDyeColor.class);
+
     {
         COLORS.put(EnumDyeColor.WHITE, new Color(0xF9FFFE));
         COLORS.put(EnumDyeColor.ORANGE, new Color(0xF9801D));

@@ -1,13 +1,7 @@
 package com.technicalitiesmc;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.objectweb.asm.Type;
-
 import com.google.common.base.Throwables;
 import com.technicalitiesmc.util.client.SpecialRenderer;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
@@ -16,6 +10,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
+import org.objectweb.asm.Type;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public class TKClientProxy extends TKCommonProxy {
 

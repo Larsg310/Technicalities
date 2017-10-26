@@ -1,13 +1,12 @@
 package com.technicalitiesmc.util;
 
+import com.google.common.base.Throwables;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
+
 import java.lang.annotation.Annotation;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
-
-import com.google.common.base.Throwables;
-
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 /**
  * Represents a field in a class and allows the user to set it and get its value, no matter its visibility.

@@ -1,10 +1,5 @@
 package com.technicalitiesmc.api.pneumatics;
 
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-
-import org.apache.commons.lang3.tuple.Pair;
-
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -16,6 +11,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public abstract class TubeModule {
 
@@ -133,7 +132,20 @@ public abstract class TubeModule {
 
     }
 
-    public static abstract class Type<T extends TubeModule> extends IForgeRegistryEntry.Impl<Type<T>> {
+    public static final class RegistryEntry extends IForgeRegistryEntry.Impl<RegistryEntry> {
+
+        private final Type<?> type;
+
+        public RegistryEntry(Type<?> type) {
+            this.type = type;
+        }
+
+        public Type<?> getType() {
+            return type;
+        }
+    }
+
+    public static abstract class Type<T extends TubeModule> {
 
         public abstract T placeSingle(IPneumaticTube tube, EnumFacing side);
 

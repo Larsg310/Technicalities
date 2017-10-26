@@ -1,16 +1,15 @@
 package com.technicalitiesmc.util.simple;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-
 import com.google.common.base.Throwables;
 import com.technicalitiesmc.util.ReflectionUtils;
-
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryBuilder;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 /**
  * Manages the registration of "simple registries".

@@ -1,35 +1,35 @@
 package com.technicalitiesmc.pneumatics.init;
 
-import com.technicalitiesmc.Technicalities;
 import com.technicalitiesmc.api.pneumatics.TubeModule;
+import com.technicalitiesmc.pneumatics.TKPneumatics;
 import com.technicalitiesmc.pneumatics.tube.module.TMColorFilter;
 import com.technicalitiesmc.pneumatics.tube.module.TMFilter;
 import com.technicalitiesmc.pneumatics.tube.module.TMMembrane;
 import com.technicalitiesmc.pneumatics.tube.module.TMPlug;
 import com.technicalitiesmc.pneumatics.tube.module.TMSorter;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.registries.IForgeRegistry;
 
+@Mod.EventBusSubscriber(modid = TKPneumatics.MODID)
 public class TKTubeModules {
 
-    public static TubeModule.Type<TMColorFilter> color_filter;
-    public static TubeModule.Type<TMMembrane> membrane;
-    public static TubeModule.Type<TMPlug> plug;
-    public static TubeModule.Type<TMFilter> filter;
-    public static TubeModule.Type<TMSorter> sorter;
+    public static TubeModule.Type<TMColorFilter> color_filter= new TMColorFilter.Type();
+    public static TubeModule.Type<TMMembrane> membrane = new TMMembrane.Type();
+    public static TubeModule.Type<TMPlug> plug = new TMPlug.Type();
+    public static TubeModule.Type<TMFilter> filter = new TMFilter.Type();
+    public static TubeModule.Type<TMSorter> sorter = new TMSorter.Type();
 
-    public static void initialize() {
-        color_filter = new TMColorFilter.Type();
-        membrane = new TMMembrane.Type();
-        plug = new TMPlug.Type();
-        filter = new TMFilter.Type();
-        sorter = new TMSorter.Type();
-    }
+    @SubscribeEvent
+    public static void onModuleRegistration(RegistryEvent.Register<TubeModule.RegistryEntry> event) {
+        IForgeRegistry<TubeModule.RegistryEntry> registry = event.getRegistry();
 
-    public static void register() {
-        Technicalities.register(color_filter.setRegistryName("color_filter"));
-        Technicalities.register(membrane.setRegistryName("membrane"));
-        Technicalities.register(plug.setRegistryName("plug"));
-        Technicalities.register(filter.setRegistryName("filter"));
-        Technicalities.register(sorter.setRegistryName("sorter"));
+        registry.register(new TubeModule.RegistryEntry(color_filter).setRegistryName("color_filter"));
+        registry.register(new TubeModule.RegistryEntry(membrane).setRegistryName("membrane"));
+        registry.register(new TubeModule.RegistryEntry(plug).setRegistryName("plug"));
+        registry.register(new TubeModule.RegistryEntry(filter).setRegistryName("filter"));
+        registry.register(new TubeModule.RegistryEntry(sorter).setRegistryName("sorter"));
     }
 
 }

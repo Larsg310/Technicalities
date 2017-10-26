@@ -1,11 +1,6 @@
 package com.technicalitiesmc.base.item;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-
 import com.technicalitiesmc.util.item.ItemBase;
-
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
@@ -16,6 +11,10 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.INBTSerializable;
+
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ItemRecipeBook extends ItemBase {
 

@@ -1,11 +1,11 @@
 package com.technicalitiesmc;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public class TKCommonProxy {
 

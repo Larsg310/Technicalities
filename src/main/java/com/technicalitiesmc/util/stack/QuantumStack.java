@@ -1,8 +1,8 @@
 package com.technicalitiesmc.util.stack;
 
-import java.util.Random;
-
 import net.minecraft.item.ItemStack;
+
+import java.util.Random;
 
 public class QuantumStack {
 
@@ -35,7 +35,7 @@ public class QuantumStack {
     /**
      * Creates a new {@link IQuantumStack} from an {@link ItemStack} and a chance.
      *
-     * @param stack The {@link ItemStack}.
+     * @param stack  The {@link ItemStack}.
      * @param chance The chance of returning that stack.
      * @return The resulting {@link IQuantumStack}.
      */

@@ -10,7 +10,6 @@ import com.technicalitiesmc.util.inventory.InsertingSlotItemHandler;
 import com.technicalitiesmc.util.inventory.SimpleContainer;
 import com.technicalitiesmc.util.inventory.SimpleItemHandler;
 import com.technicalitiesmc.util.network.GuiHandler;
-
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;

@@ -1,13 +1,8 @@
 package com.technicalitiesmc.base.block;
 
-import java.util.List;
-
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.technicalitiesmc.base.tile.TileBarrel;
 import com.technicalitiesmc.util.RayTraceHelper;
 import com.technicalitiesmc.util.block.BlockBase;
-
 import net.minecraft.block.BlockRotatedPillar;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -26,27 +21,30 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.items.ItemHandlerHelper;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.List;
 
 public class BlockBarrel extends BlockBase implements ITileEntityProvider {
 
     private static final EnumFacing.Axis[] AXIS_VALUES = EnumFacing.Axis.values();
-    private static final AxisAlignedBB[][] BOXES = new AxisAlignedBB[][] { //
+    private static final AxisAlignedBB[][] BOXES = new AxisAlignedBB[][]{ //
             { //
                     new AxisAlignedBB(0 / 16D, 0 / 16D, 4 / 16D, 16 / 16D, 16 / 16D, 12 / 16D), //
                     new AxisAlignedBB(0 / 16D, 1 / 16D, 2 / 16D, 16 / 16D, 15 / 16D, 14 / 16D), //
                     new AxisAlignedBB(0 / 16D, 2 / 16D, 1 / 16D, 16 / 16D, 14 / 16D, 15 / 16D), //
                     new AxisAlignedBB(0 / 16D, 4 / 16D, 0 / 16D, 16 / 16D, 12 / 16D, 16 / 16D)//
             }, { //
-                    new AxisAlignedBB(4 / 16D, 0 / 16D, 0 / 16D, 12 / 16D, 16 / 16D, 16 / 16D), //
-                    new AxisAlignedBB(2 / 16D, 0 / 16D, 1 / 16D, 14 / 16D, 16 / 16D, 15 / 16D), //
-                    new AxisAlignedBB(1 / 16D, 0 / 16D, 2 / 16D, 15 / 16D, 16 / 16D, 14 / 16D), //
-                    new AxisAlignedBB(0 / 16D, 0 / 16D, 4 / 16D, 16 / 16D, 16 / 16D, 12 / 16D)//
-            }, { //
-                    new AxisAlignedBB(4 / 16D, 0 / 16D, 0 / 16D, 12 / 16D, 16 / 16D, 16 / 16D), //
-                    new AxisAlignedBB(2 / 16D, 1 / 16D, 0 / 16D, 14 / 16D, 15 / 16D, 16 / 16D), //
-                    new AxisAlignedBB(1 / 16D, 2 / 16D, 0 / 16D, 15 / 16D, 14 / 16D, 16 / 16D), //
-                    new AxisAlignedBB(0 / 16D, 4 / 16D, 0 / 16D, 16 / 16D, 12 / 16D, 16 / 16D)//
-            } };
+            new AxisAlignedBB(4 / 16D, 0 / 16D, 0 / 16D, 12 / 16D, 16 / 16D, 16 / 16D), //
+            new AxisAlignedBB(2 / 16D, 0 / 16D, 1 / 16D, 14 / 16D, 16 / 16D, 15 / 16D), //
+            new AxisAlignedBB(1 / 16D, 0 / 16D, 2 / 16D, 15 / 16D, 16 / 16D, 14 / 16D), //
+            new AxisAlignedBB(0 / 16D, 0 / 16D, 4 / 16D, 16 / 16D, 16 / 16D, 12 / 16D)//
+    }, { //
+            new AxisAlignedBB(4 / 16D, 0 / 16D, 0 / 16D, 12 / 16D, 16 / 16D, 16 / 16D), //
+            new AxisAlignedBB(2 / 16D, 1 / 16D, 0 / 16D, 14 / 16D, 15 / 16D, 16 / 16D), //
+            new AxisAlignedBB(1 / 16D, 2 / 16D, 0 / 16D, 15 / 16D, 14 / 16D, 16 / 16D), //
+            new AxisAlignedBB(0 / 16D, 4 / 16D, 0 / 16D, 16 / 16D, 12 / 16D, 16 / 16D)//
+    }};
 
     public BlockBarrel() {
         super(Material.WOOD);
@@ -75,7 +73,7 @@ public class BlockBarrel extends BlockBase implements ITileEntityProvider {
 
     @Override
     public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta,
-            EntityLivingBase placer, EnumHand hand) {
+                                            EntityLivingBase placer, EnumHand hand) {
         return getDefaultState().withProperty(BlockRotatedPillar.AXIS, EnumFacing.getDirectionFromEntityLiving(pos, placer).getAxis());
     }
 
@@ -88,7 +86,7 @@ public class BlockBarrel extends BlockBase implements ITileEntityProvider {
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing,
-            float hitX, float hitY, float hitZ) {
+                                    float hitX, float hitY, float hitZ) {
         if (facing.getAxis() == state.getValue(BlockRotatedPillar.AXIS)) {
             ItemStack stack = player.getHeldItem(hand);
             if (!stack.isEmpty()) {

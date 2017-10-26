@@ -2,11 +2,11 @@
 	"forge_marker": 1,
 	"defaults": {
 		"textures": {
-			"side": "technicalities:blocks/shaft",
-			"end": "technicalities:blocks/shaft_end",
-			"particle": "technicalities:blocks/shaft"
+			"side": "tkmechanical:blocks/shaft",
+			"end": "tkmechanical:blocks/shaft_end",
+			"particle": "tkmechanical:blocks/shaft"
 		},
-		"model": "technicalities:shaft",
+		"model": "tkmechanical:shaft",
 		"transform": "forge:default-block"
 	},
 	"variants": {

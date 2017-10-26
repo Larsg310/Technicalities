@@ -1,36 +1,16 @@
 package com.technicalitiesmc.base.client.render;
 
-import static net.minecraft.client.renderer.GlStateManager.*;
-
-import java.util.List;
-
 import com.technicalitiesmc.base.tile.TileCraftingSlab;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPane;
 import net.minecraft.block.BlockRailBase;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.EntityRenderer;
-import net.minecraft.client.renderer.GlStateManager.CullFace;
-import net.minecraft.client.renderer.GlStateManager.DestFactor;
-import net.minecraft.client.renderer.GlStateManager.SourceFactor;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.texture.TextureUtil;
-import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemBed;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.model.pipeline.LightUtil;
+
+import static net.minecraft.client.renderer.GlStateManager.*;
 
 public class TESRCraftingSlab extends TileEntitySpecialRenderer<TileCraftingSlab> {
 
@@ -98,63 +78,10 @@ public class TESRCraftingSlab extends TileEntitySpecialRenderer<TileCraftingSlab
             return;
         }
 
-        IBakedModel model = Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(stack, null, null);
-
-        rendererDispatcher.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        rendererDispatcher.renderEngine.getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
-        color(1.0F, 1.0F, 1.0F, 1.0F);
-        enableRescaleNormal();
-        alphaFunc(516, 0.1F);
-        enableBlend();
-        tryBlendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ZERO);
         pushMatrix();
-        model = ForgeHooksClient.handleCameraTransforms(model, transform, false);
-
         translate(-0.5F, -0.5F, -0.5F);
-        if (model.isBuiltInRenderer()) {
-            pushMatrix();
-            color(1.0F, 1.0F, 1.0F, 1.0F);
-            enableRescaleNormal();
-            TileEntityItemStackRenderer.instance.func_192838_a(stack, alpha);
-            popMatrix();
-        } else {
-            int color = 0xFFFFFF | ((int) (alpha * 255) << 24);
-
-            Tessellator tessellator = Tessellator.getInstance();
-            BufferBuilder bufferbuilder = tessellator.getBuffer();
-            bufferbuilder.begin(7, DefaultVertexFormats.ITEM);
-
-            for (EnumFacing enumfacing : EnumFacing.values()) {
-                renderQuads(bufferbuilder, model.getQuads((IBlockState) null, enumfacing, 0L), color, stack);
-            }
-
-            renderQuads(bufferbuilder, model.getQuads((IBlockState) null, (EnumFacing) null, 0L), color, stack);
-            tessellator.draw();
-        }
-
-        cullFace(CullFace.BACK);
+        com.technicalitiesmc.util.client.RenderHelper.renderStack(stack, transform, alpha);
         popMatrix();
-        disableRescaleNormal();
-        disableBlend();
-        rendererDispatcher.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        rendererDispatcher.renderEngine.getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
-    }
-
-    private void renderQuads(BufferBuilder renderer, List<BakedQuad> quads, int color, ItemStack stack) {
-        boolean flag = color == -1 && !stack.isEmpty();
-        int i = 0;
-        for (int j = quads.size(); i < j; ++i) {
-            BakedQuad bakedquad = quads.get(i);
-            int k = color;
-            if (flag && bakedquad.hasTintIndex()) {
-                k = Minecraft.getMinecraft().getItemColors().getColorFromItemstack(stack, bakedquad.getTintIndex());
-                if (EntityRenderer.anaglyphEnable) {
-                    k = TextureUtil.anaglyphColor(k);
-                }
-                k = k | 0xFEFFFFFF;
-            }
-            LightUtil.renderQuadColor(renderer, bakedquad, k);
-        }
     }
 
     private boolean renderFlat(ItemStack stack) {

@@ -1,13 +1,12 @@
 package com.technicalitiesmc.util.network;
 
-import java.io.IOException;
-
 import com.technicalitiesmc.util.block.TileBase;
-
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
+
+import java.io.IOException;
 
 public class PacketTileUpdate extends LocatedPacket<PacketTileUpdate> {
 

@@ -11,6 +11,7 @@ import com.technicalitiesmc.pneumatics.block.BlockPneumaticTube.Connection;
 import com.technicalitiesmc.util.client.WrappedModel;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.util.EnumFacing;
@@ -36,7 +37,11 @@ public class ModelPneumaticTube extends WrappedModel {
         if (state == null) {
             List<BakedQuad> quads = new ArrayList<>();
             for (EnumFacing face : EnumFacing.VALUES) {
-                quads.addAll(MODELS.get(face.getAxis() == Axis.Y ? TUBE_OPEN : TUBE_CLOSED, face).getQuads(state, side, rand));
+                IBakedModel model = MODELS.get(face.getAxis() == Axis.Y ? TUBE_OPEN : TUBE_CLOSED, face);
+                if(model == null){
+                    model = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getModelManager().getMissingModel();
+                }
+                quads.addAll(model.getQuads(state, side, rand));
             }
             return quads;
         }

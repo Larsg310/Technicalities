@@ -1,9 +1,9 @@
 {
 	"textures": {
-		"pipe": "technicalities:blocks/pipe",
-		"caps": "technicalities:blocks/pipe_caps",
-		"caps2": "technicalities:blocks/pipe_caps2",
-		"glass": "technicalities:blocks/pipe_glass"
+		"pipe": "tkpneumatics:blocks/pipe",
+		"caps": "tkpneumatics:blocks/pipe_caps",
+		"caps2": "tkpneumatics:blocks/pipe_caps2",
+		"glass": "tkpneumatics:blocks/pipe_glass"
 	},
 	"elements": [
 		{

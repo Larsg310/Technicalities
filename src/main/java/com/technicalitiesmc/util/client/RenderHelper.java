@@ -1,18 +1,10 @@
 package com.technicalitiesmc.util.client;
 
-import static net.minecraft.client.renderer.GlStateManager.*;
-
-import java.util.List;
-
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.EntityRenderer;
-import net.minecraft.client.renderer.GlStateManager.CullFace;
-import net.minecraft.client.renderer.GlStateManager.DestFactor;
-import net.minecraft.client.renderer.GlStateManager.SourceFactor;
+import net.minecraft.client.renderer.GlStateManager.*;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -27,6 +19,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.pipeline.LightUtil;
+import org.lwjgl.opengl.GL11;
+
+import java.util.List;
+
+import static net.minecraft.client.renderer.GlStateManager.*;
 
 public class RenderHelper {
 
@@ -54,7 +51,7 @@ public class RenderHelper {
             pushMatrix();
             color(1.0F, 1.0F, 1.0F, 1.0F);
             enableRescaleNormal();
-            TileEntityItemStackRenderer.instance.func_192838_a(stack, alpha);
+            TileEntityItemStackRenderer.instance.renderByItem(stack, alpha);
             popMatrix();
         } else {
             int color = 0xFFFFFF | ((int) (alpha * 255) << 24);
@@ -86,7 +83,7 @@ public class RenderHelper {
             BakedQuad bakedquad = quads.get(i);
             int k = color;
             if (flag && bakedquad.hasTintIndex()) {
-                k = Minecraft.getMinecraft().getItemColors().getColorFromItemstack(stack, bakedquad.getTintIndex());
+                k = Minecraft.getMinecraft().getItemColors().colorMultiplier(stack, bakedquad.getTintIndex());
                 if (EntityRenderer.anaglyphEnable) {
                     k = TextureUtil.anaglyphColor(k);
                 }

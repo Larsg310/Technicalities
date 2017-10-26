@@ -1,0 +1,7 @@
+tile.tkpneumatics:pneumatic_tube.name=Pneumatic Tube
+
+item.tkpneumatics:tube_module.color_filter.name=Pneumatic Color Filter
+item.tkpneumatics:tube_module.membrane.name=Pneumatic Membrane
+item.tkpneumatics:tube_module.plug.name=Pneumatic Tube Plug
+item.tkpneumatics:tube_module.filter.name=Pneumatic Filter
+item.tkpneumatics:tube_module.sorter.name=Pneumatic Sorter

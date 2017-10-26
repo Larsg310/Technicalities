@@ -1,0 +1,20 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"textures": {
+			"pipe": "tkpneumatics:blocks/pipe",
+			"pipe_s": "tkpneumatics:blocks/pipe_straight",
+			"caps": "tkpneumatics:blocks/pipe_caps",
+			"caps2": "tkpneumatics:blocks/pipe_caps2",
+			"glass": "tkpneumatics:blocks/pipe_glass",
+			"glass_s": "tkpneumatics:blocks/pipe_glass_straight",
+			"particle": "tkpneumatics:blocks/pipe"
+		},
+		"transform": "forge:default-block",
+		"uvlock": true
+	},
+	"variants": {
+		"inventory": [{ "model": "tkpneumatics:tube/straight" }],
+		"normal":    [{ "model": "tkpneumatics:empty" }]
+	}
+}

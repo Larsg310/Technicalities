@@ -1,18 +1,16 @@
 package com.technicalitiesmc.pneumatics.client.gui;
 
-import java.io.IOException;
-
-import org.lwjgl.input.Mouse;
-
-import com.technicalitiesmc.Technicalities;
+import com.technicalitiesmc.pneumatics.TKPneumatics;
 import com.technicalitiesmc.pneumatics.tube.module.TMFilter;
 import com.technicalitiesmc.util.Tint;
-
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Mouse;
+
+import java.io.IOException;
 
 public class GuiFilter extends GuiContainer {
 
@@ -37,7 +35,7 @@ public class GuiFilter extends GuiContainer {
         GlStateManager.translate((this.width - this.xSize) / 2, (this.height - this.ySize) / 2, 0);
 
         this.mc.getTextureManager()
-                .bindTexture(new ResourceLocation(Technicalities.MODID, "textures/gui/tube_module/filter" + (big ? 8 : 4) + ".png"));
+                .bindTexture(new ResourceLocation(TKPneumatics.MODID, "textures/gui/tube_module/filter" + (big ? 8 : 4) + ".png"));
         this.drawTexturedModalRect(0, 0, 0, 0, this.xSize, this.ySize);
 
         for (int j = 0; j < (big ? 2 : 1); j++) {

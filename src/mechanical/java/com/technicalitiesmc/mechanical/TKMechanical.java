@@ -1,19 +1,23 @@
 package com.technicalitiesmc.mechanical;
 
-import com.technicalitiesmc.ITKModule;
-import com.technicalitiesmc.TKModule;
+import com.technicalitiesmc.Technicalities;
 import com.technicalitiesmc.api.mechanical.IGearAttachable;
 import com.technicalitiesmc.api.mechanical.IShaftAttachable;
-import com.technicalitiesmc.mechanical.init.TKMechanicalBlocks;
 import com.technicalitiesmc.mechanical.kinesis.KineticManager;
 import com.technicalitiesmc.util.simple.SimpleCapability;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-@TKModule("mechanical")
-public class TKMechanical implements ITKModule {
+@Mod(modid = TKMechanical.MODID, name = TKMechanical.NAME, version = TKMechanical.VERSION,
+        dependencies = "required-after:" + Technicalities.MODID)
+public class TKMechanical {
+
+    public static final String MODID = "tkmechanical", NAME = "Technicalities Mechanical", VERSION = "%VERSION%";
 
     // Used to register simple capabilities
     @SimpleCapability
@@ -23,21 +27,17 @@ public class TKMechanical implements ITKModule {
     @CapabilityInject(IGearAttachable.class)
     public static Capability<IGearAttachable> CAP_GEAR_ATTACHABLE;
 
-    @Override
-    public void preInit() {
-        // Initialize and register blocks
-        TKMechanicalBlocks.initialize();
-        TKMechanicalBlocks.register();
+    @Mod.EventHandler
+    public void preInit(FMLPreInitializationEvent event) {
     }
 
-    @Override
-    public void init() {
+    @Mod.EventHandler
+    public void init(FMLInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(KineticManager.INSTANCE);
     }
 
-    @Override
-    public void postInit() {
-
+    @Mod.EventHandler
+    public void postInit(FMLPostInitializationEvent event) {
     }
 
 }

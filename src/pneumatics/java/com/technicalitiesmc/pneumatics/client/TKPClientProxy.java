@@ -1,14 +1,11 @@
 package com.technicalitiesmc.pneumatics.client;
 
-import java.util.Map;
-
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import com.technicalitiesmc.Technicalities;
 import com.technicalitiesmc.pneumatics.TKPCommonProxy;
+import com.technicalitiesmc.pneumatics.TKPneumatics;
 import com.technicalitiesmc.pneumatics.init.TKPneumaticsBlocks;
 import com.technicalitiesmc.pneumatics.tube.module.ModuleManager;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -23,14 +20,16 @@ import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import java.util.Map;
+
 public class TKPClientProxy extends TKPCommonProxy {
 
     public static final Table<ResourceLocation, EnumFacing, IBakedModel> MODELS = HashBasedTable.create();
 
-    public static final ResourceLocation TUBE_OPEN = new ResourceLocation(Technicalities.MODID, "block/tube/open");
-    public static final ResourceLocation TUBE_CLOSED = new ResourceLocation(Technicalities.MODID, "block/tube/closed");
-    public static final ResourceLocation TUBE_CAP = new ResourceLocation(Technicalities.MODID, "block/tube/cap");
-    public static final ResourceLocation TUBE_STRAIGHT = new ResourceLocation(Technicalities.MODID, "block/tube/straight");
+    public static final ResourceLocation TUBE_OPEN = new ResourceLocation(TKPneumatics.MODID, "block/tube/open");
+    public static final ResourceLocation TUBE_CLOSED = new ResourceLocation(TKPneumatics.MODID, "block/tube/closed");
+    public static final ResourceLocation TUBE_CAP = new ResourceLocation(TKPneumatics.MODID, "block/tube/cap");
+    public static final ResourceLocation TUBE_STRAIGHT = new ResourceLocation(TKPneumatics.MODID, "block/tube/straight");
 
     private static final TRSRTransformation BASE_TRANSFORM = new TRSRTransformation(EnumFacing.DOWN).inverse();
 

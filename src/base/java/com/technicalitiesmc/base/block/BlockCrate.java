@@ -2,7 +2,6 @@ package com.technicalitiesmc.base.block;
 
 import com.technicalitiesmc.base.tile.TileCrate;
 import com.technicalitiesmc.util.block.BlockBase;
-
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -31,7 +30,7 @@ public class BlockCrate extends BlockBase implements ITileEntityProvider {
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing,
-            float hitX, float hitY, float hitZ) {
+                                    float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
         if (!stack.isEmpty()) {
             TileCrate tile = (TileCrate) world.getTileEntity(pos);

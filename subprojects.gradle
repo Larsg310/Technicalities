@@ -1,0 +1,85 @@
+subprojects {
+    apply plugin: 'java'
+	apply plugin: 'idea'
+	
+	// Define the name of the archives as that of the main project
+	archivesBaseName = rootProject.name
+
+    // Make all subprojects depend on the root
+    dependencies {
+        compile rootProject
+    }
+
+    // Add source directories, as well as the AT
+    sourceSets {
+        main {
+            java {
+                srcDir file("$rootDir/src/${project.name}/java")
+            }
+            resources {
+                srcDir file("$rootDir/src/${project.name}/resources")
+            }
+        }
+    }
+
+	// Add all the root project's libs to the subproject (namely Forge)
+	// This means we don't need to make this another Forge project!
+    afterEvaluate {
+        sourceSets.main.compileClasspath += rootProject.sourceSets.main.compileClasspath
+    }
+	
+	// Store the jar, with the right name and version, in the deobf directory
+    jar {
+        destinationDir = file("$rootDir/build/libs/deobf")
+		finalizedBy rootProject.fatJar
+		
+		classifier = project.name.capitalize()
+		version = rootProject.jar.version
+    }
+	
+	// Define a task to create a "mini jar" that only has this project
+	task miniJar(type: Jar, dependsOn: reobfJar) {
+		doFirst {
+			from(zipTree(rootProject.jar.archivePath)) {
+				include rootProject.group.replace('.', '/') + "/${project.name}/**"
+				include "assets/tk${project.name}/**"
+				
+				include 'pack.mcmeta'
+				include "mcmod_${project.name}.info"
+				rename("mcmod_${project.name}.info", 'mcmod.info')
+				
+				includeEmptyDirs = false
+			}
+		}
+		
+		destinationDir = file("$rootDir/build/libs")
+		classifier = project.name.capitalize()
+		version = rootProject.jar.version
+	}
+	
+	// Add build results to the fat jar and force a "mini jar" to be created
+	rootProject.fatJar {
+		from zipTree(jar.archivePath)
+		finalizedBy miniJar
+	}
+
+	// Add subproject to runtime dependencies of the root project
+	// This lets us run the game with the main project and all subprojects at the same time
+	rootProject.dependencies {
+		runtimeOnly project(":${project.name}")
+	}
+	
+	// Make subproject name uppercase in Idea
+	idea {
+		module {
+			name = project.name.capitalize()
+		}
+	}
+}
+
+// Leaving this here in case it's ever needed
+//project(':project') {
+//    dependencies {
+//        compile project(':other')
+//    }
+//}

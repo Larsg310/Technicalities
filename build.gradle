@@ -1,3 +1,9 @@
+// Due to the way ForgeGradle works, we can't build each jar separately and obfuscate them one by one
+// For this reason, we first build all the jars (without obfuscating them) and build a "fat jar"
+// with the contents of all of them that replaces the main JAR file. After this, we let the reobfuscation
+// task in ForgeGradle do its thing, which generates a single obfuscated "fat jar". Lastly, we split
+// this file into separate ones based on the original files in each jar.
+
 buildscript {
     repositories {
         jcenter()
@@ -7,38 +13,126 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
+
+// Load ForgeGradle
 apply plugin: 'net.minecraftforge.gradle.forge'
 
+// Set mod version
+version = mod_version
 
-version = "0.0.1"
+// Set main package and jar name based on the current project
 group = "com.technicalitiesmc"
-archivesBaseName = "technicalities"
+archivesBaseName = rootProject.name
 
-sourceCompatibility = targetCompatibility = "1.8"
-compileJava {
-    sourceCompatibility = targetCompatibility = "1.8"
-}
-
+// Set Forge version and mappings
 minecraft {
-    version = "1.12-14.21.0.2382"
+    version = "$mc_version-$forge_version"
     runDir = "run"
-    mappings = "snapshot_20170620"
+    mappings = mapping_version
+	makeObfSourceJar = false
 }
 
-dependencies {
-}
-
+// Replace version string in assets
 processResources {
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
 
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-                
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+        expand 'version': project.version, 'mcversion': project.minecraft.version
     }
         
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
+}
+
+// Add main, base and API sources and resources, as well as the AT
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+            srcDir 'src/base/java'
+            srcDir 'src/api/java'
+        }
+        resources {
+            srcDir 'src/main/resources'
+            srcDir 'src/base/resources'
+            srcDir 'src/at'
+        }
+    }
+}
+
+// Load dependency repos
+repositories {
+	maven {
+		url = "http://dvs1.progwml6.com/files/maven"
+	}
+}
+
+// Add compiletime and runtime dependencies
+dependencies {
+	runtimeOnly "mezz.jei:jei_${mc_version}:${jei_version}"
+}
+
+// Set a classifier for the main jar file
+// (This will be the "fat jar", the base jar is created in the task below)
+jar {
+	classifier = 'ALL'
+}
+
+// Create a jar with the base contents of the mod (aka excluding subproject contents)
+task baseJar(type: Jar, dependsOn: reobfJar) {
+	doFirst {
+		from(zipTree(jar.archivePath)) {
+			subprojects.each {
+				if (it.name != rootProject.name) {
+					exclude rootProject.group.replace('.', '/') + "/${it.name}/**"
+					exclude "assets/technicalities_${it.name}/**"
+				}
+			}
+			
+			includeEmptyDirs = false
+		}
+	}
+	
+	// Let Forge know our jar has an AT in it
+    manifest {
+        attributes 'FMLAT': 'Technicalities_at.cfg'
+    }
+	
+	destinationDir = file("$rootDir/build/libs")
+	classifier = 'Base'
+}
+
+// Create a "fat jar" for obfuscation
+task fatJar(type: Jar, dependsOn: jar) {
+	finalizedBy reobfJar
+	finalizedBy baseJar
+	from zipTree(jar.archivePath)
+	
+	// As long as this isn't the same as the regular jar, it'll work
+	// We just need to replace one file with the other later
+	classifier = 'FAT'
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	
+	doLast {
+		file(jar.archivePath).renameTo(file("${jar.destinationDir}/deobf/${jar.archiveName}"))
+		file(archivePath).renameTo(file(jar.archivePath))
+	}
+}
+
+// Load subprojects from a separate file (for cleanliness)
+apply from: 'subprojects.gradle'
+
+// Configure Idea output directories so assets are loaded properly
+allprojects {
+	apply plugin: 'idea'
+	idea {
+		module {
+			inheritOutputDirs = false
+			outputDir = file("$rootDir/out/${project.name}/production")
+			testOutputDir = file("$rootDir/out/${project.name}/test")
+		}
+	}
 }

@@ -1,16 +1,11 @@
 package com.technicalitiesmc.pneumatics.tube.module;
 
-import java.util.function.Consumer;
-
-import org.apache.commons.lang3.tuple.Pair;
-
-import com.technicalitiesmc.Technicalities;
 import com.technicalitiesmc.api.pneumatics.EnumTubeDirection;
 import com.technicalitiesmc.api.pneumatics.IPneumaticTube;
 import com.technicalitiesmc.api.pneumatics.ITubeStack;
 import com.technicalitiesmc.api.pneumatics.TubeModule;
+import com.technicalitiesmc.pneumatics.TKPneumatics;
 import com.technicalitiesmc.util.Tint;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -22,10 +17,13 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.function.Consumer;
 
 public class TMColorFilter extends TubeModule {
 
-    private static final ResourceLocation PATH_SINGLE = new ResourceLocation(Technicalities.MODID, "block/tube/color_filter/single");
+    private static final ResourceLocation PATH_SINGLE = new ResourceLocation(TKPneumatics.MODID, "block/tube/color_filter/single");
 
     private EnumDyeColor color = EnumDyeColor.WHITE;
 

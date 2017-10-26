@@ -1,7 +1,6 @@
 package com.technicalitiesmc.util.simple;
 
 import com.google.common.base.Throwables;
-
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;

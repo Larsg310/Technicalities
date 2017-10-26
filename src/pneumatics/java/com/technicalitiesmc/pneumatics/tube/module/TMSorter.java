@@ -1,21 +1,13 @@
 package com.technicalitiesmc.pneumatics.tube.module;
 
-import java.util.Arrays;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.tuple.Pair;
-
-import com.technicalitiesmc.Technicalities;
 import com.technicalitiesmc.api.pneumatics.EnumTubeDirection;
 import com.technicalitiesmc.api.pneumatics.IPneumaticTube;
 import com.technicalitiesmc.api.pneumatics.ITubeStack;
 import com.technicalitiesmc.api.pneumatics.TubeModule;
+import com.technicalitiesmc.pneumatics.TKPneumatics;
 import com.technicalitiesmc.pneumatics.client.gui.GuiSorter;
 import com.technicalitiesmc.util.inventory.GhostSlotItemHandler;
 import com.technicalitiesmc.util.inventory.SimpleContainer;
-
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
@@ -32,12 +24,18 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.oredict.OreDictionary;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.Arrays;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class TMSorter extends TubeModule.ContainerModule {
 
-    private static final ResourceLocation PATH_SINGLE = new ResourceLocation(Technicalities.MODID, "block/tube/sorter/single");
-    // private static final ResourceLocation PATH_MASTER = new ResourceLocation(Technicalities.MODID, "block/tube/sorter/single");
-    // private static final ResourceLocation PATH_SLAVE = new ResourceLocation(Technicalities.MODID, "block/tube/sorter/single");
+    private static final ResourceLocation PATH_SINGLE = new ResourceLocation(TKPneumatics.MODID, "block/tube/sorter/single");
+    // private static final ResourceLocation PATH_MASTER = new ResourceLocation(TKPneumatics.MODID, "block/tube/sorter/single");
+    // private static final ResourceLocation PATH_SLAVE = new ResourceLocation(TKPneumatics.MODID, "block/tube/sorter/single");
 
     private TMSorter other;
     private boolean master;

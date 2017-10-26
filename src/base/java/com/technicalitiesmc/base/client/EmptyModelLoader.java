@@ -1,12 +1,6 @@
 package com.technicalitiesmc.base.client;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Function;
-
 import com.technicalitiesmc.Technicalities;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -21,6 +15,11 @@ import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Function;
 
 public enum EmptyModelLoader implements ICustomModelLoader {
     INSTANCE;
@@ -60,7 +59,7 @@ public enum EmptyModelLoader implements ICustomModelLoader {
 
             @Override
             public IBakedModel bake(IModelState state, VertexFormat format,
-                    Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
+                                    Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
 
                 return new IBakedModel() {
 

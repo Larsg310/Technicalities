@@ -1,7 +1,6 @@
 package com.technicalitiesmc.util.block;
 
 import com.technicalitiesmc.util.item.ItemResource.IResource;
-
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyInteger;
