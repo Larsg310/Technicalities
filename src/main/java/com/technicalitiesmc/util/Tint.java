@@ -9,8 +9,7 @@ import java.util.Map;
 public class Tint {
 
     private static final Map<EnumDyeColor, Color> COLORS = new EnumMap<>(EnumDyeColor.class);
-
-    {
+    static {
         COLORS.put(EnumDyeColor.WHITE, new Color(0xF9FFFE));
         COLORS.put(EnumDyeColor.ORANGE, new Color(0xF9801D));
         COLORS.put(EnumDyeColor.MAGENTA, new Color(0xC74EBD));
