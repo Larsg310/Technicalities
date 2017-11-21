@@ -14,7 +14,9 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 public class TileChannel extends TileBase implements ITickable {
 
@@ -47,15 +49,16 @@ public class TileChannel extends TileBase implements ITickable {
         tank.setTileEntity(this);
     }
 
-    private List<TileChannel> getNeighbours() {
-        List<TileChannel> list = new ArrayList<>();
+    private Map<EnumFacing, TileChannel> getNeighbours() {
+        Map<EnumFacing, TileChannel> map = new EnumMap<EnumFacing, TileChannel>(EnumFacing.class);
         for (EnumFacing face : EnumFacing.VALUES) {
+            if (face == EnumFacing.UP) continue;
             TileEntity te = world.getTileEntity(pos.offset(face));
             if (te != null && te instanceof TileChannel) {
-                list.add((TileChannel)te);
+                map.put(face, (TileChannel)te);
             }
         }
-        return list;
+        return map;
     }
 
     @Override
@@ -79,24 +82,31 @@ public class TileChannel extends TileBase implements ITickable {
     public void update() {
         if (world.isRemote) return;
 
-        List<TileChannel> neighbours = getNeighbours();
-        for (TileChannel channel : neighbours) {
-            FluidTank otherTank = (FluidTank)channel.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.DOWN);
+        Map<EnumFacing, TileChannel> neighbours = getNeighbours();
+        for (EnumFacing face : neighbours.keySet()) {
+            TileChannel channel = neighbours.get(face);
+            if (channel == null) continue;
+
+            FluidTank otherTank = (FluidTank)channel.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face.getOpposite());
             if (otherTank == null) continue;
 
             float diff = Math.abs(tank.getFluidAmount() - otherTank.getFluidAmount());
+            if (face == EnumFacing.DOWN) {
+                diff = otherTank.getCapacity() - otherTank.getFluidAmount();
+                diff = Math.min(diff, tank.getFluidAmount());
+            }
 
             float flow = diff * 0.01f;
+
+            if (face == EnumFacing.DOWN) {
+                flow *= 10;
+            }
+
             int finalFlow = (int)Math.ceil(Math.min(flow, 5));
 
-            if (tank.getFluidAmount() > otherTank.getFluidAmount()) {
+            if (face == EnumFacing.DOWN || tank.getFluidAmount() > otherTank.getFluidAmount()) {
                 FluidStack stack = tank.drain(finalFlow, true);
                 otherTank.fill(stack, true);
-                channel.markDirty();
-                markDirty();
-            } else {
-                FluidStack stack = otherTank.drain(finalFlow, true);
-                tank.fill(stack, true);
                 channel.markDirty();
                 markDirty();
             }
