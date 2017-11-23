@@ -1,0 +1,7 @@
+{
+	"textureOverrides": {
+		"activated": {
+			"true": "tkelectricity:blocks/coalgeneratorfront-tkelectricity:blocks/coalgeneratorfronta"
+		}
+	}
+}

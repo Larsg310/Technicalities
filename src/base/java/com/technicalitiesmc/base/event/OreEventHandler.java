@@ -21,8 +21,8 @@ public class OreEventHandler {
     // @SubscribeEvent
     // public void onAttachCapabilities(AttachCapabilitiesEvent<ItemStack> event) {
     // if (event.getObject() instanceof ItemStack) {
-    // handleStack(event.getObject(), stack -> event.addCapability(GravelCleanCounter.NAME, new GravelCleanCounter.Provider()),
-    // stack -> event.addCapability(OreFallTracker.NAME, new OreFallTracker.Provider()));
+    // handleStack(event.getObject(), stack -> event.addCapability(GravelCleanCounter.MODNAME, new GravelCleanCounter.Provider()),
+    // stack -> event.addCapability(OreFallTracker.MODNAME, new OreFallTracker.Provider()));
     // }
     // }
     //
@@ -198,7 +198,7 @@ public class OreEventHandler {
     // @SimpleCapability
     // private static class GravelCleanCounter {
     //
-    // public static final ResourceLocation NAME = new ResourceLocation(Technicalities.MODID, "gravel_clean_counter");
+    // public static final ResourceLocation MODNAME = new ResourceLocation(Technicalities.MODID, "gravel_clean_counter");
     //
     // @CapabilityInject(GravelCleanCounter.class)
     // public static final Capability<GravelCleanCounter> CAPABILITY = null;
@@ -227,7 +227,7 @@ public class OreEventHandler {
     // @SimpleCapability
     // private static class OreFallTracker {
     //
-    // public static final ResourceLocation NAME = new ResourceLocation(Technicalities.MODID, "ore_fall_tracker");
+    // public static final ResourceLocation MODNAME = new ResourceLocation(Technicalities.MODID, "ore_fall_tracker");
     //
     // @CapabilityInject(OreFallTracker.class)
     // public static final Capability<OreFallTracker> CAPABILITY = null;

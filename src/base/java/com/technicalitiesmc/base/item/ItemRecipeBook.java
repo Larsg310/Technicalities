@@ -18,6 +18,10 @@ import java.util.List;
 
 public class ItemRecipeBook extends ItemBase {
 
+    public ItemRecipeBook(){
+        setMaxStackSize(1);
+    }
+
     public static List<Recipe> getRecipes(ItemStack book) {
         List<Recipe> recipes = new LinkedList<>();
         if (!book.isEmpty() && book.hasTagCompound()) {

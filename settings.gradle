@@ -8,3 +8,4 @@ def addProject(name) {
 
 addProject 'mechanical'
 addProject 'pneumatics'
+addProject 'electricity'

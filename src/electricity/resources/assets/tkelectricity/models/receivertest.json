@@ -1,0 +1,10 @@
+{
+
+	"parent": "block/orientable",
+    "textures": {
+        "top": "tkelectricity:blocks/normal",
+        "front": "tkelectricity:blocks/chunkmain_front",
+        "side": "tkelectricity:blocks/normal"
+    }
+
+}
