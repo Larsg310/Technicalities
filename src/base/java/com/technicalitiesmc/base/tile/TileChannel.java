@@ -105,10 +105,14 @@ public class TileChannel extends TileBase implements ITickable {
             int finalFlow = (int)Math.ceil(Math.min(flow, 5));
 
             if (face == EnumFacing.DOWN || tank.getFluidAmount() > otherTank.getFluidAmount()) {
-                FluidStack stack = tank.drain(finalFlow, true);
-                otherTank.fill(stack, true);
-                channel.markDirty();
-                markDirty();
+                FluidStack stack = tank.drain(finalFlow, false);
+                if (otherTank.fill(stack, false) == stack.amount) {
+                    tank.drain(stack, true);
+                    otherTank.fill(stack, true);
+
+                    channel.markDirty();
+                    markDirty();
+                }
             }
         }
     }
