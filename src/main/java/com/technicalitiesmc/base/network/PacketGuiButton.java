@@ -1,6 +1,6 @@
 package com.technicalitiesmc.base.network;
 
-import com.technicalitiesmc.base.TKBase;
+import com.technicalitiesmc.Technicalities;
 import com.technicalitiesmc.util.network.LocatedPacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
@@ -39,7 +39,7 @@ public class PacketGuiButton extends LocatedPacket<PacketGuiButton> {
     }
 
     public static void send(BlockPos pos, int button) {
-        TKBase.NETWORK_HANDLER.sendToServer(new PacketGuiButton(pos, button));
+        Technicalities.networkHandler.sendToServer(new PacketGuiButton(pos, button));
     }
 
 }

@@ -1,7 +1,6 @@
 package com.technicalitiesmc.base.init;
 
 import com.technicalitiesmc.Technicalities;
-import com.technicalitiesmc.base.TKBase;
 import com.technicalitiesmc.base.block.*;
 import com.technicalitiesmc.base.tile.*;
 import com.technicalitiesmc.util.item.ItemBlockBase;
@@ -67,7 +66,7 @@ public class TKBaseBlocks {
     private static void registerItem(IForgeRegistry<Item> registry, Item item, String name) {
         ResourceLocation resLoc = new ResourceLocation(Technicalities.MODID, name);
         registry.register(item.setRegistryName(resLoc));
-        TKBase.proxy.registerItemModel(item, 0, new ModelResourceLocation(resLoc, "inventory"));
+        Technicalities.proxy.registerItemModel(item, 0, new ModelResourceLocation(resLoc, "inventory"));
     }
 
 }

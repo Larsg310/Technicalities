@@ -1,6 +1,6 @@
 package com.technicalitiesmc.mechanical.init;
 
-import com.technicalitiesmc.base.TKBase;
+import com.technicalitiesmc.Technicalities;
 import com.technicalitiesmc.mechanical.TKMechanical;
 import com.technicalitiesmc.mechanical.block.BlockKineticTest;
 import com.technicalitiesmc.mechanical.block.BlockShaft;
@@ -60,7 +60,7 @@ public class TKMechanicalBlocks {
     private static void registerItem(IForgeRegistry<Item> registry, Item item, String name) {
         ResourceLocation resLoc = new ResourceLocation(TKMechanical.MODID, name);
         registry.register(item.setRegistryName(resLoc));
-        TKBase.proxy.registerItemModel(item, 0, new ModelResourceLocation(resLoc, "inventory"));
+        Technicalities.proxy.registerItemModel(item, 0, new ModelResourceLocation(resLoc, "inventory"));
     }
 
 }

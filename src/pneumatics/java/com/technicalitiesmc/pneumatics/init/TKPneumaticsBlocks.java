@@ -1,6 +1,6 @@
 package com.technicalitiesmc.pneumatics.init;
 
-import com.technicalitiesmc.base.TKBase;
+import com.technicalitiesmc.Technicalities;
 import com.technicalitiesmc.pneumatics.TKPneumatics;
 import com.technicalitiesmc.pneumatics.block.BlockPneumaticTube;
 import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeClient;
@@ -56,7 +56,7 @@ public class TKPneumaticsBlocks {
     private static void registerItem(IForgeRegistry<Item> registry, Item item, String name) {
         ResourceLocation resLoc = new ResourceLocation(TKPneumatics.MODID, name);
         registry.register(item.setRegistryName(resLoc));
-        TKBase.proxy.registerItemModel(item, 0, new ModelResourceLocation(resLoc, "inventory"));
+        Technicalities.proxy.registerItemModel(item, 0, new ModelResourceLocation(resLoc, "inventory"));
     }
 
 }

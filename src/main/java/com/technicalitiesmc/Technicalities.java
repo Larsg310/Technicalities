@@ -1,6 +1,7 @@
 package com.technicalitiesmc;
 
-import com.technicalitiesmc.base.TKBase;
+import com.technicalitiesmc.base.event.OreEventHandler;
+import com.technicalitiesmc.base.network.PacketGuiButton;
 import com.technicalitiesmc.electricity.grid.ElectricityGridHandler;
 import com.technicalitiesmc.util.block.TileBase;
 import com.technicalitiesmc.util.network.GuiHandler;
@@ -9,6 +10,7 @@ import com.technicalitiesmc.util.network.PacketTileUpdate;
 import com.technicalitiesmc.util.simple.SimpleCapabilityManager;
 import com.technicalitiesmc.util.simple.SimpleRegistryManager;
 import elec332.core.main.ElecCoreRegistrar;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
@@ -56,11 +58,12 @@ public class Technicalities {
         SimpleCapabilityManager.INSTANCE.init(asmTable);
         SimpleRegistryManager.INSTANCE.init(asmTable);
 
+        MinecraftForge.EVENT_BUS.register(new OreEventHandler());
+
         // Register packets
         networkHandler.registerPacket(PacketTileUpdate.class, Side.CLIENT);
-
-        // Preinit TKBase
-        TKBase.preInit(event);
+        networkHandler.registerPacket(PacketGuiButton.class, Side.SERVER);
+        proxy.preInit();
     }
 
     @Mod.EventHandler
@@ -70,15 +73,10 @@ public class Technicalities {
 
         // Register GUI Handler
         NetworkRegistry.INSTANCE.registerGuiHandler(this, guiHandler);
-
-        // Init TKBase
-        TKBase.init(event);
     }
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-        // Postinit TKBase
-        TKBase.postInit(event);
     }
 
     @SubscribeEvent

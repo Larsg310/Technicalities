@@ -1,6 +1,6 @@
 package com.technicalitiesmc.pneumatics.init;
 
-import com.technicalitiesmc.base.TKBase;
+import com.technicalitiesmc.Technicalities;
 import com.technicalitiesmc.pneumatics.TKPneumatics;
 import com.technicalitiesmc.pneumatics.item.ItemTubeModule;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -26,7 +26,7 @@ public class TKPneumaticsItems {
     private static void register(IForgeRegistry<Item> registry, Item item, String name){
         ResourceLocation resLoc = new ResourceLocation(TKPneumatics.MODID, name);
         registry.register(item.setRegistryName(resLoc));
-        TKBase.proxy.registerItemModel(item, 0, new ModelResourceLocation(resLoc, "inventory"));
+        Technicalities.proxy.registerItemModel(item, 0, new ModelResourceLocation(resLoc, "inventory"));
     }
 
 }

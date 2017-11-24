@@ -52,12 +52,10 @@ sourceSets {
     main {
         java {
             srcDir 'src/main/java'
-            srcDir 'src/base/java'
             srcDir 'src/api/java'
         }
         resources {
             srcDir 'src/main/resources'
-            srcDir 'src/base/resources'
             srcDir 'src/at'
         }
     }
@@ -66,13 +64,19 @@ sourceSets {
 // Load dependency repos
 repositories {
 	maven {
+		//JEI
 		url = "http://dvs1.progwml6.com/files/maven"
+	}
+	maven {
+		//Waila
+		url "http://tehnut.info/maven"
 	}
 }
 
 // Add compiletime and runtime dependencies
 dependencies {
 	runtimeOnly "mezz.jei:jei_${mc_version}:${jei_version}"
+	runtimeOnly "mcp.mobius.waila:Hwyla:${waila_version}"
 }
 
 // Set a classifier for the main jar file

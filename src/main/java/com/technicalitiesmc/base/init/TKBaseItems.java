@@ -1,7 +1,6 @@
 package com.technicalitiesmc.base.init;
 
 import com.technicalitiesmc.Technicalities;
-import com.technicalitiesmc.base.TKBase;
 import com.technicalitiesmc.base.item.ItemRecipeBook;
 import com.technicalitiesmc.util.item.ItemBase;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -29,7 +28,7 @@ public class TKBaseItems {
     private static void register(IForgeRegistry<Item> registry, Item item, String name){
         ResourceLocation resLoc = new ResourceLocation(Technicalities.MODID, name);
         registry.register(item.setRegistryName(resLoc));
-        TKBase.proxy.registerItemModel(item, 0, new ModelResourceLocation(resLoc, "inventory"));
+        Technicalities.proxy.registerItemModel(item, 0, new ModelResourceLocation(resLoc, "inventory"));
     }
 
 }

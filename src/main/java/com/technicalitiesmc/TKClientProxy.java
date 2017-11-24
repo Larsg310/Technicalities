@@ -1,12 +1,17 @@
 package com.technicalitiesmc;
 
 import com.google.common.base.Throwables;
+import com.technicalitiesmc.base.client.EmptyModelLoader;
 import com.technicalitiesmc.util.client.SpecialRenderer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
@@ -16,6 +21,17 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class TKClientProxy extends TKCommonProxy {
+
+    @Override
+    public void preInit() {
+        super.preInit();
+        ModelLoaderRegistry.registerLoader(EmptyModelLoader.INSTANCE);
+    }
+
+    @Override
+    public void registerItemModel(Item item, int meta, ModelResourceLocation location) {
+        ModelLoader.setCustomModelResourceLocation(item, meta, location);
+    }
 
     @Override
     public void bindSpecialRenderers(ASMDataTable asmDataTable) {
