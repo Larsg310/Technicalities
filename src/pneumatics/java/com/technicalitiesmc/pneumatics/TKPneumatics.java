@@ -4,15 +4,11 @@ import com.google.common.base.Throwables;
 import com.technicalitiesmc.Technicalities;
 import com.technicalitiesmc.api.pneumatics.TubeModule;
 import com.technicalitiesmc.pneumatics.init.TKPneumaticsBlocks;
-import com.technicalitiesmc.pneumatics.network.PacketModuleInfo;
-import com.technicalitiesmc.pneumatics.network.PacketStackJoinNetwork;
-import com.technicalitiesmc.pneumatics.network.PacketStackLeaveNetwork;
-import com.technicalitiesmc.pneumatics.network.PacketStackPickRoute;
-import com.technicalitiesmc.pneumatics.network.PacketStackUpdate;
-import com.technicalitiesmc.pneumatics.network.TKPGuiHandler;
+import com.technicalitiesmc.pneumatics.network.*;
 import com.technicalitiesmc.pneumatics.tube.TubeTicker;
-import com.technicalitiesmc.util.ReflectionUtils;
-import com.technicalitiesmc.util.network.NetworkHandler;
+import elec332.core.api.network.INetworkHandler;
+import elec332.core.api.network.ModNetworkHandler;
+import elec332.core.java.ReflectionHelper;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
@@ -26,7 +22,6 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -40,18 +35,19 @@ public class TKPneumatics {
             clientSide = "com.technicalitiesmc.pneumatics.client.TKPClientProxy")
     public static TKPCommonProxy proxy;
 
-    public static final NetworkHandler NETWORK_HANDLER = new NetworkHandler(MODID);
+    @ModNetworkHandler
+    public static INetworkHandler networkHandler;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(proxy);
         MinecraftForge.EVENT_BUS.register(TubeTicker.class);
 
-        NETWORK_HANDLER.registerPacket(PacketStackJoinNetwork.class, Side.CLIENT);
-        NETWORK_HANDLER.registerPacket(PacketStackLeaveNetwork.class, Side.CLIENT);
-        NETWORK_HANDLER.registerPacket(PacketStackPickRoute.class, Side.CLIENT);
-        NETWORK_HANDLER.registerPacket(PacketStackUpdate.class, Side.CLIENT);
-        NETWORK_HANDLER.registerPacket(PacketModuleInfo.class, Side.SERVER);
+        networkHandler.registerPacket(PacketStackJoinNetwork.class, Side.CLIENT);
+        networkHandler.registerPacket(PacketStackLeaveNetwork.class, Side.CLIENT);
+        networkHandler.registerPacket(PacketStackPickRoute.class, Side.CLIENT);
+        networkHandler.registerPacket(PacketStackUpdate.class, Side.CLIENT);
+        networkHandler.registerPacket(PacketModuleInfo.class, Side.SERVER);
     }
 
     @Mod.EventHandler
@@ -63,8 +59,7 @@ public class TKPneumatics {
 
         try {
             Field field = TubeModule.ContainerModule.class.getDeclaredField("openGui");
-            ReflectionUtils.setModifier(field, Modifier.FINAL, false);
-            field.setAccessible(true);
+            ReflectionHelper.makeFinalFieldModifiable(field);
             field.set(null, (BiConsumer<TubeModule.ContainerModule, EntityPlayer>) (mod, player) -> {
                 BlockPos pos = mod.getTube().getTubePos();
                 player.openGui(Technicalities.MODID, mod.getSide().ordinal(), mod.getTube().getTubeWorld(), pos.getX(), pos.getY(),
@@ -72,12 +67,11 @@ public class TKPneumatics {
             });
 
             field = TubeModule.class.getDeclaredField("sendToServer");
-            ReflectionUtils.setModifier(field, Modifier.FINAL, false);
-            field.setAccessible(true);
+            ReflectionHelper.makeFinalFieldModifiable(field);
             field.set(null, (BiConsumer<TubeModule, Consumer<PacketBuffer>>) (mod, cons) -> {
                 PacketBuffer buf = new PacketBuffer(Unpooled.buffer());
                 cons.accept(buf);
-                NETWORK_HANDLER.sendToServer(new PacketModuleInfo(mod.getTube().getTubePos(), mod.getSide(), buf));
+                networkHandler.sendToServer(new PacketModuleInfo(mod.getTube().getTubePos(), mod.getSide(), buf));
             });
         } catch (Exception ex) {
             throw Throwables.propagate(ex);

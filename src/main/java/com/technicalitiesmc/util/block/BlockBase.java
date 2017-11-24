@@ -1,6 +1,10 @@
 package com.technicalitiesmc.util.block;
 
+import com.technicalitiesmc.Technicalities;
 import com.technicalitiesmc.util.IndexedAABB;
+import elec332.core.inventory.window.IWindowHandler;
+import elec332.core.inventory.window.WindowManager;
+import elec332.core.tile.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -22,7 +26,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlockBase extends Block {
+public class BlockBase extends AbstractBlock {
 
     public BlockBase(Material material) {
         super(material);
@@ -103,8 +107,7 @@ public class BlockBase extends Block {
 
     @Deprecated
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing,
-                                    float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivatedC(World world, BlockPos pos, EntityPlayer player, EnumHand hand, IBlockState state, EnumFacing facing, float hitX, float hitY, float hitZ) {
         RayTraceResult hit = rayTrace(state, world, pos, player);
         if (hit == null) {
             return false;
@@ -168,6 +171,15 @@ public class BlockBase extends Block {
     @SideOnly(Side.CLIENT)
     private double getClientReach() {
         return Minecraft.getMinecraft().playerController.getBlockReachDistance();
+    }
+
+    public boolean openTileWindow(EntityPlayer player, World world, BlockPos pos){
+        return openWindow(player, Technicalities.proxy, world, pos, -1);
+    }
+
+    public boolean openWindow(EntityPlayer player, IWindowHandler windowHandler, World world, BlockPos pos, int id){
+        WindowManager.openWindow(player, Technicalities.proxy, world, pos, (byte) id);
+        return true;
     }
 
 }

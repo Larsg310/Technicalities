@@ -1,10 +1,5 @@
 package com.technicalitiesmc.pneumatics.tube;
 
-import java.util.EnumSet;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.function.Supplier;
-
 import com.technicalitiesmc.api.pneumatics.EnumTubeDirection;
 import com.technicalitiesmc.api.pneumatics.ITubeStack;
 import com.technicalitiesmc.api.pneumatics.TubeModule;
@@ -12,12 +7,16 @@ import com.technicalitiesmc.pneumatics.TKPneumatics;
 import com.technicalitiesmc.pneumatics.network.PacketStackPickRoute;
 import com.technicalitiesmc.pneumatics.network.PacketStackUpdate;
 import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeBase;
-
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
+
+import java.util.EnumSet;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.function.Supplier;
 
 public class TubeStack implements ITubeStack {
 
@@ -141,7 +140,7 @@ public class TubeStack implements ITubeStack {
                         }
                     }
                     to = it.next();
-                    TKPneumatics.NETWORK_HANDLER.sendToAllAround(new PacketStackPickRoute(this), tube.getWorld(), tube.getPos());
+                    TKPneumatics.networkHandler.sendToAllAround(new PacketStackPickRoute(this), tube.getWorld(), tube.getPos(), 64);
                 } else {
                     to = nextDirection.get();
                     if (to == null) {
@@ -163,7 +162,7 @@ public class TubeStack implements ITubeStack {
                     }
                     if (progress < pos && newProgress >= pos) {
                         module.traverse(this, pos < 0.5F ? EnumTubeDirection.INWARDS : EnumTubeDirection.OUTWARDS);
-                        TKPneumatics.NETWORK_HANDLER.sendToAllAround(new PacketStackUpdate(this), tube.getWorld(), tube.getPos());
+                        TKPneumatics.networkHandler.sendToAllAround(new PacketStackUpdate(this), tube.getWorld(), tube.getPos(), 64);
                     }
                 }
             }

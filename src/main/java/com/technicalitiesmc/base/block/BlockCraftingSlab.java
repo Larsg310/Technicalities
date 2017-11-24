@@ -22,6 +22,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.items.ItemHandlerHelper;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Random;
 
 public class BlockCraftingSlab extends BlockBase implements ITileEntityProvider {
@@ -57,9 +59,9 @@ public class BlockCraftingSlab extends BlockBase implements ITileEntityProvider 
         return getDefaultState().withProperty(PROPERTY_FACING, EnumFacing.getHorizontal(meta));
     }
 
+    @Nonnull
     @Override
-    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta,
-                                            EntityLivingBase placer, EnumHand hand) {
+    public IBlockState getBlockStateForPlacementC(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, @Nullable EnumHand hand) {
         return getDefaultState().withProperty(PROPERTY_FACING, placer.getHorizontalFacing().getOpposite());
     }
 
@@ -80,8 +82,7 @@ public class BlockCraftingSlab extends BlockBase implements ITileEntityProvider 
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing,
-                                    float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivatedC(World world, BlockPos pos, EntityPlayer player, EnumHand hand, IBlockState state, EnumFacing facing, float hitX, float hitY, float hitZ) {
         int x = hitX > 4 / 16F && hitX < 6 / 16F ? 0 : hitX > 7 / 16F && hitX < 9 / 16F ? 1 : hitX > 10 / 16F && hitX < 12 / 16F ? 2 : -1;
         int z = hitZ > 4 / 16F && hitZ < 6 / 16F ? 0 : hitZ > 7 / 16F && hitZ < 9 / 16F ? 1 : hitZ > 10 / 16F && hitZ < 12 / 16F ? 2 : -1;
 

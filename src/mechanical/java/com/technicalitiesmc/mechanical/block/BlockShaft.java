@@ -2,7 +2,6 @@ package com.technicalitiesmc.mechanical.block;
 
 import com.technicalitiesmc.mechanical.tile.TileShaft;
 import com.technicalitiesmc.util.block.BlockBase;
-
 import net.minecraft.block.BlockRotatedPillar;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -18,6 +17,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class BlockShaft extends BlockBase implements ITileEntityProvider {
 
@@ -73,9 +75,10 @@ public class BlockShaft extends BlockBase implements ITileEntityProvider {
         return false;
     }
 
+
+    @Nonnull
     @Override
-    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta,
-            EntityLivingBase placer, EnumHand hand) {
+    public IBlockState getBlockStateForPlacementC(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, @Nullable EnumHand hand) {
         return getDefaultState().withProperty(BlockRotatedPillar.AXIS, facing.getAxis());
     }
 

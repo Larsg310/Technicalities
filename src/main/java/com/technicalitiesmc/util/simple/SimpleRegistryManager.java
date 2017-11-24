@@ -1,7 +1,7 @@
 package com.technicalitiesmc.util.simple;
 
 import com.google.common.base.Throwables;
-import com.technicalitiesmc.util.ReflectionUtils;
+import elec332.core.java.ReflectionHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -9,7 +9,6 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryBuilder;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 
 /**
  * Manages the registration of "simple registries".
@@ -47,7 +46,7 @@ public enum SimpleRegistryManager {
                         .create();
 
                 if (field != null) {
-                    ReflectionUtils.setModifier(field, Modifier.FINAL, false);
+                    ReflectionHelper.makeFinalFieldModifiable(field);
                     field.set(null, registry);
                 }
             } catch (Exception e) {

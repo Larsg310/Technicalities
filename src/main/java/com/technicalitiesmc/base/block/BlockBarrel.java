@@ -23,6 +23,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class BlockBarrel extends BlockBase implements ITileEntityProvider {
@@ -71,9 +73,10 @@ public class BlockBarrel extends BlockBase implements ITileEntityProvider {
         return state.getValue(BlockRotatedPillar.AXIS).ordinal();
     }
 
+
+    @Nonnull
     @Override
-    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta,
-                                            EntityLivingBase placer, EnumHand hand) {
+    public IBlockState getBlockStateForPlacementC(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, @Nullable EnumHand hand) {
         return getDefaultState().withProperty(BlockRotatedPillar.AXIS, EnumFacing.getDirectionFromEntityLiving(pos, placer).getAxis());
     }
 
@@ -85,8 +88,7 @@ public class BlockBarrel extends BlockBase implements ITileEntityProvider {
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing,
-                                    float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivatedC(World world, BlockPos pos, EntityPlayer player, EnumHand hand, IBlockState state, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (facing.getAxis() == state.getValue(BlockRotatedPillar.AXIS)) {
             ItemStack stack = player.getHeldItem(hand);
             if (!stack.isEmpty()) {

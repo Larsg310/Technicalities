@@ -3,7 +3,6 @@ package com.technicalitiesmc.base.tile;
 import com.technicalitiesmc.util.block.TileBase;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -12,7 +11,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
-import java.io.IOException;
+import javax.annotation.Nonnull;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -32,6 +31,7 @@ public class TileChannel extends TileBase implements ITickable {
     }
 
     @Override
+    @Nonnull
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound = super.writeToNBT(compound);
 
@@ -115,6 +115,25 @@ public class TileChannel extends TileBase implements ITickable {
         }
     }
 
+    public void syncTank(){
+        NBTTagCompound nbt = new NBTTagCompound();
+        tank.writeToNBT(nbt);
+        sendPacket(2, nbt);
+    }
+
+    @Override
+    public void onDataPacket(int id, NBTTagCompound tag) {
+        if (id == 2){
+            tank.readFromNBT(tag);
+        } else {
+            super.onDataPacket(id, tag);
+        }
+    }
+
+    /*
+
+    Please call synctank for syncing tank contents
+
     @Override
     public void writeDescription(PacketBuffer buf) throws IOException {
         super.writeDescription(buf);
@@ -131,4 +150,5 @@ public class TileChannel extends TileBase implements ITickable {
         NBTTagCompound nbt = buf.readCompoundTag();
         tank.readFromNBT(nbt);
     }
+    */
 }

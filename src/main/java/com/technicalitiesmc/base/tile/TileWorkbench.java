@@ -6,13 +6,14 @@ import com.technicalitiesmc.base.item.ItemRecipeBook.Recipe;
 import com.technicalitiesmc.util.block.TileBase;
 import com.technicalitiesmc.util.inventory.SimpleItemHandler;
 import com.technicalitiesmc.util.stack.StackList;
+import elec332.core.inventory.ContainerNull;
+import elec332.core.util.NBTHelper;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -21,7 +22,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.io.IOException;
+import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,7 +38,7 @@ public class TileWorkbench extends TileBase {
     private final ExposedInventory exposedInventory = new ExposedInventory();
 
     private final GridInventory craftingGrid = new GridInventory();
-    private final InventoryCrafting inventoryCrafting = new InventoryCrafting(null, 3, 3);
+    private final InventoryCrafting inventoryCrafting = new InventoryCrafting(new ContainerNull(), 3, 3);
 
     private final List<Pair<Recipe, StackList>> recipes = new LinkedList<>();
 
@@ -89,7 +90,7 @@ public class TileWorkbench extends TileBase {
         }
         if (!simulated) {
             ink--;
-            sync();
+            sendPacket(4, new NBTHelper().addToTag(ink, "ink").serializeNBT());
         }
         return true;
     }
@@ -167,22 +168,20 @@ public class TileWorkbench extends TileBase {
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return true;
-        }
-        return super.hasCapability(capability, facing);
+    public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
+        return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return (T) exposedInventory;
         }
         return super.getCapability(capability, facing);
     }
 
+    @Nonnull
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {
         tag = super.writeToNBT(tag);
@@ -206,15 +205,12 @@ public class TileWorkbench extends TileBase {
     }
 
     @Override
-    public void writeDescription(PacketBuffer buf) throws IOException {
-        super.writeDescription(buf);
-        buf.writeInt(ink);
-    }
-
-    @Override
-    public void readDescription(PacketBuffer buf) throws IOException {
-        super.readDescription(buf);
-        ink = buf.readInt();
+    public void onDataPacket(int id, NBTTagCompound tag) {
+        if (id == 4){
+            ink = tag.getInteger("ink");
+        } else {
+            super.onDataPacket(id, tag);
+        }
     }
 
     public class ExposedInventory implements IItemHandler, Iterable<ItemStack> {
@@ -227,25 +223,28 @@ public class TileWorkbench extends TileBase {
             return INV_SIZE;
         }
 
+        @Nonnull
         @Override
         public ItemStack getStackInSlot(int slot) {
             return slot < INV_SIZE ? inventory.getStackInSlot(slot) : ItemStack.EMPTY;
         }
 
+        @Nonnull
         @Override
-        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
             if (slot < INV_SIZE) {
                 return inventory.insertItem(slot, stack, simulate);
             }
             return stack;
         }
 
+        @Nonnull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             if (slot < INV_SIZE) {
                 return inventory.extractItem(slot, amount, simulate);
             }
-            return null;
+            return ItemStack.EMPTY;
         }
 
         @Override
@@ -256,6 +255,7 @@ public class TileWorkbench extends TileBase {
             return 0;
         }
 
+        @Nonnull
         @Override
         public Iterator<ItemStack> iterator() {
             return new Iterator<ItemStack>() {
@@ -284,16 +284,19 @@ public class TileWorkbench extends TileBase {
             return GRID_SIZE;
         }
 
+        @Nonnull
         @Override
         public ItemStack getStackInSlot(int slot) {
             return inventory.getStackInSlot(GRID_START + slot);
         }
 
+        @Nonnull
         @Override
-        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
             return inventory.insertItem(GRID_START + slot, stack, simulate);
         }
 
+        @Nonnull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             if (slot == 9 && !simulate) {
@@ -338,7 +341,7 @@ public class TileWorkbench extends TileBase {
         }
 
         @Override
-        public void setStackInSlot(int slot, ItemStack stack) {
+        public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
             inventory.setStackInSlot(GRID_START + slot, stack);
         }
 

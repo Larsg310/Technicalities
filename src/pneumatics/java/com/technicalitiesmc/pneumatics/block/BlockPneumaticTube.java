@@ -1,8 +1,5 @@
 package com.technicalitiesmc.pneumatics.block;
 
-import java.util.List;
-import java.util.Random;
-
 import com.technicalitiesmc.api.pneumatics.TubeModule;
 import com.technicalitiesmc.pneumatics.init.TKPneumaticsItems;
 import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeBase;
@@ -10,9 +7,8 @@ import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeClient;
 import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeServer;
 import com.technicalitiesmc.pneumatics.tube.module.ModuleManager;
 import com.technicalitiesmc.util.IndexedAABB;
-import com.technicalitiesmc.util.UnlistedProperty;
 import com.technicalitiesmc.util.block.BlockBase;
-
+import elec332.core.util.UniversalUnlistedProperty;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -32,16 +28,19 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 
+import java.util.List;
+import java.util.Random;
+
 public class BlockPneumaticTube extends BlockBase implements ITileEntityProvider {
 
     @SuppressWarnings("rawtypes")
-    public static final IUnlistedProperty[] CONNECTIONS = new IUnlistedProperty[] { //
-            UnlistedProperty.ofType(Connection.class, "down"), //
-            UnlistedProperty.ofType(Connection.class, "up"), //
-            UnlistedProperty.ofType(Connection.class, "north"), //
-            UnlistedProperty.ofType(Connection.class, "south"), //
-            UnlistedProperty.ofType(Connection.class, "west"), //
-            UnlistedProperty.ofType(Connection.class, "east") //
+    public static final IUnlistedProperty[] CONNECTIONS = new IUnlistedProperty[] {
+            new UniversalUnlistedProperty<>("down", Connection.class),
+            new UniversalUnlistedProperty<>("up", Connection.class),
+            new UniversalUnlistedProperty<>("north", Connection.class),
+            new UniversalUnlistedProperty<>("south", Connection.class),
+            new UniversalUnlistedProperty<>("west", Connection.class),
+            new UniversalUnlistedProperty<>("east", Connection.class),
     };
 
     private static final double SIDE_DIST = 0.25;
@@ -154,7 +153,7 @@ public class BlockPneumaticTube extends BlockBase implements ITileEntityProvider
     }
 
     @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
+    public void neighborChangedC(World world, BlockPos pos, IBlockState state, Block neighbor, BlockPos fromPos) {
         TileEntity te = world.getTileEntity(pos);
         if (!(te instanceof TilePneumaticTubeServer)) {
             return;

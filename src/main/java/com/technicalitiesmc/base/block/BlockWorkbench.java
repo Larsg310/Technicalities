@@ -1,5 +1,6 @@
 package com.technicalitiesmc.base.block;
 
+import com.google.common.base.Preconditions;
 import com.technicalitiesmc.Technicalities;
 import com.technicalitiesmc.base.client.gui.GuiWorkbench;
 import com.technicalitiesmc.base.item.ItemRecipeBook;
@@ -52,7 +53,7 @@ public class BlockWorkbench extends BlockBase implements ITileEntityProvider {
     @Override
     public boolean eventReceived(IBlockState state, World world, BlockPos pos, int id, int param) {
         if (!world.isRemote && id == -1) {
-            TileWorkbench te = (TileWorkbench) world.getTileEntity(pos);
+            TileWorkbench te = Preconditions.checkNotNull((TileWorkbench) world.getTileEntity(pos));
             if (param == -1) {
                 SimpleItemHandler inv = te.getInventory();
                 ItemStack book = inv.getStackInSlot(TileWorkbench.BOOK_START).copy();

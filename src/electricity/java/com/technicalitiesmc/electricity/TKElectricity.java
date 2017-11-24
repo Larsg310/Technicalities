@@ -13,11 +13,11 @@ import com.technicalitiesmc.electricity.util.TKEResourceLocation;
 import elec332.core.api.IElecCoreMod;
 import elec332.core.api.config.IConfigWrapper;
 import elec332.core.api.module.IModuleController;
+import elec332.core.api.network.INetworkHandler;
 import elec332.core.api.network.ModNetworkHandler;
 import elec332.core.api.registration.IObjectRegister;
 import elec332.core.config.ConfigWrapper;
 import elec332.core.inventory.window.WindowManager;
-import elec332.core.network.IElecNetworkHandler;
 import elec332.core.util.AbstractCreativeTab;
 import elec332.core.util.LoadTimer;
 import elec332.core.util.RegistryHelper;
@@ -32,7 +32,6 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -53,7 +52,7 @@ public class TKElectricity implements IModuleController, IElecCoreMod {
 	@Mod.Instance(MODID)
 	public static TKElectricity instance;
 	@ModNetworkHandler
-	public static IElecNetworkHandler networkHandler;
+	public static INetworkHandler networkHandler;
 	public static Configuration config;
 	public static CreativeTabs creativeTab;
 	public static Logger logger;

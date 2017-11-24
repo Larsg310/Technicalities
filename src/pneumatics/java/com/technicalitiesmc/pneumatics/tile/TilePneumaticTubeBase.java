@@ -1,23 +1,13 @@
 package com.technicalitiesmc.pneumatics.tile;
 
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.commons.lang3.tuple.Triple;
-
 import com.technicalitiesmc.api.pneumatics.IPneumaticTube;
 import com.technicalitiesmc.api.pneumatics.TubeModule;
 import com.technicalitiesmc.pneumatics.tube.TubeStack;
 import com.technicalitiesmc.pneumatics.tube.module.ModuleManager;
 import com.technicalitiesmc.util.block.TileBase;
 import com.technicalitiesmc.util.simple.SimpleCapability;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -25,6 +15,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.util.Constants.NBT;
+import org.apache.commons.lang3.tuple.Triple;
+
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @SimpleCapability
 public abstract class TilePneumaticTubeBase extends TileBase implements IPneumaticTube {
@@ -146,6 +143,10 @@ public abstract class TilePneumaticTubeBase extends TileBase implements IPneumat
         stacks.forEach(t -> this.stacks.add(TubeStack.deserializeNBT(this, (NBTTagCompound) t)));
     }
 
+    /*
+
+    TODO: Beat Elec hard enough to beat the stupid out of him, so he knows how this works and how he should port it
+
     @Override
     public void writeDescription(PacketBuffer buf) {
         for (EnumFacing face : EnumFacing.VALUES) {
@@ -189,5 +190,5 @@ public abstract class TilePneumaticTubeBase extends TileBase implements IPneumat
             getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
         }
     }
-
+*/
 }

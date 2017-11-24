@@ -13,7 +13,6 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
@@ -24,8 +23,6 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.registries.IForgeRegistry;
-
-import java.io.IOException;
 
 // FIXME: Grid offsets for recipes smaller than 3x3
 // A bucket aligned to the bottom will have the crafting items placed at the top
@@ -212,6 +209,10 @@ public class TileCraftingSlab extends TileBase {
         locked = tag.getBoolean("locked");
     }
 
+    /*
+
+    TODO: send full description packets in some cases? Send partial packets?
+
     @Override
     public void writeDescription(PacketBuffer buf) {
         for (int i = 0; i < 9; i++) {
@@ -261,5 +262,6 @@ public class TileCraftingSlab extends TileBase {
         }
         locked = buf.readBoolean();
     }
+    */
 
 }

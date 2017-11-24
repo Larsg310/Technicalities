@@ -32,11 +32,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @SimpleCapability // TODO: Replace with a proper capability registration method (to save to the world)
 public class TubeTicker {
@@ -128,13 +124,13 @@ public class TubeTicker {
     }
 
     private void notifyStackAddition(TubeStack stack) {
-        TKPneumatics.NETWORK_HANDLER.sendToAllAround(new PacketStackJoinNetwork(stack), stack.getTube().getWorld(),
-                stack.getTube().getPos());
+        TKPneumatics.networkHandler.sendToAllAround(new PacketStackJoinNetwork(stack), stack.getTube().getWorld(),
+                stack.getTube().getPos(), 64);
     }
 
     private void notifyStackRemoval(TubeStack stack) {
-        TKPneumatics.NETWORK_HANDLER.sendToAllAround(new PacketStackLeaveNetwork(stack), stack.getTube().getWorld(),
-                stack.getTube().getPos());
+        TKPneumatics.networkHandler.sendToAllAround(new PacketStackLeaveNetwork(stack), stack.getTube().getWorld(),
+                stack.getTube().getPos(), 64);
     }
 
     public void scheduleInventoryDump(TilePneumaticTubeServer tube) {

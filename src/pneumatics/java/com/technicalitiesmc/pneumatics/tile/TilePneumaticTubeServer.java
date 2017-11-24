@@ -1,26 +1,24 @@
 package com.technicalitiesmc.pneumatics.tile;
 
-import java.util.EnumMap;
-import java.util.Map;
-
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
-
 import com.technicalitiesmc.api.pneumatics.EnumTubeDirection;
 import com.technicalitiesmc.api.pneumatics.ITubeStack;
 import com.technicalitiesmc.api.pneumatics.TubeModule;
 import com.technicalitiesmc.pneumatics.tube.TubeStack;
 import com.technicalitiesmc.pneumatics.tube.TubeTicker;
 import com.technicalitiesmc.util.inventory.SimpleItemHandler;
-
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
+
+import java.util.EnumMap;
+import java.util.Map;
 
 public class TilePneumaticTubeServer extends TilePneumaticTubeBase {
 
@@ -184,6 +182,17 @@ public class TilePneumaticTubeServer extends TilePneumaticTubeBase {
         return super.getCapability(capability, facing);
     }
 
+    public void sendConnections(){
+        NBTTagCompound tag = new NBTTagCompound();
+        int connections = 0;
+        for (EnumFacing face : neighbors.keySet()) {
+            connections |= 1 << face.ordinal();
+        }
+        tag.setInteger("sides", connections);
+        sendPacket(2, tag);
+    }
+
+    /*
     @Override
     public void writeDescription(PacketBuffer buf) {
         super.writeDescription(buf);
@@ -194,6 +203,7 @@ public class TilePneumaticTubeServer extends TilePneumaticTubeBase {
         }
         buf.writeInt(connections);
     }
+*/
 
     // Used to limit insertion rates to just 1 stack per tick per face
     private class Inventory extends SimpleItemHandler {
