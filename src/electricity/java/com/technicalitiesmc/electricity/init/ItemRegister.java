@@ -7,7 +7,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.registries.IForgeRegistry;
 
-import static com.technicalitiesmc.electricity.init.BlockRegister.*;
+import static com.technicalitiesmc.electricity.init.BlockRegister.generator;
+import static com.technicalitiesmc.electricity.init.BlockRegister.receiver;
 
 /**
  * Created by Elec332 on 23-11-2017.

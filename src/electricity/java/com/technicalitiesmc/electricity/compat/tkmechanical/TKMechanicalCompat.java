@@ -11,8 +11,6 @@ import net.minecraft.item.ItemBlock;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-import javax.annotation.Nonnull;
-
 /**
  * Created by Elec332 on 23-11-2017.
  */

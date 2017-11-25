@@ -1,74 +1,39 @@
 package com.technicalitiesmc.util.item;
 
-import com.technicalitiesmc.Technicalities;
+import elec332.core.item.IEnumItem;
+import elec332.core.item.ItemEnumBased;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.text.translation.I18n;
+import net.minecraft.util.math.BlockPos;
 
-@SuppressWarnings("deprecation")
-public class ItemResource extends ItemBase {
+import javax.annotation.Nonnull;
 
-    private final IResource[] resources;
+public class ItemResource<E extends Enum<E> & IEnumItem> extends ItemEnumBased<E> implements ICanBreakOverride {
 
-    public ItemResource(IResource[] resources) {
-        this.resources = resources;
-        setHasSubtypes(true);
+    public ItemResource(Class<E> clazz) {
+        super(null, clazz);
         setCreativeTab(CreativeTabs.MISC);
     }
 
+    private String unlName;
+
+    protected String createUnlocalizedName(){
+        return "item." + getRegistryName().toString().replace(":", ".").toLowerCase();
+    }
+
+    @Nonnull
     @Override
-    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
-        if (!isInCreativeTab(tab)) {
-            return;
+    public String getUnlocalizedName() {
+        if (this.unlName == null){
+            unlName = createUnlocalizedName();
         }
-        for (int i = 0; i < resources.length; i++) {
-            IResource resource = resources[i];
-            if (resource != null) {
-                subItems.add(new ItemStack(this, 1, i));
-            }
-        }
+        return unlName;
     }
 
     @Override
-    public String getUnlocalizedName(ItemStack stack) {
-        if (stack.getMetadata() >= resources.length) {
-            return "item." + Technicalities.MODID + ":error";
-        }
-
-        IResource resource = resources[stack.getMetadata()];
-        if (resource == null) {
-            return "item." + Technicalities.MODID + ":error";
-        }
-
-        return getRegistryName() + "." + resource.getName();
-    }
-
-    @Override
-    public String getItemStackDisplayName(ItemStack stack) {
-        String unlocalized = getUnlocalizedName(stack);
-        String localized = I18n.translateToLocal(unlocalized);
-        if (!localized.equals(unlocalized)) {
-            return localized;
-        }
-
-        if (stack.getMetadata() >= resources.length) {
-            return I18n.translateToLocal("item." + Technicalities.MODID + ":error");
-        }
-
-        IResource resource = resources[stack.getMetadata()];
-        if (resource == null) {
-            return I18n.translateToLocal("item." + Technicalities.MODID + ":error");
-        }
-
-        return I18n.translateToLocalFormatted("item." + getRegistryName() + ".name",
-                I18n.translateToLocal("material." + Technicalities.MODID + ":" + resource.getName() + ".name"));
-    }
-
-    public static interface IResource {
-
-        String getName();
-
+    public boolean onBlockStartBreak(ItemStack stack, BlockPos pos, EntityPlayer player) {
+        return !canBreak(player.world, pos, stack);
     }
 
 }

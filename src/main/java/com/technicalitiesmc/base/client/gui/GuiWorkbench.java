@@ -126,14 +126,14 @@ public class GuiWorkbench extends GuiContainer {
                         }
                     }
 
-                    tip.add(TextFormatting.GRAY + I18n.format("gui." + Technicalities.MODID + ":tip.workbench.required") + ":");
+                    tip.add(TextFormatting.GRAY + I18n.format("gui." + Technicalities.MODID + ".tip.workbench.required") + ":");
                     stacks.forEachEntry((stack, amt) -> {
                         tip.add(TextFormatting.YELLOW + " " + amt + " " + stack.getDisplayName());
                         return true;
                     });
 
                     if (!pair.getValue().isEmpty()) {
-                        tip.add(TextFormatting.GRAY + I18n.format("gui." + Technicalities.MODID + ":tip.workbench.missing") + ":");
+                        tip.add(TextFormatting.GRAY + I18n.format("gui." + Technicalities.MODID + ".tip.workbench.missing") + ":");
                         pair.getValue().forEachEntry((stack, amt) -> {
                             tip.add(TextFormatting.RED + " " + amt + " " + stack.getDisplayName());
                             return true;
@@ -142,7 +142,7 @@ public class GuiWorkbench extends GuiContainer {
 
                     if (hasInfo) {
                         tip.add(TextFormatting.DARK_GRAY.toString() + TextFormatting.ITALIC + "<"
-                                + I18n.format("gui." + Technicalities.MODID + ":tip.workbench.info") + ">");
+                                + I18n.format("gui." + Technicalities.MODID + ".tip.workbench.info") + ">");
                     }
                 }
 

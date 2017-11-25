@@ -6,7 +6,6 @@ import com.technicalitiesmc.api.util.ObjFloatConsumer;
 import com.technicalitiesmc.mechanical.kinesis.KineticManager;
 import com.technicalitiesmc.mechanical.kinesis.KineticNode;
 import com.technicalitiesmc.util.block.TileBase;
-
 import net.minecraft.block.BlockRotatedPillar;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;

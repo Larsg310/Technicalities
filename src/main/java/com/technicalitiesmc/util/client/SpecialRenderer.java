@@ -6,8 +6,8 @@ import net.minecraft.tileentity.TileEntity;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.*;
-import static java.lang.annotation.RetentionPolicy.*;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Marker for {@link TileEntity TileEntities} that automatically binds a {@link TileEntitySpecialRenderer} to them.

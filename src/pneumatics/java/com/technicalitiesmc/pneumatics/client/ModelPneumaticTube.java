@@ -1,15 +1,8 @@
 package com.technicalitiesmc.pneumatics.client;
 
-import static com.technicalitiesmc.pneumatics.client.TKPClientProxy.*;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.technicalitiesmc.pneumatics.block.BlockPneumaticTube;
 import com.technicalitiesmc.pneumatics.block.BlockPneumaticTube.Connection;
 import com.technicalitiesmc.util.client.WrappedModel;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -19,6 +12,12 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.property.IExtendedBlockState;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static com.technicalitiesmc.pneumatics.client.TKPClientProxy.*;
 
 public class ModelPneumaticTube extends WrappedModel {
 

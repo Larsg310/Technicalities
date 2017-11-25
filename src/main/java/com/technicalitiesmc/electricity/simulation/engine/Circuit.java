@@ -7,7 +7,6 @@ import com.google.common.collect.Sets;
 import com.technicalitiesmc.api.electricity.component.CircuitElement;
 import com.technicalitiesmc.api.electricity.component.ICircuit;
 import com.technicalitiesmc.api.util.ConnectionPoint;
-import com.technicalitiesmc.electricity.grid.ElectricityGridHandler;
 import com.technicalitiesmc.electricity.simulation.CircuitElementFactory;
 import com.technicalitiesmc.electricity.simulation.CompressedCircuitElement;
 import com.technicalitiesmc.electricity.simulation.ICircuitCompressor;

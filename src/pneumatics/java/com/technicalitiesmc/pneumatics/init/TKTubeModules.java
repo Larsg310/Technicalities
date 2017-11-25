@@ -2,11 +2,7 @@ package com.technicalitiesmc.pneumatics.init;
 
 import com.technicalitiesmc.api.pneumatics.TubeModule;
 import com.technicalitiesmc.pneumatics.TKPneumatics;
-import com.technicalitiesmc.pneumatics.tube.module.TMColorFilter;
-import com.technicalitiesmc.pneumatics.tube.module.TMFilter;
-import com.technicalitiesmc.pneumatics.tube.module.TMMembrane;
-import com.technicalitiesmc.pneumatics.tube.module.TMPlug;
-import com.technicalitiesmc.pneumatics.tube.module.TMSorter;
+import com.technicalitiesmc.pneumatics.tube.module.*;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;

@@ -13,7 +13,6 @@ import com.technicalitiesmc.api.util.ConnectionPoint;
 import com.technicalitiesmc.electricity.simulation.CircuitElementFactory;
 import com.technicalitiesmc.electricity.simulation.engine.Circuit;
 import com.technicalitiesmc.electricity.simulation.engine.SimulationEngine;
-import elec332.core.api.util.IClearable;
 import elec332.core.grid.AbstractGridHandler;
 import elec332.core.world.*;
 import net.minecraft.tileentity.TileEntity;

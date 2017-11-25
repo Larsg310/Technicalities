@@ -23,6 +23,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,14 +33,25 @@ public class BlockBase extends AbstractBlock {
         super(material);
     }
 
+    private String unlName;
+
+    protected String createUnlocalizedName(){
+        return "tile." + getRegistryName().toString().replace(":", ".").toLowerCase();
+    }
+
+    @Nonnull
     @Override
-    public Block setSoundType(SoundType sound) {
+    public Block setSoundType(@Nonnull SoundType sound) {
         return super.setSoundType(sound);
     }
 
+    @Nonnull
     @Override
     public String getUnlocalizedName() {
-        return "tile." + getRegistryName();
+        if (this.unlName == null){
+            unlName = createUnlocalizedName();
+        }
+        return unlName;
     }
 
     public void addBoxes(IBlockState state, World world, BlockPos pos, List<AxisAlignedBB> boxes) {

@@ -3,7 +3,6 @@ package com.technicalitiesmc.electricity.tile;
 import com.technicalitiesmc.api.TechnicalitiesAPI;
 import com.technicalitiesmc.api.electricity.EnergyType;
 import com.technicalitiesmc.api.electricity.IEnergyReceiver;
-import com.technicalitiesmc.api.util.BreakReason;
 import com.technicalitiesmc.api.util.ConnectionPoint;
 import elec332.core.api.info.IInfoDataAccessorBlock;
 import elec332.core.api.info.IInfoProvider;

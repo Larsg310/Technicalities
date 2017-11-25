@@ -12,7 +12,6 @@ import com.technicalitiesmc.electricity.util.TKEResourceLocation;
 import com.technicalitiesmc.electricity.util.Wire;
 import com.technicalitiesmc.electricity.util.WireData;
 import elec332.core.item.AbstractItem;
-import elec332.core.util.PlayerHelper;
 import elec332.core.world.WorldHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

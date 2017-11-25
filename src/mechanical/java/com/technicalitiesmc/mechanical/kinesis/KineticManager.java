@@ -1,21 +1,19 @@
 package com.technicalitiesmc.mechanical.kinesis;
 
-import java.util.ArrayDeque;
-import java.util.HashSet;
-import java.util.Queue;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.google.common.util.concurrent.AtomicDouble;
 import com.technicalitiesmc.api.mechanical.IKineticNode;
-
 import gnu.trove.map.TObjectFloatMap;
 import gnu.trove.map.hash.TObjectFloatHashMap;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.ArrayDeque;
+import java.util.HashSet;
+import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public enum KineticManager {
     INSTANCE;

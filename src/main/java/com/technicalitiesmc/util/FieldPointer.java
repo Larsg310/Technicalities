@@ -50,6 +50,7 @@ public final class FieldPointer<P, T> {
         return name;
     }
 
+    @SuppressWarnings("unchecked")
     public T get(P parent) {
         try {
             return (T) getter.invoke(parent);
