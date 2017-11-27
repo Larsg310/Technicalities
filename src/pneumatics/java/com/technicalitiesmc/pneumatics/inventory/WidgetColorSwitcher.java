@@ -7,7 +7,6 @@ import elec332.core.inventory.widget.WidgetButton;
 import elec332.core.inventory.window.Window;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.EnumDyeColor;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 
 /**
  * Created by Elec332 on 27-11-2017.
@@ -35,9 +34,7 @@ public class WidgetColorSwitcher extends WidgetButton {
     @Override
     public void onButtonClicked(int mouseButton) {
         super.onButtonClicked(mouseButton);
-        if (FMLCommonHandler.instance().getEffectiveSide().isClient()){
-            sorter.cycleColor(id, mouseButton == 1);
-        }
+        sorter.cycleColor(id, mouseButton == 1);
     }
 
     @Override

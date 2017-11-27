@@ -175,21 +175,6 @@ public class TMFilter extends TubeModule implements IWindowModule, IColorCycler,
         }
         meta = meta % 17;
         EnumDyeColor color = meta < 16 ? EnumDyeColor.byMetadata(meta) : null;
-        sendToServer(buf -> {
-            buf.writeInt(id);
-            if (color != null) {
-                buf.writeBoolean(true);
-                buf.writeEnumValue(color);
-            } else {
-                buf.writeBoolean(false);
-            }
-        });
-    }
-
-    @Override
-    public void handleClientPacket(PacketBuffer buf) {
-        int id = buf.readInt();
-        EnumDyeColor color = buf.readBoolean() ? buf.readEnumValue(EnumDyeColor.class) : null;
         if (id >= 0) {
             filters[id].color = color;
         } else if (id == -1) {
@@ -197,7 +182,7 @@ public class TMFilter extends TubeModule implements IWindowModule, IColorCycler,
         } else if (id == -2) {
             this.color[1] = color;
         }
-        markDirty();
+        save();
     }
 
     @Override
