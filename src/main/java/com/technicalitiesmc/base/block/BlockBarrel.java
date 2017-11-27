@@ -1,8 +1,8 @@
 package com.technicalitiesmc.base.block;
 
 import com.technicalitiesmc.base.tile.TileBarrel;
-import com.technicalitiesmc.util.RayTraceHelper;
-import com.technicalitiesmc.util.block.BlockBase;
+import com.technicalitiesmc.lib.RayTraceHelper;
+import com.technicalitiesmc.lib.block.BlockBase;
 import net.minecraft.block.BlockRotatedPillar;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;

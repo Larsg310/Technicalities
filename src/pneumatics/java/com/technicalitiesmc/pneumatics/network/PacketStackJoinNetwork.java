@@ -1,10 +1,10 @@
 package com.technicalitiesmc.pneumatics.network;
 
+import com.technicalitiesmc.lib.network.Packet;
 import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeBase;
 import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeClient;
 import com.technicalitiesmc.pneumatics.tube.TubeStack;
 import com.technicalitiesmc.pneumatics.tube.TubeTicker;
-import com.technicalitiesmc.util.network.Packet;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;

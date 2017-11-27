@@ -1,9 +1,9 @@
 package com.technicalitiesmc.base.init;
 
-import com.technicalitiesmc.Technicalities;
+import com.technicalitiesmc.base.Technicalities;
 import com.technicalitiesmc.base.block.*;
 import com.technicalitiesmc.base.tile.*;
-import com.technicalitiesmc.util.item.ItemBlockBase;
+import com.technicalitiesmc.lib.item.ItemBlockBase;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;

@@ -4,13 +4,13 @@ import com.technicalitiesmc.api.pneumatics.EnumTubeDirection;
 import com.technicalitiesmc.api.pneumatics.IPneumaticTube;
 import com.technicalitiesmc.api.pneumatics.ITubeStack;
 import com.technicalitiesmc.api.pneumatics.TubeModule;
+import com.technicalitiesmc.lib.inventory.widget.WidgetGhostSlot;
 import com.technicalitiesmc.pneumatics.TKPneumatics;
-import com.technicalitiesmc.pneumatics.client.gui.GuiSorter;
-import com.technicalitiesmc.util.inventory.GhostSlotItemHandler;
-import com.technicalitiesmc.util.inventory.SimpleContainer;
-import net.minecraft.client.gui.inventory.GuiContainer;
+import com.technicalitiesmc.pneumatics.inventory.WidgetColorSwitcher;
+import com.technicalitiesmc.pneumatics.tube.IWindowModule;
+import elec332.core.inventory.window.IWindowModifier;
+import elec332.core.inventory.window.Window;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Slot;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,8 +20,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.ArrayUtils;
@@ -31,7 +29,7 @@ import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class TMSorter extends TubeModule.ContainerModule {
+public class TMSorter extends TubeModule implements IWindowModule, IColorCycler, IWindowModifier {
 
     private static final ResourceLocation PATH_SINGLE = new ResourceLocation(TKPneumatics.MODID, "block/tube/sorter/single");
     // private static final ResourceLocation PATH_MASTER = new ResourceLocation(TKPneumatics.MODID, "block/tube/sorter/single");
@@ -116,36 +114,42 @@ public class TMSorter extends TubeModule.ContainerModule {
             return other.onActivated(player, hand);
         }
         if (!getTube().getTubeWorld().isRemote) {
-            openGUI(player);
+            openWindow.accept(this, player);
         }
         return true;
     }
 
     @Override
-    public SimpleContainer createContainer(EntityPlayer player) {
-        SimpleContainer container = new SimpleContainer();
-        for (int i = 0; i < filters.length; i++) {
-            container.addSlotToContainer(new GhostSlotItemHandler(filterInv, i, 53 + (i % 4) * 18, 24 + (i >= 4 ? 30 : 0), false));
-        }
-
-        for (int i = 0; i < 3; ++i) {
-            for (int j = 0; j < 9; ++j) {
-                container.addSlotToContainer(new Slot(player.inventory, j + i * 9 + 9, 8 + j * 18, (other != null ? 92 : 51) + i * 18));
-            }
-        }
-        for (int k = 0; k < 9; ++k) {
-            container.addSlotToContainer(new Slot(player.inventory, k, 8 + k * 18, (other != null ? 92 : 51) + 58));
-        }
-
-        return container;
+    public Window createWindow(Object... objects) {
+        boolean big = other != null;
+        return new Window(176, big ? 174 : 133, this);
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
-    public GuiContainer createGUI(EntityPlayer player) {
-        return new GuiSorter(createContainer(player), this, other != null);
+    public void modifyWindow(Window window, Object... objects) {
+        boolean big = other != null;
+        window.setBackground(new ResourceLocation(TKPneumatics.MODID, "textures/gui/tube_module/sorter" + (big ? 8 : 4) + ".png"));
+        int offsetMin = -84;
+        offsetMin += big ? 92 : 51;
+        window.setOffset(offsetMin);
+        for (int i = 0; i < filters.length; i++) {
+            window.addWidget(new WidgetGhostSlot(filterInv, i, 53 + (i % 4) * 18, 24 + (i >= 4 ? 30 : 0), false));
+        }
+        window.addPlayerInventoryToContainer();
+        for (int j = 0; j < (big ? 2 : 1); j++) {
+            for (int i = 0; i < 4; i++) {
+                int id = i + j * 4;
+                int x = 57 + i * 18, y = 13 + j * 60;
+                window.addWidget(new WidgetColorSwitcher(x, y, this, id));
+            }
+            int x = 24, y = !big ? 24 : (35 + j * 16);
+            window.addWidget(new WidgetColorSwitcher(x, y, this, -1 - j));
+        }
+        int x = !big ? 127 : 131, y = !big ? 32 : 43;
+        window.addWidget(new WidgetColorSwitcher(x, y, this, -3));
     }
 
+    @Override
     public EnumDyeColor getColor(int id) {
         if (id >= 0) {
             return filters[id].color;
@@ -160,6 +164,7 @@ public class TMSorter extends TubeModule.ContainerModule {
         }
     }
 
+    @Override
     public void cycleColor(int id, boolean backwards) {
         EnumDyeColor prevColor = getColor(id);
         int meta = (prevColor != null ? prevColor.getMetadata() : 16) + (backwards ? -1 : 1);

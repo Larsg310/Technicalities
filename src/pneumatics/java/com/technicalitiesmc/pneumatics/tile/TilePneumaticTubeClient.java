@@ -4,14 +4,16 @@ import com.technicalitiesmc.api.pneumatics.EnumTubeDirection;
 import com.technicalitiesmc.api.pneumatics.IPneumaticTube;
 import com.technicalitiesmc.api.pneumatics.ITubeStack;
 import com.technicalitiesmc.api.pneumatics.TubeModule;
+import com.technicalitiesmc.lib.client.SpecialRenderer;
 import com.technicalitiesmc.pneumatics.client.TESRPneumaticTube;
-import com.technicalitiesmc.util.client.SpecialRenderer;
+import elec332.core.world.WorldHelper;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 
+import javax.annotation.Nonnull;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -54,6 +56,9 @@ public class TilePneumaticTubeClient extends TilePneumaticTubeBase {
                     this.connections.remove(face);
                 }
             }
+            WorldHelper.markBlockForRenderUpdate(world, pos);
+        } else if (id == 0){
+            onDataPacket(2, tag.getCompoundTag("scon"));
         } else {
             super.onDataPacket(id, tag);
         }
@@ -75,6 +80,7 @@ public class TilePneumaticTubeClient extends TilePneumaticTubeBase {
 			}
 		}
 	*/
+    @Nonnull
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
         return super.getRenderBoundingBox().grow(0.25);

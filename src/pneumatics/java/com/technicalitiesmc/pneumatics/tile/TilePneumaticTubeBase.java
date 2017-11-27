@@ -2,10 +2,10 @@ package com.technicalitiesmc.pneumatics.tile;
 
 import com.technicalitiesmc.api.pneumatics.IPneumaticTube;
 import com.technicalitiesmc.api.pneumatics.TubeModule;
+import com.technicalitiesmc.lib.block.TileBase;
+import com.technicalitiesmc.lib.simple.SimpleCapability;
 import com.technicalitiesmc.pneumatics.tube.TubeStack;
 import com.technicalitiesmc.pneumatics.tube.module.ModuleManager;
-import com.technicalitiesmc.util.block.TileBase;
-import com.technicalitiesmc.util.simple.SimpleCapability;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;

@@ -3,9 +3,9 @@ package com.technicalitiesmc.pneumatics.tile;
 import com.technicalitiesmc.api.pneumatics.EnumTubeDirection;
 import com.technicalitiesmc.api.pneumatics.ITubeStack;
 import com.technicalitiesmc.api.pneumatics.TubeModule;
+import com.technicalitiesmc.lib.inventory.SimpleItemHandler;
 import com.technicalitiesmc.pneumatics.tube.TubeStack;
 import com.technicalitiesmc.pneumatics.tube.TubeTicker;
-import com.technicalitiesmc.util.inventory.SimpleItemHandler;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,6 +17,7 @@ import net.minecraftforge.items.IItemHandler;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
+import javax.annotation.Nonnull;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -41,6 +42,7 @@ public class TilePneumaticTubeServer extends TilePneumaticTubeBase {
                 tube.modules.remove(face.getOpposite());
                 tube.markDirty();
             }
+            sync();
             return true;
         }
         if (isConnected(face) && getNeighbor(face).isTube()) { // Dual module
@@ -64,7 +66,8 @@ public class TilePneumaticTubeServer extends TilePneumaticTubeBase {
 
             markDirty();
             tube.markDirty();
-
+            tube.sync();
+            sync();
             return true;
         } else { // Regular module
             TubeModule module = type.placeSingle(this, face);
@@ -78,7 +81,7 @@ public class TilePneumaticTubeServer extends TilePneumaticTubeBase {
             }
 
             markDirty();
-
+            sync();
             return true;
         }
     }
@@ -99,12 +102,13 @@ public class TilePneumaticTubeServer extends TilePneumaticTubeBase {
                         if (other == null || !other.getMiddle().preventsConnection()) {
                             neighbors.put(side, new Neighbor((TilePneumaticTubeServer) te.getCapability(CAPABILITY, null)));
                             markDirty();
+                            sync();
                             return;
                         }
                     } else if (te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite())) {
-                        neighbors.put(side,
-                                new Neighbor(te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite())));
+                        neighbors.put(side, new Neighbor(te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite())));
                         markDirty();
+                        sync();
                         return;
                     }
                 }
@@ -119,6 +123,7 @@ public class TilePneumaticTubeServer extends TilePneumaticTubeBase {
                 markDirty();
             }
         }
+        sync();
     }
 
     @Override
@@ -183,13 +188,25 @@ public class TilePneumaticTubeServer extends TilePneumaticTubeBase {
     }
 
     public void sendConnections(){
+        sendPacket(2, writeConnections());
+    }
+
+    private NBTTagCompound writeConnections(){
         NBTTagCompound tag = new NBTTagCompound();
         int connections = 0;
         for (EnumFacing face : neighbors.keySet()) {
             connections |= 1 << face.ordinal();
         }
         tag.setInteger("sides", connections);
-        sendPacket(2, tag);
+        return tag;
+    }
+
+    @Nonnull
+    @Override
+    public NBTTagCompound getUpdateTag() {
+        NBTTagCompound ret = super.getUpdateTag();
+        ret.setTag("scon", writeConnections());
+        return ret;
     }
 
     /*
@@ -212,6 +229,7 @@ public class TilePneumaticTubeServer extends TilePneumaticTubeBase {
             super(1, TilePneumaticTubeServer.this::onInventoryStackInserted);
         }
 
+        @Nonnull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             return ItemStack.EMPTY;

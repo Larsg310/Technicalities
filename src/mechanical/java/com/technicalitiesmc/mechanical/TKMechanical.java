@@ -1,10 +1,10 @@
 package com.technicalitiesmc.mechanical;
 
-import com.technicalitiesmc.Technicalities;
 import com.technicalitiesmc.api.mechanical.IGearAttachable;
 import com.technicalitiesmc.api.mechanical.IShaftAttachable;
+import com.technicalitiesmc.base.Technicalities;
+import com.technicalitiesmc.lib.simple.SimpleCapability;
 import com.technicalitiesmc.mechanical.kinesis.KineticManager;
-import com.technicalitiesmc.util.simple.SimpleCapability;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;

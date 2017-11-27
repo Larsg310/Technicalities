@@ -1,8 +1,8 @@
 package com.technicalitiesmc.base.init;
 
-import com.technicalitiesmc.Technicalities;
+import com.technicalitiesmc.base.Technicalities;
 import com.technicalitiesmc.base.item.ItemRecipeBook;
-import com.technicalitiesmc.util.item.ItemBase;
+import com.technicalitiesmc.lib.item.ItemBase;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;

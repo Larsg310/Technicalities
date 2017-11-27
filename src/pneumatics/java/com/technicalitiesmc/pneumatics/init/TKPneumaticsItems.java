@@ -1,6 +1,6 @@
 package com.technicalitiesmc.pneumatics.init;
 
-import com.technicalitiesmc.Technicalities;
+import com.technicalitiesmc.base.Technicalities;
 import com.technicalitiesmc.pneumatics.TKPneumatics;
 import com.technicalitiesmc.pneumatics.item.ItemTubeModule;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;

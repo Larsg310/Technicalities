@@ -1,10 +1,10 @@
 package com.technicalitiesmc.pneumatics.client;
 
+import com.technicalitiesmc.lib.Tint;
+import com.technicalitiesmc.lib.client.RenderHelper;
 import com.technicalitiesmc.pneumatics.TKPneumatics;
 import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeClient;
 import com.technicalitiesmc.pneumatics.tube.TubeStack;
-import com.technicalitiesmc.util.Tint;
-import com.technicalitiesmc.util.client.RenderHelper;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.GlStateManager.*;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;

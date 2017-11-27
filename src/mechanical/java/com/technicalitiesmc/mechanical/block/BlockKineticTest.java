@@ -1,7 +1,7 @@
 package com.technicalitiesmc.mechanical.block;
 
+import com.technicalitiesmc.lib.block.BlockBase;
 import com.technicalitiesmc.mechanical.tile.TileKineticTest;
-import com.technicalitiesmc.util.block.BlockBase;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;

@@ -1,13 +1,13 @@
 package com.technicalitiesmc.pneumatics.block;
 
 import com.technicalitiesmc.api.pneumatics.TubeModule;
+import com.technicalitiesmc.lib.IndexedAABB;
+import com.technicalitiesmc.lib.block.BlockBase;
 import com.technicalitiesmc.pneumatics.init.TKPneumaticsItems;
 import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeBase;
 import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeClient;
 import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeServer;
 import com.technicalitiesmc.pneumatics.tube.module.ModuleManager;
-import com.technicalitiesmc.util.IndexedAABB;
-import com.technicalitiesmc.util.block.BlockBase;
 import elec332.core.util.UniversalUnlistedProperty;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;

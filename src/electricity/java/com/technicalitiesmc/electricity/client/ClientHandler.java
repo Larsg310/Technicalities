@@ -1,7 +1,7 @@
 package com.technicalitiesmc.electricity.client;
 
-import com.technicalitiesmc.Technicalities;
 import com.technicalitiesmc.api.electricity.IEnergyObject;
+import com.technicalitiesmc.base.Technicalities;
 import com.technicalitiesmc.electricity.util.Wire;
 import elec332.core.world.WorldHelper;
 import net.minecraft.client.Minecraft;
@@ -22,7 +22,6 @@ public class ClientHandler {
 
 	@SubscribeEvent
 	public void renderStuff(RenderWorldLastEvent event){
-		System.out.println(event);
 		int world = WorldHelper.getDimID(Minecraft.getMinecraft().world);
 		for (IEnergyObject o : Technicalities.electricityGridHandler.wirez){
 			System.out.println(o + "");

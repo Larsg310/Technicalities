@@ -1,6 +1,7 @@
 package com.technicalitiesmc.pneumatics.tube;
 
-import com.technicalitiesmc.Technicalities;
+import com.technicalitiesmc.base.Technicalities;
+import com.technicalitiesmc.lib.simple.SimpleCapability;
 import com.technicalitiesmc.pneumatics.TKPneumatics;
 import com.technicalitiesmc.pneumatics.network.PacketStackJoinNetwork;
 import com.technicalitiesmc.pneumatics.network.PacketStackLeaveNetwork;
@@ -8,7 +9,6 @@ import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeBase;
 import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeClient;
 import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeServer;
 import com.technicalitiesmc.pneumatics.tile.TilePneumaticTubeServer.Neighbor;
-import com.technicalitiesmc.util.simple.SimpleCapability;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import net.minecraft.block.Block;

@@ -2,7 +2,7 @@ package com.technicalitiesmc.electricity.compat.tkmechanical;
 
 import com.technicalitiesmc.electricity.TKElectricity;
 import com.technicalitiesmc.electricity.util.TKEResourceLocation;
-import com.technicalitiesmc.util.block.BlockTileBaseWithFacing;
+import com.technicalitiesmc.lib.block.BlockTileBaseWithFacing;
 import elec332.core.api.module.ElecModule;
 import elec332.core.util.RegistryHelper;
 import net.minecraft.block.Block;

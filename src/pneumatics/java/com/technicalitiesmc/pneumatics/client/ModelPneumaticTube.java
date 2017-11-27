@@ -1,8 +1,8 @@
 package com.technicalitiesmc.pneumatics.client;
 
+import com.technicalitiesmc.lib.client.WrappedModel;
 import com.technicalitiesmc.pneumatics.block.BlockPneumaticTube;
 import com.technicalitiesmc.pneumatics.block.BlockPneumaticTube.Connection;
-import com.technicalitiesmc.util.client.WrappedModel;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;

@@ -1,7 +1,7 @@
 package com.technicalitiesmc.base.block;
 
 import com.technicalitiesmc.base.tile.TileCrate;
-import com.technicalitiesmc.util.block.BlockBase;
+import com.technicalitiesmc.lib.block.BlockBase;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;

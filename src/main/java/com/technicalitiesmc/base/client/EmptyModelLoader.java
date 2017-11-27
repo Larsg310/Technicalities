@@ -1,6 +1,6 @@
 package com.technicalitiesmc.base.client;
 
-import com.technicalitiesmc.Technicalities;
+import com.technicalitiesmc.base.Technicalities;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -15,13 +15,17 @@ import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
+@SideOnly(Side.CLIENT)
 public enum EmptyModelLoader implements ICustomModelLoader {
+
     INSTANCE;
 
     private final ResourceLocation location = new ResourceLocation(Technicalities.MODID, "block/empty");

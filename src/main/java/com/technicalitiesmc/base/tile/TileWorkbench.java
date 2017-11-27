@@ -1,13 +1,26 @@
 package com.technicalitiesmc.base.tile;
 
+import com.technicalitiesmc.base.Technicalities;
+import com.technicalitiesmc.base.init.TKBaseBlocks;
 import com.technicalitiesmc.base.init.TKBaseItems;
+import com.technicalitiesmc.base.inventory.WidgetRecipeBook;
 import com.technicalitiesmc.base.item.ItemRecipeBook;
 import com.technicalitiesmc.base.item.ItemRecipeBook.Recipe;
-import com.technicalitiesmc.util.block.TileBase;
-import com.technicalitiesmc.util.inventory.SimpleItemHandler;
-import com.technicalitiesmc.util.stack.StackList;
+import com.technicalitiesmc.lib.block.TileBase;
+import com.technicalitiesmc.lib.inventory.SimpleItemHandler;
+import com.technicalitiesmc.lib.inventory.widget.WidgetInsertingSlot;
+import com.technicalitiesmc.lib.stack.StackList;
+import elec332.core.api.inventory.IHasProgressBar;
 import elec332.core.inventory.ContainerNull;
+import elec332.core.inventory.widget.Widget;
+import elec332.core.inventory.widget.WidgetButton;
+import elec332.core.inventory.widget.WidgetProgressArrow;
+import elec332.core.inventory.widget.WidgetText;
+import elec332.core.inventory.widget.slot.WidgetSlot;
+import elec332.core.inventory.window.ISimpleWindowFactory;
+import elec332.core.inventory.window.Window;
 import elec332.core.util.NBTHelper;
+import net.minecraft.client.Minecraft;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -15,6 +28,7 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -27,7 +41,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class TileWorkbench extends TileBase {
+public class TileWorkbench extends TileBase implements ISimpleWindowFactory {
 
     public static final int INV_START = 0, INV_SIZE = 2 * 9;
     public static final int GRID_START = INV_START + INV_SIZE, GRID_SIZE = 3 * 3 + 1;
@@ -211,6 +225,79 @@ public class TileWorkbench extends TileBase {
         } else {
             super.onDataPacket(id, tag);
         }
+    }
+
+    @Override
+    public void modifyWindow(Window window, Object... objects) {
+
+        IItemHandler inventory = getInventory();
+        IItemHandler grid = getCraftingGrid();
+
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 3; ++j) {
+                window.addWidget(new WidgetSlot(grid, j + i * 3, 31 + j * 18, 18 + i * 18));
+            }
+        }
+
+        window.addWidget(new WidgetSlot(grid, 9, 125, 36) {
+
+            @Override
+            public boolean canMergeSlot(ItemStack stack) {
+                return false;
+            }
+
+            @Override
+            public boolean isItemValid(ItemStack stack) {
+                return false;
+            }
+
+        });
+
+        window.addWidget(new WidgetText(-1, 6, true, TKBaseBlocks.workbench::getLocalizedName).centerWindowX());
+        window.addWidget(new WidgetText(8, 116, false, () -> Minecraft.getMinecraft().player.inventory.getDisplayName().getUnformattedText()));
+
+        window.addWidget(new WidgetInsertingSlot(inventory, TileWorkbench.BOOK_START, 8, 36));
+        window.addWidget(new WidgetInsertingSlot(inventory, TileWorkbench.BOOK_START + 1, 152, 54));
+
+        window.addWidget(new Widget(150, 35, 150, 35, 20, 50).setBackground(new ResourceLocation(Technicalities.MODID, "textures/gui/workbench.png")));
+
+        window.addWidget(new WidgetProgressArrow(90, 35, new IHasProgressBar() {
+            @Override
+            public int getProgress() {
+                return 0;
+            }
+
+            @Override
+            public float getProgressScaled(int i) {
+                return 0;
+            }
+
+        }, true));
+
+        for (int i = 0; i < 2; ++i) {
+            for (int j = 0; j < 9; ++j) {
+                window.addWidget(new WidgetInsertingSlot(inventory, TileWorkbench.INV_START + j + i * 9, 8 + j * 18, 77 + i * 18));
+            }
+        }
+
+        window.addWidget(new WidgetButton(152, 17, 16, 16).addButtonEvent(widgetButton -> {
+            SimpleItemHandler inv = getInventory();
+            ItemStack book = inv.getStackInSlot(TileWorkbench.BOOK_START).copy();
+            if (!book.isEmpty() && consumeInk(true) && ItemRecipeBook.addRecipe(book, Recipe.fromGrid(getGrid(), world))) {
+                inv.setStackInSlot(TileWorkbench.BOOK_START, book);
+                consumeInk(false);
+            }
+        }));
+
+        window.addWidget(new WidgetRecipeBook(this, BOOK_START));
+
+        window.setOffset(43);
+        window.addPlayerInventoryToContainer();
+    }
+
+    @Override
+    public int getYSize() {
+        return 209;
     }
 
     public class ExposedInventory implements IItemHandler, Iterable<ItemStack> {

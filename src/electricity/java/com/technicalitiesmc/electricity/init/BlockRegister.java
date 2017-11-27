@@ -4,7 +4,7 @@ import com.technicalitiesmc.electricity.TKElectricity;
 import com.technicalitiesmc.electricity.tile.TileTestGenerator;
 import com.technicalitiesmc.electricity.tile.TileTestReceiver;
 import com.technicalitiesmc.electricity.util.TKEResourceLocation;
-import com.technicalitiesmc.util.block.BlockTileBaseWithFacing;
+import com.technicalitiesmc.lib.block.BlockTileBaseWithFacing;
 import elec332.core.api.registration.IBlockRegister;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;

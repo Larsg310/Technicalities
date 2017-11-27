@@ -3,8 +3,8 @@ package com.technicalitiesmc.pneumatics.tube.module;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.technicalitiesmc.api.pneumatics.TubeModule;
+import com.technicalitiesmc.lib.simple.SimpleRegistry;
 import com.technicalitiesmc.pneumatics.TKPneumatics;
-import com.technicalitiesmc.util.simple.SimpleRegistry;
 import net.minecraftforge.registries.ForgeRegistry;
 
 import java.util.Set;

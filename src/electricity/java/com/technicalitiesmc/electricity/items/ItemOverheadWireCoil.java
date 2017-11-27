@@ -1,12 +1,12 @@
 package com.technicalitiesmc.electricity.items;
 
-import com.technicalitiesmc.Technicalities;
 import com.technicalitiesmc.api.TechnicalitiesAPI;
 import com.technicalitiesmc.api.electricity.EnergyType;
 import com.technicalitiesmc.api.electricity.IEnergyObject;
 import com.technicalitiesmc.api.electricity.WireConnectionMethod;
 import com.technicalitiesmc.api.electricity.WireThickness;
 import com.technicalitiesmc.api.util.ConnectionPoint;
+import com.technicalitiesmc.base.Technicalities;
 import com.technicalitiesmc.electricity.util.EnumWireType;
 import com.technicalitiesmc.electricity.util.TKEResourceLocation;
 import com.technicalitiesmc.electricity.util.Wire;

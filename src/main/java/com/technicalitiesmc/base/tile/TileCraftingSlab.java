@@ -1,8 +1,8 @@
 package com.technicalitiesmc.base.tile;
 
 import com.technicalitiesmc.base.client.render.TESRCraftingSlab;
-import com.technicalitiesmc.util.block.TileBase;
-import com.technicalitiesmc.util.client.SpecialRenderer;
+import com.technicalitiesmc.lib.block.TileBase;
+import com.technicalitiesmc.lib.client.SpecialRenderer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;

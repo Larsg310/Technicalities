@@ -9,9 +9,12 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.item.ItemBed;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import static net.minecraft.client.renderer.GlStateManager.*;
 
+@SideOnly(Side.CLIENT)
 public class TESRCraftingSlab extends TileEntitySpecialRenderer<TileCraftingSlab> {
 
     @Override
@@ -80,7 +83,7 @@ public class TESRCraftingSlab extends TileEntitySpecialRenderer<TileCraftingSlab
 
         pushMatrix();
         translate(-0.5F, -0.5F, -0.5F);
-        com.technicalitiesmc.util.client.RenderHelper.renderStack(stack, transform, alpha);
+        com.technicalitiesmc.lib.client.RenderHelper.renderStack(stack, transform, alpha);
         popMatrix();
     }
 

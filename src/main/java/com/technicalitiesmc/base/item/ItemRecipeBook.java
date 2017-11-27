@@ -1,6 +1,6 @@
 package com.technicalitiesmc.base.item;
 
-import com.technicalitiesmc.util.item.ItemBase;
+import com.technicalitiesmc.lib.item.ItemBase;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;

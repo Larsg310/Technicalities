@@ -1,13 +1,14 @@
 package com.technicalitiesmc.pneumatics;
 
 import com.google.common.base.Throwables;
-import com.technicalitiesmc.Technicalities;
 import com.technicalitiesmc.api.pneumatics.TubeModule;
-import com.technicalitiesmc.pneumatics.init.TKPneumaticsBlocks;
+import com.technicalitiesmc.base.Technicalities;
 import com.technicalitiesmc.pneumatics.network.*;
+import com.technicalitiesmc.pneumatics.tube.IWindowModule;
 import com.technicalitiesmc.pneumatics.tube.TubeTicker;
 import elec332.core.api.network.INetworkHandler;
 import elec332.core.api.network.ModNetworkHandler;
+import elec332.core.inventory.window.WindowManager;
 import elec332.core.java.ReflectionHelper;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,6 +20,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
 import java.lang.reflect.Field;
@@ -55,15 +57,16 @@ public class TKPneumatics {
         proxy.init();
 
         // Register GUI handler
-        Technicalities.guiHandler.add(TKPneumaticsBlocks.pneumatic_tube, new TKPGuiHandler());
+        TKPGuiHandler guiHandler = new TKPGuiHandler();
+        NetworkRegistry.INSTANCE.registerGuiHandler(this, guiHandler);
+        WindowManager.INSTANCE.register(guiHandler);
 
         try {
             Field field = TubeModule.ContainerModule.class.getDeclaredField("openGui");
             ReflectionHelper.makeFinalFieldModifiable(field);
             field.set(null, (BiConsumer<TubeModule.ContainerModule, EntityPlayer>) (mod, player) -> {
                 BlockPos pos = mod.getTube().getTubePos();
-                player.openGui(Technicalities.MODID, mod.getSide().ordinal(), mod.getTube().getTubeWorld(), pos.getX(), pos.getY(),
-                        pos.getZ());
+                player.openGui(this, mod.getSide().ordinal(), mod.getTube().getTubeWorld(), pos.getX(), pos.getY(), pos.getZ());
             });
 
             field = TubeModule.class.getDeclaredField("sendToServer");
@@ -73,6 +76,10 @@ public class TKPneumatics {
                 cons.accept(buf);
                 networkHandler.sendToServer(new PacketModuleInfo(mod.getTube().getTubePos(), mod.getSide(), buf));
             });
+            field = IWindowModule.class.getDeclaredField("openWindow");
+            ReflectionHelper.makeFinalFieldModifiable(field);
+            field.set(null, (BiConsumer<TubeModule, EntityPlayer>) (module, player) ->
+                    WindowManager.openWindow(player, guiHandler, module.getTube().getTubeWorld(), module.getTube().getTubePos(), (byte) module.getSide().ordinal()));
         } catch (Exception ex) {
             throw Throwables.propagate(ex);
         }
