@@ -1,0 +1,20 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"textures": {
+			"all": "technicalities:blocks/valve",
+			"base": "technicalities:blocks/valve",
+			"particle": "technicalities:blocks/valve"
+		},
+		"model": "technicalities:cube_all_multilayer",
+		"transform": "forge:default-block"
+	},
+	"variants": {
+        "mode": {
+			"in":   { "textures": { "overlay": "technicalities:blocks/valve_in"  } },
+			"out":  { "textures": { "overlay": "technicalities:blocks/valve_out" } },
+			"none": { "model": "minecraft:cube_all" }
+		},
+        "inventory": [{ }]
+    }
+}

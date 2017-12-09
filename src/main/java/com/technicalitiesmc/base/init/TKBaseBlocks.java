@@ -1,8 +1,18 @@
 package com.technicalitiesmc.base.init;
 
 import com.technicalitiesmc.base.Technicalities;
-import com.technicalitiesmc.base.block.*;
-import com.technicalitiesmc.base.tile.*;
+import com.technicalitiesmc.base.block.BlockBarrel;
+import com.technicalitiesmc.base.block.BlockChannel;
+import com.technicalitiesmc.base.block.BlockCraftingSlab;
+import com.technicalitiesmc.base.block.BlockCrate;
+import com.technicalitiesmc.base.block.BlockValve;
+import com.technicalitiesmc.base.block.BlockWorkbench;
+import com.technicalitiesmc.base.tile.TileBarrel;
+import com.technicalitiesmc.base.tile.TileChannel;
+import com.technicalitiesmc.base.tile.TileCraftingSlab;
+import com.technicalitiesmc.base.tile.TileCrate;
+import com.technicalitiesmc.base.tile.TileValve;
+import com.technicalitiesmc.base.tile.TileWorkbench;
 import com.technicalitiesmc.lib.item.ItemBlockBase;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -25,6 +35,8 @@ public class TKBaseBlocks {
 
     public static Block channel = new BlockChannel();
 
+    public static Block valve = new BlockValve();
+
     @SubscribeEvent
     public static void onBlockRegistration(RegistryEvent.Register<Block> event) {
         IForgeRegistry<Block> registry = event.getRegistry();
@@ -34,6 +46,7 @@ public class TKBaseBlocks {
         register(registry, crafting_slab, "crafting_slab", TileCraftingSlab.class);
         register(registry, workbench, "workbench", TileWorkbench.class);
         register(registry, channel, "channel", TileChannel.class);
+        register(registry, valve, "valve", TileValve.class);
     }
 
     @SubscribeEvent
@@ -45,6 +58,7 @@ public class TKBaseBlocks {
         registerItem(registry, crafting_slab);
         registerItem(registry, workbench);
         registerItem(registry, channel);
+        registerItem(registry, valve);
     }
 
     private static void register(IForgeRegistry<Block> registry, Block block, String name) {
