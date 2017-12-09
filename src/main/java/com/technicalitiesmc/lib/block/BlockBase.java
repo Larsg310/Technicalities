@@ -13,12 +13,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -33,9 +35,13 @@ public class BlockBase extends AbstractBlock {
         super(material);
     }
 
+    protected <T extends TileEntity> T getTile(IBlockAccess world, BlockPos pos) {
+        return (T) world.getTileEntity(pos);
+    }
+
     private String unlName;
 
-    protected String createUnlocalizedName(){
+    protected String createUnlocalizedName() {
         return "tile." + getRegistryName().toString().replace(":", ".").toLowerCase();
     }
 
@@ -48,7 +54,7 @@ public class BlockBase extends AbstractBlock {
     @Nonnull
     @Override
     public String getUnlocalizedName() {
-        if (this.unlName == null){
+        if (this.unlName == null) {
             unlName = createUnlocalizedName();
         }
         return unlName;
@@ -93,7 +99,6 @@ public class BlockBase extends AbstractBlock {
         }
     }
 
-    @Deprecated
     @Nonnull
     @SideOnly(Side.CLIENT)
     @Override
@@ -120,7 +125,6 @@ public class BlockBase extends AbstractBlock {
         return state.getBoundingBox(world, pos);
     }
 
-    @Deprecated
     @Override
     public boolean onBlockActivatedC(World world, BlockPos pos, EntityPlayer player, EnumHand hand, IBlockState state, EnumFacing facing, float hitX, float hitY, float hitZ) {
         RayTraceResult hit = rayTrace(state, world, pos, player);
@@ -189,11 +193,11 @@ public class BlockBase extends AbstractBlock {
         return Minecraft.getMinecraft().playerController.getBlockReachDistance();
     }
 
-    public boolean openTileWindow(EntityPlayer player, World world, BlockPos pos){
+    public boolean openTileWindow(EntityPlayer player, World world, BlockPos pos) {
         return openWindow(player, Technicalities.proxy, world, pos, -1);
     }
 
-    public boolean openWindow(EntityPlayer player, IWindowHandler windowHandler, World world, BlockPos pos, int id){
+    public boolean openWindow(EntityPlayer player, IWindowHandler windowHandler, World world, BlockPos pos, int id) {
         WindowManager.openWindow(player, windowHandler, world, pos, (byte) id);
         return true;
     }
