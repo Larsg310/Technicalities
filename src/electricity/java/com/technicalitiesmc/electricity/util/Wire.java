@@ -16,12 +16,14 @@ import javax.annotation.Nullable;
 public class Wire implements IEnergyObject {
 
 	public Wire(ConnectionPoint start, Vec3d startV, ConnectionPoint end, Vec3d endV, WireData wireData){
-		this.startPos = start;
-		this.endPos = end;
-		this.start = startV;
-		this.end = endV;
-		this.renderStart = startV.addVector(start.getPos().getX(), start.getPos().getY(), start.getPos().getZ());
-		this.renderEnd = endV.addVector(end.getPos().getX(), end.getPos().getY(), end.getPos().getZ());
+		boolean n = start.hashCode() > end.hashCode();
+		this.startPos = n ? start : end;
+		this.endPos = n ? end : start;
+		n = startV.hashCode() > endV.hashCode();
+		this.start = n ? startV : endV;
+		this.end = n ? endV : startV;
+		this.renderStart = this.start.addVector(startPos.getPos().getX(), startPos.getPos().getY(), startPos.getPos().getZ());
+		this.renderEnd = this.end.addVector(endPos.getPos().getX(), endPos.getPos().getY(), endPos.getPos().getZ());
 		this.wireData = wireData;
 	}
 
@@ -49,7 +51,6 @@ public class Wire implements IEnergyObject {
 		return wireData.getConnectionMethod() == WireConnectionMethod.OVERHEAD;
 	}
 
-	//@Override
 	public double getResistance() {
 		return wireData.getResistivity(getLength());
 	}
@@ -70,6 +71,15 @@ public class Wire implements IEnergyObject {
 	@Override
 	public ConnectionPoint getConnectionPoint(EnumFacing side, Vec3d hitVec) {
 		return null;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof Wire ? eq((Wire) obj) : super.equals(obj);
+	}
+
+	public boolean eq(Wire wire){
+		return start.equals(wire.start) && end.equals(wire.end) && startPos.equals(wire.startPos) && endPos.equals(wire.endPos) && wireData.equals(wire.wireData);
 	}
 
 }

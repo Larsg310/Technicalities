@@ -71,12 +71,17 @@ repositories {
 		//Waila
 		url "http://tehnut.info/maven"
 	}
+	maven {
+		//MCMP
+		url "http://maven.amadornes.com"
+	}
 }
 
 // Add compiletime and runtime dependencies
 dependencies {
 	runtimeOnly "mezz.jei:jei_${mc_version}:${jei_version}"
 	runtimeOnly "mcp.mobius.waila:Hwyla:${waila_version}"
+	deobfCompile "MCMultiPart2:MCMultiPart:${mcmp_version}"
 }
 
 // Set a classifier for the main jar file

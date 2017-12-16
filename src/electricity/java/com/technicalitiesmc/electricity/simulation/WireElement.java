@@ -13,11 +13,14 @@ public class WireElement extends AbstractResistorElement<Wire> {
 
 	public WireElement(Wire energyTile) {
 		super(energyTile);
+		resistance = energyTile.getResistance();
 	}
+
+	private final double resistance;
 
 	@Override
 	public double getResistance() {
-		return 0.000001;
+		return resistance;
 	}
 
 	@Nullable
@@ -28,8 +31,6 @@ public class WireElement extends AbstractResistorElement<Wire> {
 
 	@Override
 	public void apply() {
-
-
 	}
 
 	@Override
@@ -37,7 +38,9 @@ public class WireElement extends AbstractResistorElement<Wire> {
 		return super.isWire();
 	}
 
-	/*@Override
+	/*   Tests, don't remove
+
+	@Override
 	public void stamp() {
 		getCircuit().stampVoltageSource(nodes[0], nodes[1], voltSource, 0);
 		getCircuit().stampResistor(nodes[0], nodes[1], 1);
@@ -61,6 +64,7 @@ public class WireElement extends AbstractResistorElement<Wire> {
 	@Override
 	public boolean isWire() {
 		return true;
-	}*/
+	}
+	*/
 
 }
