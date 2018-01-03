@@ -132,7 +132,7 @@ public class BlockBase extends AbstractBlock {
     }
 
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, RayTraceResult hit) {
-        return super.onBlockActivated(world, pos, state, player, hand, hit.sideHit, (float) hit.hitVec.x - pos.getX(),
+        return super.onBlockActivatedC(world, pos, player, hand, state, hit.sideHit, (float) hit.hitVec.x - pos.getX(),
                 (float) hit.hitVec.y - pos.getY(), (float) hit.hitVec.z - pos.getZ());
     }
 
