@@ -42,14 +42,14 @@ public enum GlobalHeatHandler {
 
     @SubscribeEvent
     public void tickWorld(TickEvent.WorldTickEvent event){
-        if (event.side == Side.CLIENT){
+        if (event.side == Side.CLIENT || event.phase == TickEvent.Phase.END){
             return;
         }
         WorldHeatHandler h = (WorldHeatHandler) event.world.getCapability(TechnicalitiesAPI.WORLD_HEAT_CAP, null);
         Preconditions.checkNotNull(h); //You never know...
         h.update(event.world, ((ChunkProviderServer) event.world.getChunkProvider()).id2ChunkMap.values());
     }
-
+/*
     @SuppressWarnings("all")
     @SubscribeEvent(receiveCanceled = true)
     public void onNeighborChange(BlockEvent.NeighborNotifyEvent event){
@@ -62,7 +62,7 @@ public enum GlobalHeatHandler {
                 }
             });
         }
-    }
+    }*/
 
     @SuppressWarnings("all")
     private class HeatCapHandler implements ICapabilitySerializable<NBTTagCompound> {

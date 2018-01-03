@@ -56,7 +56,7 @@ public final class WorldHeatHandler implements IWorldHeatHandler, INBTSerializab
     @Nullable
     @Override
     public PositionedHeatData getHeatObject(BlockPos pos) {
-        return null;
+        return dataMap.get(pos);
     }
 
     private PositionedHeatData createNew(World world, BlockPos pos){
@@ -75,12 +75,12 @@ public final class WorldHeatHandler implements IWorldHeatHandler, INBTSerializab
     }
 
     @Override
-    public void addEnergyToBlock(TileEntity tile, double energy, double temp) {
+    public void addEnergyToBlock(TileEntity from, BlockPos to, double energy, double temp) {
         energy = energy * HeatConstants.THERMAL_SCALAR;
         if (Math.abs(energy) < 10){ //Not worth the calculation costs
             return;
         }
-        heatToProcess.offer(new CachedHeatInfo(DimensionCoordinate.fromTileEntity(tile), energy, temp));
+        heatToProcess.offer(new CachedHeatInfo(new DimensionCoordinate(from.getWorld(), to), energy, temp));
     }
 
     @Override
@@ -97,10 +97,14 @@ public final class WorldHeatHandler implements IWorldHeatHandler, INBTSerializab
     }
 
     public void update(World world, Collection<Chunk> chunks){
+        if (WorldHelper.getDimID(world) != 0){
+            return;
+        }
         CachedHeatInfo chi = heatToProcess.poll();
         while (chi != null){
             BlockPos pos = chi.dimCoord.getPos();
             if (!WorldHelper.chunkLoaded(world, pos)){
+                chi = null;
                 continue;
             }
             if (chi.dirs == null){
@@ -112,9 +116,11 @@ public final class WorldHeatHandler implements IWorldHeatHandler, INBTSerializab
                     if (chi.neg()){
                         energy = -energy;
                         if (objTemp < chi.temp){
+                            chi = null;
                             continue;
                         }
                     } else if (chi.temp < objTemp){
+                        chi = null;
                         continue;
                     }
                     obj.modifyEnergy(energy);
@@ -143,7 +149,7 @@ public final class WorldHeatHandler implements IWorldHeatHandler, INBTSerializab
                 double[] em = new double[dhdL.size()];
                 for (int i = 0; i < dhdL.size(); i++) {
                     PositionedHeatData phd = dhdL.get(i);
-                    double mod = phd.getThermalMaterial().getThermalConductivity() * Math.abs(phd.getTemperature() - chi.temp);
+                    double mod = phd.getMaxEnergyTransfer(Math.abs(phd.getTemperature() - chi.temp));
                     if (chi.neg()){
                         mod = -mod;
                         if (chi.temp > phd.getTemperature()){
@@ -161,20 +167,22 @@ public final class WorldHeatHandler implements IWorldHeatHandler, INBTSerializab
                         dhdL.get(i).modifyEnergy(em[i] * factor);
                     }
                 }
-            }
 
+            }
             chi = heatToProcess.poll();
         }
         List<BlockPos> remove = Lists.newArrayList();
         chunks.forEach(chunk -> dataMap.getObjectsInChunk(chunk.getPos()).forEach((pos, h) -> {
-            if (h.shouldRemovePreTick(world)){
+            boolean b = h.shouldRemovePreTick(world);
+            if (b){
                 remove.add(pos);
             }
         }));
         remove.forEach(dataMap::remove);
-        chunks.forEach(chunk -> dataMap.getObjectsInChunk(chunk.getPos()).forEach((pos, h) -> {
-            h.update(world, this);
-        }));
+        chunks.forEach(chunk -> Lists.newArrayList(dataMap.getObjectsInChunk(chunk.getPos()).values()).forEach(
+                h -> h.update(world, this)
+        ));
+        System.out.println("---");
     }
 
     @Override

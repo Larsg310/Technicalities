@@ -8,7 +8,7 @@ import net.minecraft.world.World;
  */
 public class HeatConstants {
 
-    public static final double THERMAL_SCALAR = 10000;
+    public static final double THERMAL_SCALAR = 100;
 
     public static final double ZERO_DEGREES = 273.16;
 

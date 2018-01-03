@@ -5,6 +5,7 @@ import com.technicalitiesmc.base.block.*;
 import com.technicalitiesmc.base.tile.*;
 import com.technicalitiesmc.lib.item.ItemBlockBase;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
@@ -25,6 +26,8 @@ public class TKBaseBlocks {
 
     public static Block channel = new BlockChannel();
 
+    private static Block heatTest = new BlockHeatTest(Material.CAKE);
+
     @SubscribeEvent
     public static void onBlockRegistration(RegistryEvent.Register<Block> event) {
         IForgeRegistry<Block> registry = event.getRegistry();
@@ -34,6 +37,7 @@ public class TKBaseBlocks {
         register(registry, crafting_slab, "crafting_slab", TileCraftingSlab.class);
         register(registry, workbench, "workbench", TileWorkbench.class);
         register(registry, channel, "channel", TileChannel.class);
+        register(registry, heatTest, "heatTest");
     }
 
     @SubscribeEvent
@@ -45,6 +49,7 @@ public class TKBaseBlocks {
         registerItem(registry, crafting_slab);
         registerItem(registry, workbench);
         registerItem(registry, channel);
+        registerItem(registry, heatTest);
     }
 
     private static void register(IForgeRegistry<Block> registry, Block block, String name) {

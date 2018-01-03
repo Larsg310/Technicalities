@@ -14,7 +14,7 @@ public interface IWorldHeatHandler {
     @Nullable
     public IHeatObject getHeatObject(BlockPos pos);
 
-    public void addEnergyToBlock(TileEntity tile, double energy, double temp);
+    public void addEnergyToBlock(TileEntity from, BlockPos to, double energy, double temp);
 
     public void addEnergyToSurroundings(TileEntity tile, double energy, double temp, EnumFacing... sides);
 

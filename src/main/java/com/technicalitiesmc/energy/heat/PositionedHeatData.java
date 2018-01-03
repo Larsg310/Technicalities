@@ -67,7 +67,7 @@ public class PositionedHeatData implements IPositionable, IHeatObject, INBTSeria
     }
 
     protected double getMaxEnergyTransfer(double temp){
-        return heatStuff.getThermalConductivity() * temp;
+        return Math.pow((heatStuff.getThermalConductivity() * 100), 2) * temp;
     }
 
     protected IThermalMaterial getThermalMaterial(){
@@ -79,11 +79,13 @@ public class PositionedHeatData implements IPositionable, IHeatObject, INBTSeria
         if (worked > 0){
             worked--;
         }
-        return !heatStuff.check(world, coord.getPos()) || !stay();
+        boolean c = !heatStuff.check(world, coord.getPos());
+        //System.out.println("checkHS: "+c);
+        return c || !stay();
     }
 
     private boolean stay(){
-        return (!isConductor() && worked > 0) || (Math.abs(ambientTemp - temp) > HeatConstants.TEMP_DELTA_REMOVE);
+        return (!isConductor() && worked > 0) || (Math.abs(ambientTemp - temp) > 1);
     }
 
     void setCheckedTemperature(double temp){
@@ -103,15 +105,18 @@ public class PositionedHeatData implements IPositionable, IHeatObject, INBTSeria
             worked = 20;
             return;
         }
+        //System.out.println("ME: "+modifier);
         energy += modifier;
         if (this.energy < 0){
             this.energy = 0;
         }
+        double temp = this.temp;
         this.temp = energy / (getMass() * heatStuff.getSpecificHeatCapacity());
+        //System.out.println(this.temp+"   "+temp);
     }
 
     public void update(World world, WorldHeatHandler whh) {
-        if (this.isConductor()) {
+        if (!this.isConductor()) {
             this.temp = this.ambientTemp;
         } else {
             BlockPos pos = coord.getPos();

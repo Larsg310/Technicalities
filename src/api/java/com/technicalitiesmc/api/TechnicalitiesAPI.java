@@ -1,11 +1,15 @@
 package com.technicalitiesmc.api;
 
+import com.google.common.base.Preconditions;
 import com.technicalitiesmc.api.electricity.IEnergyObject;
 import com.technicalitiesmc.api.heat.IHeatConductor;
 import com.technicalitiesmc.api.heat.IHeatPropertyRegistry;
 import com.technicalitiesmc.api.heat.IWorldHeatHandler;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
+
+import javax.annotation.Nonnull;
 
 /**
  * Created by Elec332 on 23-11-2017.
@@ -23,6 +27,12 @@ public class TechnicalitiesAPI {
 
 	@CapabilityInject(IHeatConductor.class)
 	public static final Capability<IHeatConductor> HEAT_CONDUCTOR_CAP;
+
+	@Nonnull
+	@SuppressWarnings("all")
+	public static IWorldHeatHandler getHeatHandler(@Nonnull World world){
+		return Preconditions.checkNotNull(world.getCapability(WORLD_HEAT_CAP, null));
+	}
 
 	static {
 		heatPropertyRegistry = null;

@@ -101,7 +101,7 @@ public final class WrappedHeatConductor implements IHeatConductor, IThermalMater
         try {
             ret.deserializeNBT(tag);
         } catch (Exception e){
-            return null;
+            throw e;
         }
         return ret;
     }

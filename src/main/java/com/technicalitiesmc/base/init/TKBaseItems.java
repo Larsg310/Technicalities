@@ -1,6 +1,7 @@
 package com.technicalitiesmc.base.init;
 
 import com.technicalitiesmc.base.Technicalities;
+import com.technicalitiesmc.base.item.ItemHeatProbe;
 import com.technicalitiesmc.base.item.ItemRecipeBook;
 import com.technicalitiesmc.lib.item.ItemBase;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -17,12 +18,16 @@ public class TKBaseItems {
     public static Item reed_stick = new ItemBase();
     public static Item recipe_book = new ItemRecipeBook();
 
+    private static Item heatProbe = new ItemHeatProbe();
+
     @SubscribeEvent
     public static void onItemRegistration(RegistryEvent.Register<Item> event) {
         IForgeRegistry<Item> registry = event.getRegistry();
 
         register(registry, reed_stick, "reed_stick");
         register(registry, recipe_book, "recipe_book");
+
+        register(registry, heatProbe, "heat_probe");
     }
 
     private static void register(IForgeRegistry<Item> registry, Item item, String name){
