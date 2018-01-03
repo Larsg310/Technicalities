@@ -1,16 +1,23 @@
 package com.technicalitiesmc.base;
 
+import com.technicalitiesmc.api.TechnicalitiesAPI;
+import com.technicalitiesmc.api.heat.IHeatConductor;
+import com.technicalitiesmc.api.heat.IWorldHeatHandler;
 import com.technicalitiesmc.base.event.OreEventHandler;
+import com.technicalitiesmc.base.init.TKHeatObjects;
 import com.technicalitiesmc.base.network.PacketGuiButton;
 import com.technicalitiesmc.base.proxies.TKCommonProxy;
 import com.technicalitiesmc.energy.electricity.grid.ElectricityGridHandler;
+import com.technicalitiesmc.energy.heat.HeatPropertyRegistry;
 import com.technicalitiesmc.lib.simple.SimpleCapabilityManager;
 import com.technicalitiesmc.lib.simple.SimpleRegistryManager;
 import elec332.core.api.network.INetworkHandler;
 import elec332.core.api.network.ModNetworkHandler;
 import elec332.core.inventory.window.WindowManager;
+import elec332.core.java.ReflectionHelper;
 import elec332.core.main.ElecCore;
 import elec332.core.main.ElecCoreRegistrar;
+import elec332.core.util.RegistryHelper;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -23,6 +30,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
+import java.lang.reflect.Field;
 
 @Mod.EventBusSubscriber
 @Mod(modid = Technicalities.MODID, name = Technicalities.NAME, version = Technicalities.VERSION, dependencies = "required-after:" + ElecCore.MODID)
@@ -58,9 +66,16 @@ public class Technicalities {
         SimpleRegistryManager.INSTANCE.init(asmTable);
 
         MinecraftForge.EVENT_BUS.register(new OreEventHandler());
+        try {
+            ReflectionHelper.makeFinalFieldModifiable(TechnicalitiesAPI.class.getDeclaredField("heatPropertyRegistry")).set(null, HeatPropertyRegistry.INSTANCE);
+        } catch (Exception e){
+            throw new RuntimeException(e);
+        }
+        RegistryHelper.registerEmptyCapability(IHeatConductor.class);
+        RegistryHelper.registerEmptyCapability(IWorldHeatHandler.class);
+        TKHeatObjects.init();
 
         // Register packets
-        System.out.println(networkHandler);
         networkHandler.registerPacket(PacketGuiButton.class, Side.SERVER);
         proxy.preInit();
     }
