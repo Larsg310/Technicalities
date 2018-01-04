@@ -109,6 +109,7 @@ public final class WrappedHeatConductor implements IHeatConductor, IThermalMater
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound ret = new NBTTagCompound();
+        System.out.println("serialize: "+state.getBlock().getRegistryName());
         ret.setString("Bn", Preconditions.checkNotNull(state.getBlock().getRegistryName()).toString());
         ret.setInteger("Bm", state.getBlock().getMetaFromState(state));
         ret.setBoolean("c", c);

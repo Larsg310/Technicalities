@@ -67,11 +67,7 @@ public class PositionedHeatData implements IPositionable, IHeatObject, INBTSeria
     }
 
     protected double getMaxEnergyTransfer(double temp){
-        return Math.pow((heatStuff.getThermalConductivity() * 100), 2) * temp;
-    }
-
-    protected IThermalMaterial getThermalMaterial(){
-        return heatStuff;
+        return Math.pow((heatStuff.getThermalConductivity() * HeatConstants.getTransferScalar()), 1) * heatStuff.getM3(heatStuff.getState()) * temp;
     }
 
     protected boolean shouldRemovePreTick(World world){
@@ -85,7 +81,7 @@ public class PositionedHeatData implements IPositionable, IHeatObject, INBTSeria
     }
 
     private boolean stay(){
-        return (!isConductor() && worked > 0) || (Math.abs(ambientTemp - temp) > 1);
+        return (!isConductor() && worked > 0) || (Math.abs(ambientTemp - temp) > 0.1);
     }
 
     void setCheckedTemperature(double temp){

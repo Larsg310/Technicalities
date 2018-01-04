@@ -23,7 +23,7 @@ public class DefaultThermalMaterial implements IThermalMaterial {
         this.thermalConductivity = thermalConductivity;
         this.density = density;
         this.m3 = m3;
-        this.conductive = state -> true;
+        this.conductive = state -> false;
     }
 
     private final ResourceLocation name;

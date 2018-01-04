@@ -49,7 +49,10 @@ public enum HeatPropertyRegistry implements IHeatPropertyRegistry {
     }
 
     private boolean isValid(IThermalMaterial material, IBlockState state){
-        return material.getThermalConductivity() * material.getM3(state) * 500 < (material.getSpecificHeatCapacity() * material.getDensity() * material.getM3(state));
+        boolean c1;
+        c1 = material.getThermalConductivity() * material.getM3(state) * HeatConstants.getTransferScalar() < (material.getSpecificHeatCapacity() * material.getDensity() * material.getM3(state));
+        //c1 &= material.
+        return c1;
     }
 
     @Nonnull

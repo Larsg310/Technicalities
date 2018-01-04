@@ -12,13 +12,14 @@ import net.minecraft.util.ResourceLocation;
  */
 public class TKHeatObjects {
 
-    public static final DefaultThermalMaterial IRON, COPPER, GOLD, WATER, DEFAULT;
+    public static final DefaultThermalMaterial IRON, COPPER, GOLD, WATER, AIR, DEFAULT;
 
     public static void init(){
         IHeatPropertyRegistry registry = TechnicalitiesAPI.heatPropertyRegistry;
         registry.registerHeatMaterial(Blocks.IRON_BLOCK, IRON);
         registry.registerHeatMaterial(Blocks.GOLD_BLOCK, GOLD);
         registry.registerHeatMaterial(Blocks.WATER, WATER);
+        registry.registerHeatMaterial(Blocks.AIR, AIR);
     }
 
     private static DefaultThermalMaterial makeMaterial(String name, double specificHeatCapacity, double thermalConductivity , double density){
@@ -30,6 +31,9 @@ public class TKHeatObjects {
         COPPER = makeMaterial("copper", 0.385, 401, 8940).setConductivity(true);
         GOLD = makeMaterial("gold", 0.129, 318, 19320).setConductivity(true);
         WATER = makeMaterial("water", 4.1813, 0.5818, 1000);
+        // Times 300 for airflow (according to wikipedia, heat transfer of air is between 10-100
+        int air_factor = 200;
+        AIR = makeMaterial("air", 1.012 * air_factor, 0.0209 * air_factor, 1.1839 * air_factor);
         DEFAULT = makeMaterial("default", 4.1813, 0.51, 5515);
     }
 

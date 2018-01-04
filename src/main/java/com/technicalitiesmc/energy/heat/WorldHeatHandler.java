@@ -76,7 +76,7 @@ public final class WorldHeatHandler implements IWorldHeatHandler, INBTSerializab
 
     @Override
     public void addEnergyToBlock(TileEntity from, BlockPos to, double energy, double temp) {
-        energy = energy * HeatConstants.THERMAL_SCALAR;
+        energy = energy * HeatConstants.getPowerScalar();
         if (Math.abs(energy) < 10){ //Not worth the calculation costs
             return;
         }
@@ -85,7 +85,7 @@ public final class WorldHeatHandler implements IWorldHeatHandler, INBTSerializab
 
     @Override
     public void addEnergyToSurroundings(TileEntity tile, double energy, double temp, EnumFacing... sides) {
-        energy = energy * HeatConstants.THERMAL_SCALAR;
+        energy = energy * HeatConstants.getPowerScalar();
         if (Math.abs(energy) < 10){ //Not worth the calculation costs
             return;
         }
@@ -104,7 +104,7 @@ public final class WorldHeatHandler implements IWorldHeatHandler, INBTSerializab
         while (chi != null){
             BlockPos pos = chi.dimCoord.getPos();
             if (!WorldHelper.chunkLoaded(world, pos)){
-                chi = null;
+                chi = heatToProcess.poll();
                 continue;
             }
             if (chi.dirs == null){
@@ -116,11 +116,11 @@ public final class WorldHeatHandler implements IWorldHeatHandler, INBTSerializab
                     if (chi.neg()){
                         energy = -energy;
                         if (objTemp < chi.temp){
-                            chi = null;
+                            chi = heatToProcess.poll();
                             continue;
                         }
                     } else if (chi.temp < objTemp){
-                        chi = null;
+                        chi = heatToProcess.poll();
                         continue;
                     }
                     obj.modifyEnergy(energy);
@@ -178,6 +178,7 @@ public final class WorldHeatHandler implements IWorldHeatHandler, INBTSerializab
                 remove.add(pos);
             }
         }));
+        System.out.println(remove);
         remove.forEach(dataMap::remove);
         chunks.forEach(chunk -> Lists.newArrayList(dataMap.getObjectsInChunk(chunk.getPos()).values()).forEach(
                 h -> h.update(world, this)
