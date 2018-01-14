@@ -1,5 +1,6 @@
 package com.technicalitiesmc.base.block;
 
+import com.technicalitiesmc.base.tank.MultiblockTank;
 import com.technicalitiesmc.base.tile.TileValve;
 import com.technicalitiesmc.lib.block.BlockBase;
 import net.minecraft.block.ITileEntityProvider;
@@ -18,12 +19,14 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class BlockValve extends BlockBase implements ITileEntityProvider {
 
@@ -63,10 +66,16 @@ public class BlockValve extends BlockBase implements ITileEntityProvider {
     }
 
     @Override
-    public boolean onBlockActivatedC(World world, BlockPos pos, EntityPlayer player, EnumHand hand, IBlockState state, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivatedC(World world, BlockPos pos, EntityPlayer player, EnumHand hand, IBlockState state, EnumFacing facing,
+                                     float hitX, float hitY, float hitZ) {
         if (player.isSneaking()) {
             world.setBlockState(pos, state.cycleProperty(MODE));
             return true;
+        }
+
+        TileValve.Valve master = getTile(world, pos, TileValve.class).getValve(facing.getAxisDirection());
+        if (master.getTankID() != null) {
+            return FluidUtil.interactWithFluidHandler(player, hand, master);
         }
 
         BlockPos start = pos.offset(facing.getOpposite());
@@ -76,38 +85,29 @@ public class BlockValve extends BlockBase implements ITileEntityProvider {
         }
 
         Pair<BlockPos, BlockPos> bounds = findInnerBounds(world, start);
-        Map<BlockPos, EnumFacing.AxisDirection> valves = new HashMap<>();
-        if (!validateTank(world, bounds.getLeft(), bounds.getRight(), valves)) {
+        Map<BlockPos, EnumFacing.AxisDirection> valvePositions = new HashMap<>();
+        if (!validateTank(world, bounds.getLeft(), bounds.getRight(), valvePositions)) {
             return false; // NOPE!
         }
 
-        // Success!
-        Map<FluidStack, Integer> fluids = new HashMap<>();
-        valves.forEach((p, dir) -> {
-            TileValve valve = getTile(world, p);
-            TileValve.TankInterface itf = valve.getInterface(dir);
-            for (FluidStack stack : itf.getFluids()) {
-                stack = stack.copy();
-                int amt = stack.amount;
-                stack.amount = 1;
-                fluids.put(stack, amt);
-            }
-        });
-        int total = fluids.values().stream().mapToInt(i -> i).sum();
+        // Valid shape
 
-        Vec3i size = bounds.getRight().subtract(bounds.getLeft());
-        if (total > 8000 * size.getX() * size.getY() * size.getZ()) {
-            return false; // NOPE!
-        }
+        Vec3i size = bounds.getRight().subtract(bounds.getLeft()).add(1, 1, 1);
+        int capacity = 8000 * size.getX() * size.getY() * size.getZ();
 
-        return true;
+        Set<TileValve.Valve> valves = valvePositions.entrySet().stream()
+                .map(e -> getTile(world, e.getKey(), TileValve.class).getValve(e.getValue()))
+                .collect(Collectors.toSet());
+
+        boolean success = MultiblockTank.formTank(bounds.getLeft(), size, valves, master, capacity);
+        return success;
     }
 
     private Pair<BlockPos, BlockPos> findInnerBounds(World world, BlockPos start) {
         int[] size = new int[3];
         BlockPos minPos = start, maxPos = start;
         for (EnumFacing f : EnumFacing.VALUES) {
-            int max = MAX_REACH - size[f.getAxis().ordinal()];
+            int max = MAX_REACH + 1 - size[f.getAxis().ordinal()];
             for (int i = 1; i < max; i++) {
                 BlockPos p = start.offset(f, i);
                 IBlockState state = world.getBlockState(p);
@@ -159,7 +159,9 @@ public class BlockValve extends BlockBase implements ITileEntityProvider {
     }
 
     private boolean isValidWall(World world, BlockPos pos, IBlockState state) {
-        return !state.getBlock().isAir(state, world, pos) && !state.getBlock().isReplaceable(world, pos); // TODO: Look into this. There needs to be a better way...
+        // TODO: Chests work... What...
+        // TODO: Look into this. There needs to be a better way...
+        return !state.getBlock().isAir(state, world, pos) && !state.getBlock().isReplaceable(world, pos);
     }
 
     private boolean isValidInside(World world, BlockPos pos, IBlockState state) {

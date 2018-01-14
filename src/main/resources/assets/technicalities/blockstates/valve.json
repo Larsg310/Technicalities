@@ -4,6 +4,7 @@
 		"textures": {
 			"all": "technicalities:blocks/valve",
 			"base": "technicalities:blocks/valve",
+			"overlay": "technicalities:blocks/valve_out",
 			"particle": "technicalities:blocks/valve"
 		},
 		"model": "technicalities:cube_all_multilayer",
