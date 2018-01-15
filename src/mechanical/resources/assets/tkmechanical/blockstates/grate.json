@@ -2,10 +2,10 @@
 	"forge_marker": 1,
 	"defaults": {
 		"textures": {
-			"grate": "technicalities:blocks/metal_grate",
-			"particle": "technicalities:blocks/metal_grate"
+			"grate": "tkmechanical:blocks/metal_grate",
+			"particle": "tkmechanical:blocks/metal_grate"
 		},
-		"model": "technicalities:grate",
+		"model": "tkmechanical:grate",
 		"transform": "forge:default-block"
 	},
 	"variants": {

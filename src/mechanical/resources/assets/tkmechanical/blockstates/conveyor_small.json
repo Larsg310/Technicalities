@@ -2,14 +2,14 @@
 	"forge_marker": 1,
 	"defaults": {
 		"textures": {
-			"0": "technicalities:blocks/conveyor_belt_top",
-			"1": "technicalities:blocks/conveyor_belt_side",
-			"2": "technicalities:blocks/conveyor_rolls",
-			"3": "technicalities:blocks/conveyor_side",
-			"4": "technicalities:blocks/conveyor_side_clean",
-			"particle": "technicalities:blocks/conveyor_belt_top"
+			"0": "tkmechanical:blocks/conveyor_belt_top",
+			"1": "tkmechanical:blocks/conveyor_belt_side",
+			"2": "tkmechanical:blocks/conveyor_rolls",
+			"3": "tkmechanical:blocks/conveyor_side",
+			"4": "tkmechanical:blocks/conveyor_side_clean",
+			"particle": "tkmechanical:blocks/conveyor_belt_top"
 		},
-		"model": "technicalities:conveyor_small",
+		"model": "tkmechanical:conveyor_small",
 		"transform": "forge:default-block"
 	},
 	"variants": {

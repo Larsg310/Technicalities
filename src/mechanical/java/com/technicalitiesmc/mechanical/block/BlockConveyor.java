@@ -1,7 +1,6 @@
 package com.technicalitiesmc.mechanical.block;
 
-import com.technicalitiesmc.util.block.BlockBase;
-
+import com.technicalitiesmc.lib.block.BlockBase;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyInteger;
@@ -14,8 +13,10 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class BlockConveyor extends BlockBase {
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+public class BlockConveyor extends BlockBase {
     public static final IProperty<Integer> PROPERTY_ROTATION = PropertyInteger.create("rotation", 0, 1);
 
     public BlockConveyor() {
@@ -38,9 +39,9 @@ public class BlockConveyor extends BlockBase {
         return state.getValue(PROPERTY_ROTATION);
     }
 
+    @Nonnull
     @Override
-    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta,
-            EntityLivingBase placer, EnumHand hand) {
+    public IBlockState getBlockStateForPlacementC(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, @Nullable EnumHand hand) {
         return getDefaultState().withProperty(PROPERTY_ROTATION, placer.getHorizontalFacing().getAxis() == Axis.X ? 1 : 0);
     }
 
@@ -48,5 +49,4 @@ public class BlockConveyor extends BlockBase {
     public boolean isOpaqueCube(IBlockState state) {
         return false;
     }
-
 }

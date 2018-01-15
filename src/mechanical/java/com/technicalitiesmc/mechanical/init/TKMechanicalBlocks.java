@@ -35,7 +35,7 @@ public class TKMechanicalBlocks {
         register(registry, shaft, "shaft", TileShaft.class);
         register(registry, conveyor, "conveyor"); //, TileConveyor.class);
         register(registry, conveyor_small, "conveyor_small", TileConveyorSmall.class);
-        register(registry, grate, "grate"); //, TileConveyor.class);
+        register(registry, grate, "grate"); //, TileGrate.class);
         register(registry, test, "test", TileKineticTest.class);
     }
 
@@ -44,6 +44,9 @@ public class TKMechanicalBlocks {
         IForgeRegistry<Item> registry = event.getRegistry();
 
         registerItem(registry, shaft);
+        registerItem(registry, conveyor);
+        registerItem(registry, conveyor_small);
+        registerItem(registry, grate);
         registerItem(registry, test);
     }
 

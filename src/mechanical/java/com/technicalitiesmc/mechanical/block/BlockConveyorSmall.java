@@ -1,15 +1,13 @@
 package com.technicalitiesmc.mechanical.block;
 
+import com.technicalitiesmc.lib.block.BlockBase;
 import com.technicalitiesmc.mechanical.tile.TileConveyorSmall;
-import com.technicalitiesmc.util.block.BlockBase;
-
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -20,8 +18,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class BlockConveyorSmall extends BlockBase implements ITileEntityProvider {
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+public class BlockConveyorSmall extends BlockBase implements ITileEntityProvider {
     private static final AxisAlignedBB AABB = new AxisAlignedBB(0, 0, 0, 1, 9 / 16D, 1);
     public static final IProperty<Integer> PROPERTY_ROTATION = PropertyInteger.create("rotation", 0, 1);
 
@@ -50,9 +50,9 @@ public class BlockConveyorSmall extends BlockBase implements ITileEntityProvider
         return state.getValue(PROPERTY_ROTATION);
     }
 
+    @Nonnull
     @Override
-    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta,
-            EntityLivingBase placer, EnumHand hand) {
+    public IBlockState getBlockStateForPlacementC(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, @Nullable EnumHand hand) {
         return getDefaultState().withProperty(PROPERTY_ROTATION, placer.getHorizontalFacing().getAxis() == Axis.X ? 1 : 0);
     }
 
@@ -66,8 +66,6 @@ public class BlockConveyorSmall extends BlockBase implements ITileEntityProvider
         return false;
     }
 
-    @Override
-    public void onFallenUpon(World world, BlockPos pos, Entity entity, float fallDistance) {
-    }
-
+//    @Override
+//    public void onFallenUpon(World world, BlockPos pos, Entity entity, float fallDistance) { }
 }

@@ -3,11 +3,16 @@ package com.technicalitiesmc.api.mechanical.conveyor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.Vec3i;
+
+import javax.annotation.Nonnull;
+import java.util.UUID;
 
 public interface IConveyorObject {
+    @Nonnull
+    public UUID uuid();
 
-    public Vec3i getDimensions();
+    // the width (1.0 is the width of a full block)
+    public float width();
 
     public boolean shouldJoinFromOutside();
 
@@ -15,20 +20,17 @@ public interface IConveyorObject {
 
     public boolean requiresStickyConveyor();
 
-    public NBTTagCompound writeToNBT(NBTTagCompound tag);
+    public void saveData(NBTTagCompound tag);
 
-    public void readFromNBT(NBTTagCompound tag);
+    public void loadData(NBTTagCompound tag);
 
     public static interface Stack extends IConveyorObject {
-
+        @Nonnull
         public ItemStack getStack();
-
     }
 
     public static interface Block extends IConveyorObject {
-
+        @Nonnull
         public IBlockState getState();
-
     }
-
 }
