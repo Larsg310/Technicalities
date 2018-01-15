@@ -1,0 +1,15 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"textures": {
+			"grate": "technicalities:blocks/metal_grate",
+			"particle": "technicalities:blocks/metal_grate"
+		},
+		"model": "technicalities:grate",
+		"transform": "forge:default-block"
+	},
+	"variants": {
+        "normal": [{ }],
+        "inventory": [{ }]
+    }
+}

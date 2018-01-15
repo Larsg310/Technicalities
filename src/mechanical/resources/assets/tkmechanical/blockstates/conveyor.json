@@ -1,0 +1,22 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"textures": {
+			"0": "technicalities:blocks/conveyor_belt_top",
+			"1": "technicalities:blocks/conveyor_belt_side",
+			"2": "technicalities:blocks/conveyor_rolls",
+			"3": "technicalities:blocks/conveyor_side",
+			"4": "technicalities:blocks/conveyor_side_clean",
+			"particle": "technicalities:blocks/conveyor_belt_top"
+		},
+		"model": "technicalities:conveyor",
+		"transform": "forge:default-block"
+	},
+	"variants": {
+        "rotation": {
+        	"0": {         },
+        	"1": { "y": 90 }
+        },
+        "inventory": [{ }]
+    }
+}

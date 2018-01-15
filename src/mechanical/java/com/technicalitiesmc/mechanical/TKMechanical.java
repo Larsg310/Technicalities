@@ -2,6 +2,7 @@ package com.technicalitiesmc.mechanical;
 
 import com.technicalitiesmc.api.mechanical.IGearAttachable;
 import com.technicalitiesmc.api.mechanical.IShaftAttachable;
+import com.technicalitiesmc.api.mechanical.conveyor.IConveyorBelt;
 import com.technicalitiesmc.base.Technicalities;
 import com.technicalitiesmc.lib.simple.SimpleCapability;
 import com.technicalitiesmc.mechanical.kinesis.KineticManager;
@@ -16,8 +17,11 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 @Mod(modid = TKMechanical.MODID, name = TKMechanical.NAME, version = TKMechanical.VERSION,
         dependencies = "required-after:" + Technicalities.MODID)
 public class TKMechanical {
-
     public static final String MODID = "tkmechanical", NAME = "Technicalities Mechanical", VERSION = "%VERSION%";
+
+    @SimpleCapability
+    @CapabilityInject(IConveyorBelt.class)
+    public static final Capability<IConveyorBelt> CAPABILITY = null;
 
     // Used to register simple capabilities
     @SimpleCapability
@@ -39,5 +43,4 @@ public class TKMechanical {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
     }
-
 }
