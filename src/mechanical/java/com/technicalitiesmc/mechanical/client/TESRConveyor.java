@@ -9,8 +9,12 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformT
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.EnumFacing;
 import org.apache.commons.lang3.tuple.Pair;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.util.vector.Matrix4f;
+
+import java.nio.FloatBuffer;
 
 import static net.minecraft.client.renderer.GlStateManager.*;
 
@@ -22,22 +26,21 @@ public class TESRConveyor extends TileEntitySpecialRenderer<TileEntity> {
         if (conveyor == null) return;
 
         pushMatrix();
-        translate(x, y + conveyor.getHeight(), z);
+        translate(x + 0.5f, y + conveyor.getHeight() + 0.25f, z + 0.5f);
+        if (host.getMovementAxis() == EnumFacing.Axis.X) {
+            rotate(90, 0, 1, 0);
+        }
 
-        // translate(0.5, 0.25, 0.5 - ((0.0625 * ((double) te.getWorld().getTotalWorldTime() + partialTicks)) % 1));
-        // if (te.getPos().getX() % 2 == 0) {
-        //     RenderHelper.renderStack(new ItemStack(TKBaseBlocks.crate), TransformType.FIXED, alpha);
-        // } else {
-        //     RenderHelper.renderStack(new ItemStack(TKBaseBlocks.barrel), TransformType.FIXED, alpha);
-        // }
-
-        for (Pair<IConveyorObject, ConveyorBeltLogic.Path> object : conveyor.getObjects().values()) {
+        for (Pair<IConveyorObject, ConveyorBeltLogic.IPath> object : conveyor.getObjects().values()) {
             pushMatrix();
             if (object.getKey() instanceof IConveyorObject.Stack) {
                 ItemStack stack = ((IConveyorObject.Stack) object.getKey()).getStack();
-                ConveyorBeltLogic.Path path = object.getValue();
-                Vec3d tr = ConveyorBeltLogic.Path.getOffset(path, host, partialTicks);
-                translate(tr.x, tr.y + 0.25, tr.z);
+                ConveyorBeltLogic.IPath path = object.getValue();
+                Matrix4f tr = path.transform(partialTicks);
+                FloatBuffer fb = BufferUtils.createFloatBuffer(16);
+                tr.store(fb);
+                fb.flip();
+                multMatrix(fb);
 
                 RenderHelper.renderStack(stack, TransformType.FIXED, alpha);
             }

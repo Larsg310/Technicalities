@@ -12,10 +12,13 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
+import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector3f;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -25,7 +28,7 @@ public class ConveyorBeltLogic implements IConveyorBelt {
     private final IConveyorBeltHost host;
     private final float height;
 
-    private final Map<UUID, Pair<IConveyorObject, Path>> objects = new HashMap<>();
+    private final Map<UUID, Pair<IConveyorObject, IPath>> objects = new HashMap<>();
 
     public ConveyorBeltLogic(IConveyorBeltHost host, float height) {
         this.host = host;
@@ -39,37 +42,21 @@ public class ConveyorBeltLogic implements IConveyorBelt {
 
         if (axis == EnumFacing.Axis.Y) return; // wtf?
 
-        for (Pair<IConveyorObject, Path> o : Lists.newArrayList(objects.values())) {
+        for (Pair<IConveyorObject, IPath> o : Lists.newArrayList(objects.values())) {
             IConveyorObject co = o.getLeft();
-            Path p = o.getRight();
+            IPath p = o.getRight();
             UUID uuid = co.uuid();
 
-            p.saveLastLocation();
-
-            // nudge items into the center
-            float x = p.offsetX * 2;
-            float x3 = Math.max(-1, Math.min(x * x * x * host.getMovementSpeed() * 10f, 1));
-            p.offsetX -= x3;
-
-            p.locationOnBelt += host.getMovementSpeed();
-            // if this item is about to fall off the belt, transfer it to the next one
-            if (host.getMovementSpeed() * p.locationOnBelt > 0 && Math.abs(p.locationOnBelt) > 1) {
+            p.move(host.getMovementSpeed());
+            if (p.canTransferToNext(host.getMovementSpeed())) {
                 EnumFacing f = host.getEjectFacing();
                 IConveyorBelt next = host.getNeighbor(f);
                 if (next != null && next.canInput(f.getOpposite())) {
-                    if (next instanceof ConveyorBeltLogic) {
-                        p.locationOnBelt -= Math.signum(host.getMovementSpeed());
-                        if (next.getOrientation() != this.getOrientation()) Path.rotatePath(p);
-                        p.saveLastLocation();
-                        ((ConveyorBeltLogic) next).insert(f.getOpposite(), co, p);
-                    } else {
-                        next.insert(f.getOpposite(), co);
-                    }
+                    next.insert(f.getOpposite(), co);
                     objects.remove(uuid);
                     host.notifyObjectRemove(uuid);
                 }
             }
-
         }
 
         if (!world.isRemote) {
@@ -85,11 +72,7 @@ public class ConveyorBeltLogic implements IConveyorBelt {
                         float rx = (float) relativePos.x;
                         float rz = (float) relativePos.z;
                         if (rx >= 0 && rx <= 1 && rz >= 0 && rz <= 1) {
-                            float offsetX = (axis == EnumFacing.Axis.X ? rz : rx) - 0.5f;
-                            float locationOnBelt = axis == EnumFacing.Axis.X ? rx : rz;
-                            Path path = new Path();
-                            path.offsetX = offsetX;
-                            path.locationOnBelt = locationOnBelt;
+                            IPath path = new PathStraight(0.5f);
                             objects.put(co.uuid(), Pair.of(co, path));
                             e.setDead();
                             host.notifyObjectAdd(co.uuid());
@@ -114,16 +97,17 @@ public class ConveyorBeltLogic implements IConveyorBelt {
 
     @Override
     public void insert(EnumFacing side, IConveyorObject object) {
-        insert(side, object, null);
-    }
-
-    public void insert(EnumFacing side, IConveyorObject object, @Nullable Path path) {
-        if (path == null) path = new Path(); // TODO: implement side-specific behavior as fallback
+        IPath path;
+        if (side.getAxis() == getOrientation()) {
+            path = new PathStraight(side.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE ? 1 : 0);
+        } else {
+            path = new PathCurved(side.getAxisDirection().getOffset() > 0 ^ getOrientation() == EnumFacing.Axis.X);
+        }
         objects.put(object.uuid(), Pair.of(object, path));
         host.notifyObjectAdd(object.uuid());
     }
 
-    public Map<UUID, Pair<IConveyorObject, Path>> getObjects() {
+    public Map<UUID, Pair<IConveyorObject, IPath>> getObjects() {
         return objects;
     }
 
@@ -143,38 +127,162 @@ public class ConveyorBeltLogic implements IConveyorBelt {
         return Optional.ofNullable(o);
     }
 
-    public static class Path {
-        // offset from center towards sides (-0.5 - 0.5)
-        public float offsetX = 0.0f;
+    private static float interp(float a, float b, float partialTicks) { return a + (b - a) * partialTicks; }
 
-        // movement progress (0.0 - 1.0)
-        public float locationOnBelt = 0.5f;
+    public static interface IPath {
+        public static final int TYPE_STRAIGHT = 0;
+        public static final int TYPE_CURVED = 1;
 
-        public float lastOffsetX = 0.0f;
-        public float lastLocationOnBelt = 0.5f;
+        @SideOnly(Side.CLIENT)
+        @Nonnull
+        public Matrix4f transform(float partialTicks);
 
-        public void saveLastLocation() {
-            lastOffsetX = offsetX;
-            lastLocationOnBelt = locationOnBelt;
+        public void move(float speed);
+
+        public boolean canTransferToNext(float speed);
+
+        public int type();
+
+        public void loadData(NBTTagCompound nbt);
+
+        public void saveData(NBTTagCompound nbt);
+
+        public static IPath createFromNBT(NBTTagCompound nbt) {
+            int id = nbt.getByte("id");
+            IPath path;
+            switch (id) {
+                case TYPE_STRAIGHT:
+                    path = new PathStraight();
+                    break;
+                case TYPE_CURVED:
+                    path = new PathCurved();
+                    break;
+                default:
+                    return new PathStraight();
+            }
+            path.loadData(nbt);
+            System.out.println("Path " + path.getClass());
+            return path;
+        }
+    }
+
+    private static class PathStraight implements IPath {
+        private float prevProgress;
+        private float progress;
+
+        public PathStraight() {
+            this(0.5f);
         }
 
-        private static float interp(float a, float b, float partialTicks) {
-            return a + (b - a) * partialTicks;
+        public PathStraight(float progress) {
+            this.prevProgress = progress;
+            this.progress = progress;
         }
 
-        public static Vec3d getOffset(Path self, IConveyorBeltHost host, float partialTicks) {
-            float offsetFixed = interp(self.lastOffsetX, self.offsetX, partialTicks) + 0.5f;
-            float lobFixed = interp(self.lastLocationOnBelt, self.locationOnBelt, partialTicks);
-            float x = host.getMovementAxis() == EnumFacing.Axis.X ? lobFixed : offsetFixed;
-            float z = host.getMovementAxis() == EnumFacing.Axis.X ? offsetFixed : lobFixed;
-            return new Vec3d(x, 0, z);
+        @Nonnull
+        @Override
+        public Matrix4f transform(float partialTicks) {
+            return new Matrix4f()
+                    .translate(new Vector3f(0f, 0f, interp(prevProgress, progress, partialTicks) - 0.5f));
         }
 
-        public static void rotatePath(Path self) {
-            float t = self.offsetX + 0.5f;
-            float u = self.locationOnBelt - 0.5f;
-            self.locationOnBelt = t;
-            self.offsetX = u;
+        @Override
+        public void move(float speed) {
+            prevProgress = progress;
+            progress += speed;
+        }
+
+        @Override
+        public boolean canTransferToNext(float speed) {
+            float p = (this.progress - 0.5f) * 2f;
+            return speed * p > 0 && Math.abs(p) > 1;
+        }
+
+        @Override
+        public void loadData(NBTTagCompound nbt) {
+            prevProgress = nbt.getFloat("a");
+            progress = nbt.getFloat("b");
+        }
+
+        @Override
+        public void saveData(NBTTagCompound nbt) {
+            nbt.setFloat("id", type());
+            nbt.setFloat("a", prevProgress);
+            nbt.setFloat("b", progress);
+        }
+
+        @Override
+        public int type() {
+            return TYPE_STRAIGHT;
+        }
+    }
+
+    private static class PathCurved extends PathStraight {
+        private float prevOffsetX = 0.0f;
+        private float offsetX = 0.0f;
+        private float prevRotation = 0f;
+        private float rotation = 0f;
+
+        public PathCurved() {
+            this(false);
+        }
+
+        public PathCurved(boolean right) {
+            super(0.5f);
+            if (right) {
+                prevOffsetX = offsetX = 0.5f;
+                rotation = -90.0f;
+            } else {
+                prevOffsetX = offsetX = -0.5f;
+                rotation = 90.0f;
+            }
+        }
+
+        @Override
+        public void move(float speed) {
+            super.move(speed);
+            prevOffsetX = offsetX;
+            prevRotation = rotation;
+            offsetX = converge(offsetX, speed);
+            rotation = converge(rotation, 90f * speed / 0.5f);
+        }
+
+        private float converge(float value, float speed) {
+            float sgn = Math.signum(value);
+            float abs = Math.abs(value);
+            float sabs = Math.abs(speed);
+            return Math.max(0, abs - sabs) * sgn;
+        }
+
+        @Nonnull
+        @Override
+        public Matrix4f transform(float partialTicks) {
+            return super.transform(partialTicks)
+                    .translate(new Vector3f(interp(prevOffsetX, offsetX, partialTicks), 0f, 0f))
+                    .rotate((float) Math.toRadians(interp(prevRotation, rotation, partialTicks)), new Vector3f(0f, 1f, 0f));
+        }
+
+        @Override
+        public void loadData(NBTTagCompound nbt) {
+            super.loadData(nbt);
+            prevOffsetX = nbt.getFloat("c");
+            offsetX = nbt.getFloat("d");
+            prevRotation = nbt.getFloat("e");
+            rotation = nbt.getFloat("f");
+        }
+
+        @Override
+        public void saveData(NBTTagCompound nbt) {
+            super.saveData(nbt);
+            nbt.setFloat("c", prevOffsetX);
+            nbt.setFloat("d", offsetX);
+            nbt.setFloat("e", prevRotation);
+            nbt.setFloat("f", rotation);
+        }
+
+        @Override
+        public int type() {
+            return TYPE_CURVED;
         }
     }
 }

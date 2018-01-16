@@ -27,6 +27,8 @@ public class TileConveyorSmall extends TileBase implements ITickable, IConveyorB
 
     private final ConveyorBeltLogic logic = new ConveyorBeltLogic(this, 9 / 16F);
 
+    public boolean b = false;
+
     @Override
     public void update() {
         logic.tick();
@@ -49,20 +51,21 @@ public class TileConveyorSmall extends TileBase implements ITickable, IConveyorB
 
     @Override
     public float getMovementSpeed() {
-        return 0.01f;
+        return 0.01f * (b ? -1 : 1);
     }
 
     @Override
     public void notifyObjectAdd(UUID id) {
         if (getWorld().isRemote) return;
         System.out.println("notify add");
-        Pair<IConveyorObject, ConveyorBeltLogic.Path> o = logic.getObjects().get(id);
+        Pair<IConveyorObject, ConveyorBeltLogic.IPath> o = logic.getObjects().get(id);
         NBTTagCompound nbt = new NBTTagCompound();
-        NBTTagCompound data = new NBTTagCompound();
-        o.getLeft().saveData(data);
-        nbt.setFloat("A", o.getRight().locationOnBelt);
-        nbt.setFloat("B", o.getRight().offsetX);
-        nbt.setTag("C", data);
+        NBTTagCompound pathData = new NBTTagCompound();
+        NBTTagCompound objData = new NBTTagCompound();
+        o.getLeft().saveData(objData);
+        o.getRight().saveData(pathData);
+        nbt.setTag("a", objData);
+        nbt.setTag("b", pathData);
         sendPacket(PACKET_OBJ_ADD, nbt);
     }
 
@@ -79,12 +82,12 @@ public class TileConveyorSmall extends TileBase implements ITickable, IConveyorB
     public void onDataPacket(int id, NBTTagCompound tag) {
         switch (id) {
             case PACKET_OBJ_ADD:
-                ConveyorBeltLogic.Path p = new ConveyorBeltLogic.Path();
                 IConveyorObject co = new ConveyorStack(); // TODO: make this work for non-stacks!!!
-                p.locationOnBelt = tag.getFloat("A");
-                p.offsetX = tag.getFloat("B");
-                co.loadData(tag.getCompoundTag("C"));
-                logic.getObjects().put(co.uuid(), Pair.of(co, p));
+                NBTTagCompound objData = tag.getCompoundTag("a");
+                NBTTagCompound pathData = tag.getCompoundTag("b");
+                ConveyorBeltLogic.IPath path = ConveyorBeltLogic.IPath.createFromNBT(pathData);
+                co.loadData(objData);
+                logic.getObjects().put(co.uuid(), Pair.of(co, path));
                 break;
             case PACKET_OBJ_REMOVE:
                 logic.getObjects().remove(tag.getUniqueId("C"));

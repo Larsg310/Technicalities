@@ -9,6 +9,7 @@ import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
@@ -38,6 +39,13 @@ public class BlockConveyorSmall extends BlockBase implements ITileEntityProvider
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer.Builder(this).add(PROPERTY_ROTATION).build();
+    }
+
+    @Override
+    public boolean onBlockActivatedC(World world, BlockPos pos, EntityPlayer player, EnumHand hand, IBlockState state, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        TileConveyorSmall tileEntity = (TileConveyorSmall) world.getTileEntity(pos);
+        tileEntity.b ^= true;
+        return true;
     }
 
     @Override
