@@ -11,10 +11,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import org.apache.commons.lang3.tuple.Pair;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.util.vector.Matrix4f;
-
-import java.nio.FloatBuffer;
 
 import static net.minecraft.client.renderer.GlStateManager.*;
 
@@ -36,11 +32,7 @@ public class TESRConveyor extends TileEntitySpecialRenderer<TileEntity> {
             if (object.getKey() instanceof IConveyorObject.Stack) {
                 ItemStack stack = ((IConveyorObject.Stack) object.getKey()).getStack();
                 ConveyorBeltLogic.IPath path = object.getValue();
-                Matrix4f tr = path.transform(partialTicks);
-                FloatBuffer fb = BufferUtils.createFloatBuffer(16);
-                tr.store(fb);
-                fb.flip();
-                multMatrix(fb);
+                RenderHelper.glMultMatrix(path.transform(partialTicks));
 
                 RenderHelper.renderStack(stack, TransformType.FIXED, alpha);
             }

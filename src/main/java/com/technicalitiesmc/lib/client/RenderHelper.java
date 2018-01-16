@@ -19,13 +19,17 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.pipeline.LightUtil;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Matrix4f;
 
+import java.nio.FloatBuffer;
 import java.util.List;
 
 import static net.minecraft.client.renderer.GlStateManager.*;
 
 public class RenderHelper {
+    private static FloatBuffer matrixBuffer; // no use → no allocate c:
 
     public static void renderStack(ItemStack stack, TransformType transform, float alpha) {
         if (stack.isEmpty()) {
@@ -139,4 +143,10 @@ public class RenderHelper {
 
     }
 
+    public static void glMultMatrix(Matrix4f mat) {
+        if (matrixBuffer == null) matrixBuffer = BufferUtils.createFloatBuffer(16);
+        mat.store(matrixBuffer);
+        matrixBuffer.flip();
+        multMatrix(matrixBuffer);
+    }
 }
