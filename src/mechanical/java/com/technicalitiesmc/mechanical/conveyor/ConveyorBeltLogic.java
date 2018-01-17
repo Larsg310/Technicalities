@@ -7,6 +7,7 @@ import com.technicalitiesmc.mechanical.conveyor.object.ConveyorStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -117,9 +118,43 @@ public class ConveyorBeltLogic implements IConveyorBelt {
         return host.getMovementAxis();
     }
 
-    public void saveData(NBTTagCompound nbt) {}
+    public NBTTagCompound createData(Pair<IConveyorObject, ConveyorBeltLogic.IPath> pair) {
+        NBTTagCompound nbt = new NBTTagCompound();
+        NBTTagCompound pathData = new NBTTagCompound();
+        NBTTagCompound objData = new NBTTagCompound();
+        pair.getLeft().saveData(objData);
+        pair.getRight().saveData(pathData);
+        nbt.setTag("object", objData);
+        nbt.setTag("path", pathData);
+        return nbt;
+    }
 
-    public void loadData(NBTTagCompound nbt) {}
+    public void saveData(NBTTagCompound nbt) {
+        NBTTagList list = new NBTTagList();
+        objects.entrySet().stream()
+                .map(it -> {
+                    NBTTagCompound local = new NBTTagCompound();
+                    local.setUniqueId("id", it.getKey());
+                    local.setTag("data", createData(it.getValue()));
+                    return local;
+                })
+                .forEach(list::appendTag);
+        nbt.setTag("items", list);
+    }
+
+    public void loadData(NBTTagCompound nbt) {
+        objects.clear();
+        NBTTagList list = nbt.getTagList("items", 10);
+        for (int i = 0; i < list.tagCount(); i++) {
+            NBTTagCompound local = list.getCompoundTagAt(i);
+            UUID uuid = local.getUniqueId("id");
+            NBTTagCompound data = local.getCompoundTag("data");
+            IConveyorObject co = new ConveyorStack(); // TODO: make this work for non-stacks!!!
+            co.loadData(data.getCompoundTag("object"));
+            IPath path = IPath.createFromNBT(data.getCompoundTag("path"));
+            objects.put(uuid, Pair.of(co, path));
+        }
+    }
 
     private Optional<IConveyorObject> fromEntity(Entity e) {
         IConveyorObject o = null;

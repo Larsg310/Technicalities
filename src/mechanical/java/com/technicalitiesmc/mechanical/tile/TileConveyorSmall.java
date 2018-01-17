@@ -27,7 +27,7 @@ public class TileConveyorSmall extends TileBase implements ITickable, IConveyorB
 
     private final ConveyorBeltLogic logic = new ConveyorBeltLogic(this, 9 / 16F);
 
-    public boolean b = false;
+    public boolean b = false; // TODO temp thingy to allow for reverse movement!
 
     @Override
     public void update() {
@@ -59,13 +59,7 @@ public class TileConveyorSmall extends TileBase implements ITickable, IConveyorB
         if (getWorld().isRemote) return;
         System.out.println("notify add");
         Pair<IConveyorObject, ConveyorBeltLogic.IPath> o = logic.getObjects().get(id);
-        NBTTagCompound nbt = new NBTTagCompound();
-        NBTTagCompound pathData = new NBTTagCompound();
-        NBTTagCompound objData = new NBTTagCompound();
-        o.getLeft().saveData(objData);
-        o.getRight().saveData(pathData);
-        nbt.setTag("a", objData);
-        nbt.setTag("b", pathData);
+        NBTTagCompound nbt = logic.createData(o);
         sendPacket(PACKET_OBJ_ADD, nbt);
     }
 
@@ -83,8 +77,8 @@ public class TileConveyorSmall extends TileBase implements ITickable, IConveyorB
         switch (id) {
             case PACKET_OBJ_ADD:
                 IConveyorObject co = new ConveyorStack(); // TODO: make this work for non-stacks!!!
-                NBTTagCompound objData = tag.getCompoundTag("a");
-                NBTTagCompound pathData = tag.getCompoundTag("b");
+                NBTTagCompound objData = tag.getCompoundTag("object");
+                NBTTagCompound pathData = tag.getCompoundTag("path");
                 ConveyorBeltLogic.IPath path = ConveyorBeltLogic.IPath.createFromNBT(pathData);
                 co.loadData(objData);
                 logic.getObjects().put(co.uuid(), Pair.of(co, path));
@@ -93,6 +87,23 @@ public class TileConveyorSmall extends TileBase implements ITickable, IConveyorB
                 logic.getObjects().remove(tag.getUniqueId("C"));
                 break;
         }
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound nbt) {
+        super.readFromNBT(nbt);
+        logic.loadData(nbt.getCompoundTag("logic"));
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+        super.writeToNBT(nbt);
+
+        NBTTagCompound local = new NBTTagCompound();
+        logic.saveData(local);
+        nbt.setTag("logic", local);
+
+        return nbt;
     }
 
     @Override
