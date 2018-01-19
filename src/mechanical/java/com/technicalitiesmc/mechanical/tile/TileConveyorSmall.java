@@ -172,12 +172,15 @@ public class TileConveyorSmall extends TileBase implements ITickable, IConveyorB
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
+        b = nbt.getBoolean("invert");
         logic.loadData(nbt.getCompoundTag("logic"));
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
+
+        nbt.setBoolean("invert", b);
 
         NBTTagCompound local = new NBTTagCompound();
         logic.saveData(local);
