@@ -1,10 +1,13 @@
 package com.technicalitiesmc.api.mechanical.conveyor;
 
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
+import java.util.function.Predicate;
 
 public interface IConveyorBelt {
     @CapabilityInject(IConveyorBelt.class)
@@ -15,6 +18,8 @@ public interface IConveyorBelt {
     public boolean canInput(EnumFacing side);
 
     public void insert(EnumFacing side, IConveyorObject object);
+
+    public Collection<AxisAlignedBB> getAllBoundingBoxes(Predicate<IConveyorObject> op);
 
     @Nonnull
     public EnumFacing.Axis getOrientation();

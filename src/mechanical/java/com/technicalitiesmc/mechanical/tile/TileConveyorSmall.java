@@ -9,15 +9,26 @@ import com.technicalitiesmc.mechanical.client.TESRConveyor;
 import com.technicalitiesmc.mechanical.conveyor.ConveyorBeltLogic;
 import com.technicalitiesmc.mechanical.conveyor.IConveyorBeltHost;
 import com.technicalitiesmc.mechanical.conveyor.object.ConveyorStack;
+import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
-import java.util.UUID;
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @SpecialRenderer(TESRConveyor.class)
 public class TileConveyorSmall extends TileBase implements ITickable, IConveyorBeltHost {
@@ -51,7 +62,76 @@ public class TileConveyorSmall extends TileBase implements ITickable, IConveyorB
 
     @Override
     public float getMovementSpeed() {
-        return 0.01f * (b ? -1 : 1);
+        return 0.1f * (b ? -1 : 1);
+    }
+
+    @Override
+    public void spawnItem(ItemStack stack, Vec3d offset) {
+        World world = getWorld();
+        BlockPos pos = getPos();
+
+        if (world.isRemote) return;
+
+        EntityItem entity = new EntityItem(
+            world,
+            pos.getX() + 0.5 + offset.x,
+            pos.getY() + logic.getHeight() + offset.y,
+            pos.getZ() + 0.5 + offset.z,
+            stack
+        );
+
+        entity.setVelocity(0, 0, 0);
+        world.spawnEntity(entity);
+    }
+
+    @Override
+    public void pickupEntities(Predicate<Entity> op) {
+        if (!world.isRemote) {
+            AxisAlignedBB pickupBounds = new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.125, 1.0).offset(getPos()).offset(0.0, logic.getHeight(), 0.0);
+            world.getEntitiesWithinAABBExcludingEntity(null, pickupBounds)
+                .forEach(e -> { if (op.test(e)) e.setDead(); });
+        }
+    }
+
+    @Nonnull
+    @Override
+    public Collection<AxisAlignedBB> getObjectBoundingBoxes(int radius, int height, Predicate<IConveyorObject> filter) {
+        return getBoundingBoxesFor(radius, height, pos -> {
+            TileEntity te = getWorld().getTileEntity(pos);
+            if (te != null && te.hasCapability(IConveyorBelt.CAPABILITY, null)) {
+                IConveyorBelt cap = te.getCapability(IConveyorBelt.CAPABILITY, null);
+                return cap.getAllBoundingBoxes(filter);
+            }
+            return Collections.emptySet();
+        });
+    }
+
+    @Nonnull
+    @Override
+    public Collection<AxisAlignedBB> getWorldBoundingBoxes(int radius, int height) {
+        return getBoundingBoxesFor(radius, height, pos -> {
+            List<AxisAlignedBB> boxes = new ArrayList<>();
+            getWorld().getBlockState(pos).addCollisionBoxToList(getWorld(), pos, Block.FULL_BLOCK_AABB.offset(pos), boxes, null, false);
+            return boxes.stream().map(it -> it.offset(BlockPos.ORIGIN.subtract(pos)).offset(-0.5, -logic.getHeight() - 0.25, -0.5)).collect(Collectors.toSet());
+        });
+    }
+
+    private Collection<AxisAlignedBB> getBoundingBoxesFor(int radius, int height, Function<BlockPos, Collection<AxisAlignedBB>> op) {
+        BlockPos pos = getPos();
+
+        Collection<AxisAlignedBB> bbs = new HashSet<>();
+
+        for (int y = -1; y < height; y++) {
+            for (int x = -radius; x <= radius; x++) {
+                for (int z = -radius; z <= radius; z++) {
+                    BlockPos bp = pos.add(x, y, z);
+                    final int finalX = x, finalY = y, finalZ = z; // f u java ಠ_ಠ
+                    op.apply(bp).stream().map(it -> it.offset(finalX, finalY, finalZ)).forEach(bbs::add);
+                }
+            }
+        }
+
+        return bbs;
     }
 
     @Override

@@ -12,7 +12,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
@@ -20,10 +19,9 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class ConveyorBeltLogic implements IConveyorBelt {
     private final IConveyorBeltHost host;
@@ -37,53 +35,55 @@ public class ConveyorBeltLogic implements IConveyorBelt {
     }
 
     public void tick() {
-        World world = host.getWorld();
         BlockPos pos = host.getPos();
         EnumFacing.Axis axis = host.getMovementAxis();
 
         if (axis == EnumFacing.Axis.Y) return; // wtf?
 
+        Collection<AxisAlignedBB> world = host.getWorldBoundingBoxes(5, 2);
+
         for (Pair<IConveyorObject, IPath> o : Lists.newArrayList(objects.values())) {
             IConveyorObject co = o.getLeft();
             IPath p = o.getRight();
             UUID uuid = co.uuid();
+            Collection<AxisAlignedBB> boundingBoxes = host.getObjectBoundingBoxes(5, 2, it -> it != co);
+            boundingBoxes.addAll(world);
 
-            p.move(host.getMovementSpeed());
+            if (!p.canTransferToNext(host.getMovementSpeed()))
+                p.move(co, getOrientation(), boundingBoxes, host.getMovementSpeed());
             if (p.canTransferToNext(host.getMovementSpeed())) {
                 EnumFacing f = host.getEjectFacing();
                 IConveyorBelt next = host.getNeighbor(f);
-                if (next != null && next.canInput(f.getOpposite())) {
-                    next.insert(f.getOpposite(), co);
+                if (next != null) {
+                    if (next.canInput(f.getOpposite())) {
+                        next.insert(f.getOpposite(), co);
+                        objects.remove(uuid);
+                        host.notifyObjectRemove(uuid);
+                    }
+                } else {
+                    host.spawnItem(co.getDropItem(), getDirectionVec(getOrientation()).scale(host.getMovementSpeed()).normalize().scale(0.75));
                     objects.remove(uuid);
                     host.notifyObjectRemove(uuid);
                 }
             }
         }
 
-        if (!world.isRemote) {
-            world.getEntitiesWithinAABBExcludingEntity(null, getPickupBounds()).stream()
-                    .map(it -> Pair.of(it, fromEntity(it)))
-                    .filter(it -> it.getRight().isPresent())
-                    .map(it -> Pair.of(it.getLeft(), it.getRight().get()))
-                    .forEach(it -> {
-                        Entity e = it.getLeft();
-                        IConveyorObject co = it.getRight();
-
-                        Vec3d relativePos = e.getPositionVector().subtract(pos.getX(), pos.getY() + height, pos.getZ());
-                        float rx = (float) relativePos.x;
-                        float rz = (float) relativePos.z;
-                        if (rx >= 0 && rx <= 1 && rz >= 0 && rz <= 1) {
-                            IPath path = new PathStraight(0.5f);
-                            objects.put(co.uuid(), Pair.of(co, path));
-                            e.setDead();
-                            host.notifyObjectAdd(co.uuid());
-                        }
-                    });
-        }
-    }
-
-    private AxisAlignedBB getPickupBounds() {
-        return new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.125, 1.0).offset(host.getPos()).offset(0.0, height, 0.0);
+        host.pickupEntities(e -> {
+            Optional<IConveyorObject> coOpt = fromEntity(e);
+            if (coOpt.isPresent()) {
+                IConveyorObject co = coOpt.get();
+                Vec3d relativePos = e.getPositionVector().subtract(pos.getX(), pos.getY() + height, pos.getZ());
+                float rx = (float) relativePos.x;
+                float rz = (float) relativePos.z;
+                if (rx >= 0 && rx <= 1 && rz >= 0 && rz <= 1) {
+                    IPath path = new PathStraight(0.5f);
+                    objects.put(co.uuid(), Pair.of(co, path));
+                    host.notifyObjectAdd(co.uuid());
+                    return true;
+                }
+            }
+            return false;
+        });
     }
 
     @Override
@@ -106,6 +106,21 @@ public class ConveyorBeltLogic implements IConveyorBelt {
         }
         objects.put(object.uuid(), Pair.of(object, path));
         host.notifyObjectAdd(object.uuid());
+    }
+
+    @Override
+    public Collection<AxisAlignedBB> getAllBoundingBoxes(Predicate<IConveyorObject> op) {
+        return objects.values().stream()
+            .flatMap(it -> it.getLeft().bounds().stream().map(bb -> bb.offset(getOffsetVector(it.getRight()))))
+            .collect(Collectors.toSet());
+    }
+
+    private Vec3d getOffsetVector(IPath path) {
+        return getDirectionVec(getOrientation()).scale(path.getProgress() - 0.5);
+    }
+
+    private static Vec3d getDirectionVec(EnumFacing.Axis axis) {
+        return new Vec3d(EnumFacing.getFacingFromAxis(EnumFacing.AxisDirection.POSITIVE, axis).getDirectionVec());
     }
 
     public Map<UUID, Pair<IConveyorObject, IPath>> getObjects() {
@@ -132,13 +147,13 @@ public class ConveyorBeltLogic implements IConveyorBelt {
     public void saveData(NBTTagCompound nbt) {
         NBTTagList list = new NBTTagList();
         objects.entrySet().stream()
-                .map(it -> {
-                    NBTTagCompound local = new NBTTagCompound();
-                    local.setUniqueId("id", it.getKey());
-                    local.setTag("data", createData(it.getValue()));
-                    return local;
-                })
-                .forEach(list::appendTag);
+            .map(it -> {
+                NBTTagCompound local = new NBTTagCompound();
+                local.setUniqueId("id", it.getKey());
+                local.setTag("data", createData(it.getValue()));
+                return local;
+            })
+            .forEach(list::appendTag);
         nbt.setTag("items", list);
     }
 
@@ -164,6 +179,12 @@ public class ConveyorBeltLogic implements IConveyorBelt {
 
     private static float interp(float a, float b, float partialTicks) { return a + (b - a) * partialTicks; }
 
+    private static boolean canMoveDistance(AxisAlignedBB box, float dist, EnumFacing.Axis axis, Collection<AxisAlignedBB> obstacles) {
+        Vec3d d = getDirectionVec(axis).scale(dist);
+        AxisAlignedBB expanded = box.expand(d.x, d.y, d.z);
+        return obstacles.stream().allMatch(c -> (box.intersects(c) && expanded.getCenter().squareDistanceTo(c.getCenter()) > box.getCenter().squareDistanceTo(c.getCenter())) || !expanded.intersects(c));
+    }
+
     public static interface IPath {
         public static final int TYPE_STRAIGHT = 0;
         public static final int TYPE_CURVED = 1;
@@ -172,9 +193,11 @@ public class ConveyorBeltLogic implements IConveyorBelt {
         @Nonnull
         public Matrix4f transform(float partialTicks);
 
-        public void move(float speed);
+        public boolean move(IConveyorObject obj, EnumFacing.Axis axis, Collection<AxisAlignedBB> world, float speed);
 
         public boolean canTransferToNext(float speed);
+
+        public float getProgress();
 
         public int type();
 
@@ -218,13 +241,22 @@ public class ConveyorBeltLogic implements IConveyorBelt {
         @Override
         public Matrix4f transform(float partialTicks) {
             return new Matrix4f()
-                    .translate(new Vector3f(0f, 0f, interp(prevProgress, progress, partialTicks) - 0.5f));
+                .translate(new Vector3f(0f, 0f, interp(prevProgress, progress, partialTicks) - 0.5f));
         }
 
         @Override
-        public void move(float speed) {
+        public boolean move(IConveyorObject obj, EnumFacing.Axis axis, Collection<AxisAlignedBB> world, float speed) {
             prevProgress = progress;
-            progress += speed;
+
+            boolean check = obj.bounds().stream().allMatch(c -> canMoveDistance(c.offset(getDirectionVec(axis).scale(progress - 0.5)), speed, axis, world));
+
+            if (check) progress += speed;
+            return check;
+        }
+
+        @Override
+        public float getProgress() {
+            return progress;
         }
 
         @Override
@@ -274,12 +306,15 @@ public class ConveyorBeltLogic implements IConveyorBelt {
         }
 
         @Override
-        public void move(float speed) {
-            super.move(speed);
+        public boolean move(IConveyorObject obj, EnumFacing.Axis axis, Collection<AxisAlignedBB> world, float speed) {
             prevOffsetX = offsetX;
             prevRotation = rotation;
-            offsetX = converge(offsetX, speed);
-            rotation = converge(rotation, 90f * speed / 0.5f);
+            if (super.move(obj, axis, world, speed)) {
+                offsetX = converge(offsetX, speed);
+                rotation = converge(rotation, 90f * speed / 0.5f);
+                return true;
+            }
+            return false;
         }
 
         private float converge(float value, float speed) {
@@ -293,8 +328,8 @@ public class ConveyorBeltLogic implements IConveyorBelt {
         @Override
         public Matrix4f transform(float partialTicks) {
             return super.transform(partialTicks)
-                    .translate(new Vector3f(interp(prevOffsetX, offsetX, partialTicks), 0f, 0f))
-                    .rotate((float) Math.toRadians(interp(prevRotation, rotation, partialTicks)), new Vector3f(0f, 1f, 0f));
+                .translate(new Vector3f(interp(prevOffsetX, offsetX, partialTicks), 0f, 0f))
+                .rotate((float) Math.toRadians(interp(prevRotation, rotation, partialTicks)), new Vector3f(0f, 1f, 0f));
         }
 
         @Override

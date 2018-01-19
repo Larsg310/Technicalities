@@ -3,10 +3,15 @@ package com.technicalitiesmc.mechanical.conveyor.object;
 import com.technicalitiesmc.api.mechanical.conveyor.IConveyorObject;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.AxisAlignedBB;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
+import java.util.Collections;
 
 public class ConveyorStack extends ConveyorObject implements IConveyorObject.Stack {
+    private static final Collection<AxisAlignedBB> BOUNDS = Collections.singleton(new AxisAlignedBB(-0.25, 0, -0.25, 0.25, 0.5, 0.25));
+
     private ItemStack stack;
 
     public ConveyorStack(ItemStack stack) {
@@ -15,15 +20,21 @@ public class ConveyorStack extends ConveyorObject implements IConveyorObject.Sta
 
     public ConveyorStack() { }
 
-    @Override
-    public float width() {
-        return 0.25f;
-    }
-
     @Nonnull
     @Override
     public ItemStack getStack() {
         return stack.copy();
+    }
+
+    @Nonnull
+    @Override
+    public Collection<AxisAlignedBB> bounds() {
+        return BOUNDS;
+    }
+
+    @Override
+    public ItemStack getDropItem() {
+        return stack;
     }
 
     @Override
