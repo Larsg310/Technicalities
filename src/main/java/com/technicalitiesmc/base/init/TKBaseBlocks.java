@@ -24,6 +24,8 @@ public class TKBaseBlocks {
     public static Block crafting_slab = new BlockCraftingSlab();
     public static Block workbench = new BlockWorkbench();
 
+    public static Block funnel = new BlockFunnel();
+
     public static Block channel = new BlockChannel();
 
     private static Block heatTest = new BlockHeatTest(Material.CAKE);
@@ -36,6 +38,7 @@ public class TKBaseBlocks {
         register(registry, barrel, "barrel", TileBarrel.class);
         register(registry, crafting_slab, "crafting_slab", TileCraftingSlab.class);
         register(registry, workbench, "workbench", TileWorkbench.class);
+        register(registry, funnel, "funnel");
         register(registry, channel, "channel", TileChannel.class);
         register(registry, heatTest, "heatTest");
     }
@@ -48,6 +51,7 @@ public class TKBaseBlocks {
         registerItem(registry, barrel);
         registerItem(registry, crafting_slab);
         registerItem(registry, workbench);
+        registerItem(registry, funnel);
         registerItem(registry, channel);
         registerItem(registry, heatTest);
     }
