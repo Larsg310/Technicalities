@@ -1,4 +1,4 @@
-package com.technicalitiesmc.electricity.items;
+package com.technicalitiesmc.electricity.item;
 
 import com.technicalitiesmc.api.TechnicalitiesAPI;
 import com.technicalitiesmc.api.electricity.EnergyType;
