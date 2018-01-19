@@ -2,7 +2,9 @@ package com.technicalitiesmc.energy.heat;
 
 import com.google.common.base.Preconditions;
 import com.technicalitiesmc.api.TechnicalitiesAPI;
+import com.technicalitiesmc.api.heat.IWorldHeatHandler;
 import com.technicalitiesmc.base.Technicalities;
+import com.technicalitiesmc.lib.util.DefaultCapabilityProvider;
 import elec332.core.main.APIHandler;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -20,6 +22,8 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Created by Elec332 on 28-12-2017.
@@ -30,14 +34,8 @@ public enum GlobalHeatHandler {
     INSTANCE;
 
     GlobalHeatHandler(){
+        DefaultCapabilityProvider.registerWorldCapabilityProvider(new ResourceLocation(Technicalities.MODID, "heatapi"), TechnicalitiesAPI.WORLD_HEAT_CAP, world -> new WorldHeatHandler());
         MinecraftForge.EVENT_BUS.register(this);
-    }
-
-    private static final ResourceLocation NAME = new ResourceLocation(Technicalities.MODID, "heatapi");
-
-    @SubscribeEvent
-    public void attachCaps(AttachCapabilitiesEvent<World> event){
-        event.addCapability(NAME, new HeatCapHandler());
     }
 
     @SubscribeEvent
