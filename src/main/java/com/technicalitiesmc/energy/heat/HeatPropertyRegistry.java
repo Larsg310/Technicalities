@@ -6,7 +6,6 @@ import com.technicalitiesmc.api.heat.IHeatPropertyRegistry;
 import com.technicalitiesmc.api.heat.IThermalMaterial;
 import com.technicalitiesmc.base.Technicalities;
 import com.technicalitiesmc.base.init.TKHeatObjects;
-import com.technicalitiesmc.lib.util.DefaultThermalMaterial;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;

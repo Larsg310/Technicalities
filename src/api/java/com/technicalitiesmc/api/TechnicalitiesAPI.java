@@ -1,6 +1,7 @@
 package com.technicalitiesmc.api;
 
 import com.google.common.base.Preconditions;
+import com.technicalitiesmc.api.electricity.IElectricityDevice;
 import com.technicalitiesmc.api.electricity.IEnergyObject;
 import com.technicalitiesmc.api.heat.IHeatConductor;
 import com.technicalitiesmc.api.heat.IHeatPropertyRegistry;
@@ -20,7 +21,7 @@ public class TechnicalitiesAPI {
 	public static final IHeatPropertyRegistry heatPropertyRegistry;
 
 	@CapabilityInject(IEnergyObject.class)
-	public static final Capability<IEnergyObject> ELECTRICITY_CAP;
+	public static final Capability<IElectricityDevice> ELECTRICITY_CAP;
 
 	@CapabilityInject(IHeatConductor.class)
 	public static final Capability<IHeatConductor> HEAT_CONDUCTOR_CAP;

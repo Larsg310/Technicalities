@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.technicalitiesmc.api.TechnicalitiesAPI;
+import com.technicalitiesmc.api.electricity.IElectricityDevice;
 import com.technicalitiesmc.api.electricity.IEnergyObject;
 import com.technicalitiesmc.api.electricity.component.CircuitElement;
 import com.technicalitiesmc.api.electricity.component.ICircuit;
@@ -185,8 +186,8 @@ public final class ElectricityGridHandler extends AbstractGridHandler<ETileEntit
 		if (!tile.hasCapability(TechnicalitiesAPI.ELECTRICITY_CAP, null)){
 			return false;
 		}
-		IEnergyObject eObj = tile.getCapability(TechnicalitiesAPI.ELECTRICITY_CAP, null);
-		return eObj != null && !eObj.isPassiveConnector();
+		IElectricityDevice eObj = tile.getCapability(TechnicalitiesAPI.ELECTRICITY_CAP, null);
+		return eObj != null && !CircuitElementFactory.INSTANCE.isPassiveConnector(eObj);
 	}
 
 	@Override

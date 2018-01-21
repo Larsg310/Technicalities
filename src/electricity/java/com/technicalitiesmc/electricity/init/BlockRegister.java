@@ -1,8 +1,8 @@
 package com.technicalitiesmc.electricity.init;
 
 import com.technicalitiesmc.electricity.TKElectricity;
-import com.technicalitiesmc.electricity.block.BlockElectricWire;
-import com.technicalitiesmc.electricity.tile.TileElectricWire;
+import com.technicalitiesmc.electricity.block.BlockBundledElectricWire;
+import com.technicalitiesmc.electricity.tile.TileBundledElectricWire;
 import com.technicalitiesmc.electricity.tile.TileTestGenerator;
 import com.technicalitiesmc.electricity.tile.TileTestReceiver;
 import com.technicalitiesmc.electricity.util.TKEResourceLocation;
@@ -19,15 +19,15 @@ import net.minecraftforge.registries.IForgeRegistry;
 public class BlockRegister implements IBlockRegister {
 
 	public static Block generator, receiver;
-	public static Block electric_wire = new BlockElectricWire();
+	public static Block electric_bundled_wire = new BlockBundledElectricWire();
 
 	@Override
 	public void register(IForgeRegistry<Block> registry) {
 		registry.register(generator = new BlockTileBaseWithFacing(Material.CAKE, TileTestGenerator.class, new TKEResourceLocation("coal_generator")).setCreativeTab(TKElectricity.creativeTab));
 		registry.register(receiver = new BlockTileBaseWithFacing(Material.DRAGON_EGG, TileTestReceiver.class, new TKEResourceLocation("receivertest")).setCreativeTab(TKElectricity.creativeTab));
 
-		registry.register(electric_wire.setRegistryName("electric_wire"));
-        GameRegistry.registerTileEntity(TileElectricWire.class, TKElectricity.MODID + ":electric_wire");
+		registry.register(electric_bundled_wire.setRegistryName("electric_wire"));
+        GameRegistry.registerTileEntity(TileBundledElectricWire.class, TKElectricity.MODID + ":electric_wire");
 	}
 
 }

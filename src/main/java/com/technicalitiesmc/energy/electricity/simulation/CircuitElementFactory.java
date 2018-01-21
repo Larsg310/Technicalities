@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.technicalitiesmc.api.electricity.IElectricityDevice;
 import com.technicalitiesmc.api.electricity.IEnergyObject;
 import com.technicalitiesmc.api.electricity.IEnergyReceiver;
 import com.technicalitiesmc.api.electricity.IEnergySource;
@@ -36,10 +37,18 @@ public enum CircuitElementFactory {
 	private int hc = 1000;
 
 	@Nonnull
-	public Collection<CircuitElement<?>> wrapComponent(IEnergyObject component){
+	public Collection<CircuitElement<?>> wrapComponent(IElectricityDevice component){
 		if (component == null){
 			return Collections.emptySet();
 		}
+		Set<IEnergyObject> objects = component instanceof IEnergyObject ? Sets.newHashSet((IEnergyObject) component) : component.getInternalComponents();
+		Set<CircuitElement<?>> ret = Sets.newHashSet();
+		objects.forEach(object -> ret.addAll(wrapComponent(object)));
+		return ret;
+	}
+
+	@Nonnull
+	public Set<CircuitElement<?>> wrapComponent(IEnergyObject component){
 		List<BiConsumer<IEnergyObject, Collection<CircuitElement<?>>>> wrappers = Lists.newArrayList();
 		cache.forEach((type, wrapper) -> {
 			if (type.isAssignableFrom(component.getClass())) {
@@ -57,6 +66,15 @@ public enum CircuitElementFactory {
 		} else {
 			throw new IllegalStateException(component.toString());
 		}
+	}
+
+	public boolean isPassiveConnector(IElectricityDevice device){
+		for (IEnergyObject obj : device.getInternalComponents()){
+			if (!obj.isPassiveConnector()){
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@SuppressWarnings("all")

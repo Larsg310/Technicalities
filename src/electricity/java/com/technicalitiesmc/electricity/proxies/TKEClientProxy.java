@@ -1,9 +1,9 @@
 package com.technicalitiesmc.electricity.proxies;
 
 import com.technicalitiesmc.electricity.client.ClientHandler;
-import com.technicalitiesmc.electricity.client.model.ModelElectricWire;
+import com.technicalitiesmc.electricity.client.model.ModelCacheElectricWire;
 import com.technicalitiesmc.electricity.init.BlockRegister;
-import net.minecraft.client.renderer.block.model.IBakedModel;
+import elec332.core.client.model.RenderingRegistry;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -18,13 +18,16 @@ public class TKEClientProxy extends TKECommonProxy {
 	public void initRendering() {
 		MinecraftForge.EVENT_BUS.register(new ClientHandler());
 		MinecraftForge.EVENT_BUS.register(this);
+		modelCacheElectricWire = new ModelCacheElectricWire();
+		RenderingRegistry.instance().registerLoader(modelCacheElectricWire);
 	}
+
+	public static ModelCacheElectricWire modelCacheElectricWire;
 
 	@SubscribeEvent
     public void onModelBake(ModelBakeEvent event){
-        ModelResourceLocation path = new ModelResourceLocation(BlockRegister.electric_wire.getRegistryName(), "normal");
-	    IBakedModel wireModel = event.getModelRegistry().getObject(path);
-	    event.getModelRegistry().putObject(path, new ModelElectricWire(wireModel));
+        ModelResourceLocation path = new ModelResourceLocation(BlockRegister.electric_bundled_wire.getRegistryName(), "normal");
+	    event.getModelRegistry().putObject(path, modelCacheElectricWire);
     }
 
 }
