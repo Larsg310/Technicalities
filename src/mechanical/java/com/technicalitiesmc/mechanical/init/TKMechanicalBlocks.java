@@ -4,6 +4,7 @@ import com.technicalitiesmc.base.Technicalities;
 import com.technicalitiesmc.lib.item.ItemBlockBase;
 import com.technicalitiesmc.mechanical.TKMechanical;
 import com.technicalitiesmc.mechanical.block.*;
+import com.technicalitiesmc.mechanical.tile.TileConveyor;
 import com.technicalitiesmc.mechanical.tile.TileConveyorSmall;
 import com.technicalitiesmc.mechanical.tile.TileKineticTest;
 import com.technicalitiesmc.mechanical.tile.TileShaft;
@@ -33,7 +34,7 @@ public class TKMechanicalBlocks {
         IForgeRegistry<Block> registry = event.getRegistry();
 
         register(registry, shaft, "shaft", TileShaft.class);
-        register(registry, conveyor, "conveyor"); //, TileConveyor.class);
+        register(registry, conveyor, "conveyor", TileConveyor.class);
         register(registry, conveyor_small, "conveyor_small", TileConveyorSmall.class);
         register(registry, grate, "grate"); //, TileGrate.class);
         register(registry, test, "test", TileKineticTest.class);
