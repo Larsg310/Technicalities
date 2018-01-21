@@ -1,0 +1,15 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"textures": {
+			"missing": "technicalities:blocks/crate_side",
+			"particle": "technicalities:blocks/crate_side"
+		},
+		"model": "technicalities:funnel",
+		"transform": "forge:default-block"
+	},
+	"variants": {
+        "normal": [{ }],
+        "inventory": [{ }]
+    }
+}

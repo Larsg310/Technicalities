@@ -7,6 +7,7 @@ import com.technicalitiesmc.base.event.OreEventHandler;
 import com.technicalitiesmc.base.init.TKHeatObjects;
 import com.technicalitiesmc.base.network.PacketGuiButton;
 import com.technicalitiesmc.base.proxies.TKCommonProxy;
+import com.technicalitiesmc.base.weather.WeatherHandler;
 import com.technicalitiesmc.energy.electricity.grid.ElectricityGridHandler;
 import com.technicalitiesmc.energy.heat.HeatPropertyRegistry;
 import com.technicalitiesmc.lib.simple.SimpleCapabilityManager;
@@ -73,6 +74,7 @@ public class Technicalities {
         }
         RegistryHelper.registerEmptyCapability(IHeatConductor.class);
         RegistryHelper.registerEmptyCapability(IWorldHeatHandler.class);
+        WeatherHandler.preInit();
         TKHeatObjects.init();
 
         // Register packets

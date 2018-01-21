@@ -32,6 +32,7 @@ public final class WrappedHeatConductor implements IHeatConductor, IThermalMater
         this.state = state;
         this.conductor = conductor;
         this.material = Preconditions.checkNotNull(conductor.getMaterial());
+        Preconditions.checkState(TechnicalitiesAPI.heatPropertyRegistry.getMaterial(material.getRegistryName()) == material, "Invalid material: "+material);
         this.c = true;
     }
 
@@ -85,7 +86,6 @@ public final class WrappedHeatConductor implements IHeatConductor, IThermalMater
         return conductor == null ? material.getM3(state) : conductor.getM3(state);
     }
 
-
     public double getMass(IBlockState state) {
         return getM3(state) * getDensity();
     }
@@ -95,14 +95,9 @@ public final class WrappedHeatConductor implements IHeatConductor, IThermalMater
         return conductor == null || conductor.touches(side);
     }
 
-    @Nullable
     public static WrappedHeatConductor read(NBTTagCompound tag){
         WrappedHeatConductor ret = new WrappedHeatConductor();
-        try {
-            ret.deserializeNBT(tag);
-        } catch (Exception e){
-            throw e;
-        }
+        ret.deserializeNBT(tag);
         return ret;
     }
 
