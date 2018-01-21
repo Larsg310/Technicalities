@@ -1,10 +1,7 @@
-package com.technicalitiesmc.electricity.items;
+package com.technicalitiesmc.electricity.item;
 
 import com.technicalitiesmc.api.TechnicalitiesAPI;
-import com.technicalitiesmc.api.electricity.EnergyType;
-import com.technicalitiesmc.api.electricity.IEnergyObject;
-import com.technicalitiesmc.api.electricity.WireConnectionMethod;
-import com.technicalitiesmc.api.electricity.WireThickness;
+import com.technicalitiesmc.api.electricity.*;
 import com.technicalitiesmc.api.util.ConnectionPoint;
 import com.technicalitiesmc.base.Technicalities;
 import com.technicalitiesmc.electricity.util.EnumWireType;
@@ -44,12 +41,18 @@ public class ItemOverheadWireCoil extends AbstractItem {
 		ItemStack stack = player.getHeldItem(hand);
 		NBTTagCompound tag = stack.getTagCompound();
 		TileEntity tile = WorldHelper.getTileAt(world, pos);
-		IEnergyObject energyObject = tile == null ? null : tile.getCapability(TechnicalitiesAPI.ELECTRICITY_CAP, null);
+		IElectricityDevice energyObject = tile == null ? null : tile.getCapability(TechnicalitiesAPI.ELECTRICITY_CAP, null);
 		if (energyObject == null){
 			return EnumActionResult.SUCCESS;
 		}
 		Vec3d hitVec = new Vec3d(hitX, hitY, hitZ);
-		ConnectionPoint cp = energyObject.getConnectionPoint(facing, hitVec);
+		ConnectionPoint cp = null;
+		for (IEnergyObject obj : energyObject.getInternalComponents()){
+			cp = obj.getConnectionPoint(facing, hitVec);
+			if (cp != null){
+				break;
+			}
+		}
 		if (cp == null){
 			return EnumActionResult.SUCCESS;
 		}

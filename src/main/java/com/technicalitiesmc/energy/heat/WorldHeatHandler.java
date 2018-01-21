@@ -4,10 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 import com.technicalitiesmc.api.TechnicalitiesAPI;
-import com.technicalitiesmc.api.heat.IThermalMaterial;
 import com.technicalitiesmc.api.heat.IWorldHeatHandler;
-import elec332.core.util.IOUtil;
-import elec332.core.util.NBTHelper;
 import elec332.core.util.NBTTypes;
 import elec332.core.world.DimensionCoordinate;
 import elec332.core.world.PositionedObjectHolder;
@@ -18,7 +15,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -27,8 +23,6 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Queue;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -178,12 +172,12 @@ public final class WorldHeatHandler implements IWorldHeatHandler, INBTSerializab
                 remove.add(pos);
             }
         }));
-        System.out.println(remove);
+        //System.out.println(remove);
         remove.forEach(dataMap::remove);
         chunks.forEach(chunk -> Lists.newArrayList(dataMap.getObjectsInChunk(chunk.getPos()).values()).forEach(
                 h -> h.update(world, this)
         ));
-        System.out.println("---");
+        //System.out.println("---");
     }
 
     @Override

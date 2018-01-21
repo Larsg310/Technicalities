@@ -39,6 +39,10 @@ public class BlockBase extends AbstractBlock {
         return (T) world.getTileEntity(pos);
     }
 
+    protected <T extends TileEntity> T getTile(IBlockAccess world, BlockPos pos, Class<T> type) {
+        return getTile(world, pos);
+    }
+
     private String unlName;
 
     protected String createUnlocalizedName() {
