@@ -1,7 +1,13 @@
 package com.technicalitiesmc.base.proxies;
 
 import com.google.common.base.Throwables;
+import com.technicalitiesmc.base.Technicalities;
 import com.technicalitiesmc.base.client.EmptyModelLoader;
+import com.technicalitiesmc.base.manual.api.ManualAPI;
+import com.technicalitiesmc.base.manual.api.prefab.manual.ResourceContentProvider;
+import com.technicalitiesmc.base.manual.api.prefab.manual.TextureTabIconRenderer;
+import com.technicalitiesmc.base.manual.client.manual.provider.*;
+import com.technicalitiesmc.base.network.TKGuiHandler;
 import com.technicalitiesmc.lib.client.SpecialRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -15,6 +21,7 @@ import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.objectweb.asm.Type;
 
 import java.io.IOException;
@@ -29,6 +36,21 @@ public class TKClientProxy extends TKCommonProxy {
     }
 
     @Override
+    public void init() {
+        super.init();
+
+        NetworkRegistry.INSTANCE.registerGuiHandler(Technicalities.instance, new TKGuiHandler());
+
+        ManualAPI.addProvider(new DefinitionPathProvider());
+        ManualAPI.addProvider(new ResourceContentProvider(Technicalities.MODID, "docs/"));
+        ManualAPI.addProvider("", new TextureImageProvider());
+        ManualAPI.addProvider("item", new ItemImageProvider());
+        ManualAPI.addProvider("block", new BlockImageProvider());
+        ManualAPI.addProvider("oredict", new OreDictImageProvider());
+        ManualAPI.addTab(new TextureTabIconRenderer(new ResourceLocation(Technicalities.MODID, "textures/gui/manual_home.png")), "technicalities.manual.home", "%LANGUAGE%/index.md");
+    }
+
+    @Override
     public void registerItemModel(Item item, int meta, ModelResourceLocation location) {
         ModelLoader.setCustomModelResourceLocation(item, meta, location);
     }
@@ -38,7 +60,7 @@ public class TKClientProxy extends TKCommonProxy {
         for (ASMData data : asmDataTable.getAll(SpecialRenderer.class.getName())) {
             try {
                 bindTileEntitySpecialRenderer(Class.forName(data.getClassName()), (TileEntitySpecialRenderer<?>) Class
-                        .forName(((Type) data.getAnnotationInfo().get("value")).getClassName()).newInstance());
+                    .forName(((Type) data.getAnnotationInfo().get("value")).getClassName()).newInstance());
             } catch (Exception ex) {
                 throw Throwables.propagate(ex);
             }

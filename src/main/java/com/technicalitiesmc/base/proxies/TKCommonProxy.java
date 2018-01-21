@@ -1,5 +1,7 @@
 package com.technicalitiesmc.base.proxies;
 
+import com.technicalitiesmc.base.manual.api.API;
+import com.technicalitiesmc.base.manual.common.api.ManualAPIImpl;
 import elec332.core.inventory.window.IWindowFactory;
 import elec332.core.inventory.window.IWindowHandler;
 import elec332.core.inventory.window.Window;
@@ -20,6 +22,10 @@ import java.io.InputStream;
 public class TKCommonProxy implements IWindowHandler {
 
     public void preInit() {
+        API.manualAPI = ManualAPIImpl.INSTANCE;
+    }
+
+    public void init() {
 
     }
 
@@ -48,7 +54,7 @@ public class TKCommonProxy implements IWindowHandler {
     @Override
     public Window createWindow(byte ID, EntityPlayer entityPlayer, World world, int x, int y, int z) {
         final TileEntity tile = WorldHelper.getTileAt(world, new BlockPos(x, y, z));
-        switch (ID){
+        switch (ID) {
             //eh
             default:
                 if (tile instanceof IWindowFactory) {

@@ -20,3 +20,11 @@ item.technicalities.recipe_book.name=Recipe Book
 gui.technicalities.tip.workbench.required=Required
 gui.technicalities.tip.workbench.missing=Missing
 gui.technicalities.tip.workbench.info=Hold shift to see item info
+
+item.technicalities.book_manual.name=super cool book w/ info n shit
+
+technicalities.manual.warning.missing.block=Block unavailable.
+technicalities.manual.warning.missing.image=Image not found.
+technicalities.manual.warning.missing.item=Item unavailable.
+technicalities.manual.warning.missing.ore_dict=Ore dictionary entry unavailable.
+technicalities.manual.home=Home

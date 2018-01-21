@@ -41,6 +41,9 @@ public class Technicalities {
 
     public static final String MODID = "technicalities", NAME = "Technicalities", VERSION = "%VERSION%";
 
+    @Mod.Instance
+    public static Technicalities instance;
+
     @SidedProxy(serverSide = "com.technicalitiesmc.base.proxies.TKCommonProxy", clientSide = "com.technicalitiesmc.base.proxies.TKClientProxy")
     public static TKCommonProxy proxy;
 
@@ -89,7 +92,7 @@ public class Technicalities {
     public void init(FMLInitializationEvent event) {
         // Register TESRs
         proxy.bindSpecialRenderers(asmTable);
-
+        proxy.init();
     }
 
     @Mod.EventHandler
