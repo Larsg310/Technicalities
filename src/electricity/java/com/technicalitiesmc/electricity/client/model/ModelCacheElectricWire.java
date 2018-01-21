@@ -43,9 +43,9 @@ public class ModelCacheElectricWire extends ModelCache<BlockBundledElectricWire.
         float posStart;
         int total = colors.size();
         EnumSet<EnumFacing> conn = data.getSides();
-        int ft = (16 - (total + 2)) / 2;
+        float ft = (16 - (total + 2)) / 2f;
         for (EnumFacing facing : conn) {
-            posStart = ft;
+            posStart = ft + 1;
             ITransformation baseTransformation = RenderHelper.defaultFor(facing);
             for (int i = 0; i < colors.size(); i++) {
                 EnumDyeColor color = colors.get(facing.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE ? i : colors.size() - 1 - i);

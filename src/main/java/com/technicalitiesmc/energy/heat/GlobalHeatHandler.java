@@ -28,7 +28,6 @@ public enum GlobalHeatHandler {
     INSTANCE;
 
     GlobalHeatHandler(){
-        DefaultCapabilityProvider.registerWorldCapabilityProvider(new ResourceLocation(Technicalities.MODID, "heatapi"), TechnicalitiesAPI.WORLD_HEAT_CAP, world -> new WorldHeatHandler());
         MinecraftForge.EVENT_BUS.register(this);
     }
 

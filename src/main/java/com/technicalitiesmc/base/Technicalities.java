@@ -10,8 +10,10 @@ import com.technicalitiesmc.base.proxies.TKCommonProxy;
 import com.technicalitiesmc.base.weather.WeatherHandler;
 import com.technicalitiesmc.energy.electricity.grid.ElectricityGridHandler;
 import com.technicalitiesmc.energy.heat.HeatPropertyRegistry;
+import com.technicalitiesmc.energy.heat.WorldHeatHandler;
 import com.technicalitiesmc.lib.simple.SimpleCapabilityManager;
 import com.technicalitiesmc.lib.simple.SimpleRegistryManager;
+import com.technicalitiesmc.lib.util.DefaultCapabilityProvider;
 import elec332.core.api.network.INetworkHandler;
 import elec332.core.api.network.ModNetworkHandler;
 import elec332.core.inventory.window.WindowManager;
@@ -19,6 +21,7 @@ import elec332.core.java.ReflectionHelper;
 import elec332.core.main.ElecCore;
 import elec332.core.main.ElecCoreRegistrar;
 import elec332.core.util.RegistryHelper;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -73,6 +76,7 @@ public class Technicalities {
         }
         RegistryHelper.registerEmptyCapability(IHeatConductor.class);
         RegistryHelper.registerEmptyCapability(IWorldHeatHandler.class);
+        DefaultCapabilityProvider.registerWorldCapabilityProvider(new ResourceLocation(Technicalities.MODID, "heatapi"), TechnicalitiesAPI.WORLD_HEAT_CAP, world -> new WorldHeatHandler());
         WeatherHandler.preInit();
         TKHeatObjects.init();
 
