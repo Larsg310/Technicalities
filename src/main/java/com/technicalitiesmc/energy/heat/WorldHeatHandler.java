@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  */
 public final class WorldHeatHandler implements IWorldHeatHandler, INBTSerializable<NBTTagCompound> {
 
-    protected WorldHeatHandler(){
+    public WorldHeatHandler(){
         dataMap = new PositionedObjectHolder<>();
         heatToProcess = Queues.newArrayDeque();
     }
