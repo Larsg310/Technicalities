@@ -1,4 +1,4 @@
-# Funnel 
+# Funnel
 ![Funnel](block:technicalities:funnel@0)
 
 The funnel is a block that draws items to its center. This can be used to counter the random velocity of droppers and
