@@ -3,7 +3,6 @@ package com.technicalitiesmc.energy.heat;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.technicalitiesmc.api.heat.IHeatObject;
-import com.technicalitiesmc.api.heat.IThermalMaterial;
 import elec332.core.grid.IPositionable;
 import elec332.core.world.DimensionCoordinate;
 import net.minecraft.nbt.NBTTagCompound;

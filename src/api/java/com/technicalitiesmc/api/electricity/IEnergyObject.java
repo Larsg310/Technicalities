@@ -45,6 +45,4 @@ public interface IEnergyObject {
 		return false;
 	}
 
-
-
 }

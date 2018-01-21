@@ -2,28 +2,22 @@ package com.technicalitiesmc.energy.heat;
 
 import com.google.common.base.Preconditions;
 import com.technicalitiesmc.api.TechnicalitiesAPI;
-import com.technicalitiesmc.api.heat.IWorldHeatHandler;
 import com.technicalitiesmc.base.Technicalities;
 import com.technicalitiesmc.lib.util.DefaultCapabilityProvider;
 import elec332.core.main.APIHandler;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * Created by Elec332 on 28-12-2017.

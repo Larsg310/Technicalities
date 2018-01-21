@@ -7,6 +7,7 @@ import com.technicalitiesmc.electricity.handler.PlayerEventHandler;
 import com.technicalitiesmc.electricity.init.BlockRegister;
 import com.technicalitiesmc.electricity.init.ElementRegister;
 import com.technicalitiesmc.electricity.init.ItemRegister;
+import com.technicalitiesmc.electricity.init.RecipeRegister;
 import com.technicalitiesmc.electricity.proxies.TKECommonProxy;
 import com.technicalitiesmc.electricity.util.Config;
 import com.technicalitiesmc.electricity.util.TKEResourceLocation;
@@ -73,6 +74,7 @@ public class TKElectricity implements IModuleController, IElecCoreMod {
 		configWrapper = new ConfigWrapper(config);
 		configWrapper.registerConfig(new Config());
 		MinecraftForge.EVENT_BUS.register(proxy);
+		proxy.initRendering();
 		loadTimer.endPhase(event);
 	}
 
@@ -82,7 +84,6 @@ public class TKElectricity implements IModuleController, IElecCoreMod {
 
 		WindowManager.INSTANCE.register(proxy);
 		MinecraftForge.EVENT_BUS.register(new PlayerEventHandler());
-		proxy.initRendering();
 		ElementRegister.init();
 
 		loadTimer.endPhase(event);
@@ -97,6 +98,7 @@ public class TKElectricity implements IModuleController, IElecCoreMod {
 	public void registerRegisters(Consumer<IObjectRegister<?>> handler) {
 		handler.accept(new BlockRegister());
 		handler.accept(new ItemRegister());
+		handler.accept(new RecipeRegister());
 	}
 
 	@Override
