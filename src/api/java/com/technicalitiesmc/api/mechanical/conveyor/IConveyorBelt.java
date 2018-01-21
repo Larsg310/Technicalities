@@ -23,4 +23,6 @@ public interface IConveyorBelt {
 
     @Nonnull
     public EnumFacing.Axis getOrientation();
+
+    public void onHostDestroyed();
 }

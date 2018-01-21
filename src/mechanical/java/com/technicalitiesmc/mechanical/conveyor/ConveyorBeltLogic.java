@@ -144,6 +144,15 @@ public class ConveyorBeltLogic implements IConveyorBelt {
         return nbt;
     }
 
+    @Override
+    public void onHostDestroyed() {
+        objects.forEach((key, value) -> {
+            host.spawnItem(value.getLeft().getDropItem(), new Vec3d(0, 0, 0));
+            host.notifyObjectRemove(key);
+        });
+        objects.clear();
+    }
+
     public void saveData(NBTTagCompound nbt) {
         NBTTagList list = new NBTTagList();
         objects.entrySet().stream()
@@ -186,8 +195,8 @@ public class ConveyorBeltLogic implements IConveyorBelt {
     }
 
     public static interface IPath {
-        public static final int TYPE_STRAIGHT = 0;
-        public static final int TYPE_CURVED = 1;
+        public static final byte TYPE_STRAIGHT = 0;
+        public static final byte TYPE_CURVED = 1;
 
         @SideOnly(Side.CLIENT)
         @Nonnull
@@ -199,7 +208,7 @@ public class ConveyorBeltLogic implements IConveyorBelt {
 
         public float getProgress();
 
-        public int type();
+        public byte type();
 
         public void loadData(NBTTagCompound nbt);
 
@@ -273,13 +282,13 @@ public class ConveyorBeltLogic implements IConveyorBelt {
 
         @Override
         public void saveData(NBTTagCompound nbt) {
-            nbt.setFloat("id", type());
+            nbt.setByte("id", type());
             nbt.setFloat("a", prevProgress);
             nbt.setFloat("b", progress);
         }
 
         @Override
-        public int type() {
+        public byte type() {
             return TYPE_STRAIGHT;
         }
     }
@@ -351,7 +360,7 @@ public class ConveyorBeltLogic implements IConveyorBelt {
         }
 
         @Override
-        public int type() {
+        public byte type() {
             return TYPE_CURVED;
         }
     }

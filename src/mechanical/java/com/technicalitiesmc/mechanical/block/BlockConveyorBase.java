@@ -1,8 +1,8 @@
 package com.technicalitiesmc.mechanical.block;
 
+import com.technicalitiesmc.api.mechanical.conveyor.IConveyorBelt;
 import com.technicalitiesmc.lib.block.BlockBase;
 import com.technicalitiesmc.mechanical.tile.TileConveyorBase;
-import com.technicalitiesmc.mechanical.tile.TileConveyorSmall;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -22,6 +22,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public abstract class BlockConveyorBase extends BlockBase implements ITileEntityProvider {
     private final AxisAlignedBB AABB;
@@ -75,6 +76,15 @@ public abstract class BlockConveyorBase extends BlockBase implements ITileEntity
         return false;
     }
 
-//    @Override
+    // TODO: is this the right method for dropping the items?
+    @Override
+    public boolean removedByPlayer(@Nonnull IBlockState state, World world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player, boolean willHarvest) {
+        TileEntity te = world.getTileEntity(pos);
+        if (te != null && te.hasCapability(IConveyorBelt.CAPABILITY, null))
+            Objects.requireNonNull(te.getCapability(IConveyorBelt.CAPABILITY, null)).onHostDestroyed();
+        return super.removedByPlayer(state, world, pos, player, willHarvest);
+    }
+
+    //    @Override
 //    public void onFallenUpon(World world, BlockPos pos, Entity entity, float fallDistance) { }
 }
