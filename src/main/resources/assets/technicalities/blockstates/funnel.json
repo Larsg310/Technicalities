@@ -1,15 +1,17 @@
 {
-	"forge_marker": 1,
-	"defaults": {
-		"textures": {
-			"missing": "technicalities:blocks/crate_side",
-			"particle": "technicalities:blocks/crate_side"
-		},
-		"model": "technicalities:funnel",
-		"transform": "forge:default-block"
-	},
-	"variants": {
-        "normal": [{ }],
-        "inventory": [{ }]
-    }
+  "forge_marker": 1,
+  "defaults": {
+    "textures": {
+      "side": "technicalities:blocks/funnel_side",
+      "top": "technicalities:blocks/funnel_top",
+      "bottom": "technicalities:blocks/funnel_bottom",
+      "particle": "technicalities:blocks/crate_side"
+    },
+    "model": "technicalities:funnel",
+    "transform": "forge:default-block"
+  },
+  "variants": {
+    "normal": [{ }],
+    "inventory": [{ }]
+  }
 }
