@@ -48,6 +48,14 @@ public class TKClientProxy extends TKCommonProxy {
         ManualAPI.addProvider("block", new BlockImageProvider());
         ManualAPI.addProvider("oredict", new OreDictImageProvider());
         ManualAPI.addTab(new TextureTabIconRenderer(new ResourceLocation(Technicalities.MODID, "textures/gui/manual_home.png")), "technicalities.manual.home", "%LANGUAGE%/index.md");
+
+        final ResourceLocation enterTLDRMode = new ResourceLocation(Technicalities.MODID, "textures/gui/tldr.png");
+        final ResourceLocation exitTLDRMode = new ResourceLocation(Technicalities.MODID, "textures/gui/tldr_exit.png");
+        ManualAPI.addTab(new PageDependentTabProvider(
+            i -> isPathTldr(i) ? exitTLDRMode : enterTLDRMode,
+            i -> isPathTldr(i) ? "technicalities.manual.tldr_exit" : "technicalities.manual.tldr",
+            TKClientProxy::getCEntry
+        ));
     }
 
     @Override
@@ -87,4 +95,22 @@ public class TKClientProxy extends TKCommonProxy {
         return Minecraft.getMinecraft().getResourceManager().getResource(path).getInputStream();
     }
 
+    // TLDR (Manual) stuff.
+
+    private static boolean isPathTldr(String path) {
+        return cleanPath(path).startsWith("tldr/");
+    }
+
+    private static String cleanPath(String path) {
+        while (path.startsWith("/")) path = path.substring(1);
+        return path;
+    }
+
+    private static String getCEntry(String path) {
+        if (isPathTldr(path)) {
+            return cleanPath(path).substring(5);
+        } else {
+            return "tldr/" + path;
+        }
+    }
 }

@@ -59,7 +59,7 @@ public final class ManualAPIImpl implements ManualAPI {
         INSTANCE.history.pop();
     }
 
-    public static List<Tab> getTabs() {
+    public static List<TabProvider> getTabs() {
         return INSTANCE.tabs;
     }
 
@@ -73,7 +73,7 @@ public final class ManualAPIImpl implements ManualAPI {
     /**
      * The registered tabs of the manual, which are really just glorified links.
      */
-    private final List<Tab> tabs = new ArrayList<>();
+    private final List<TabProvider> tabs = new ArrayList<>();
 
     /**
      * The list of registered path providers, used for resolving items/blocks to paths.
@@ -106,6 +106,14 @@ public final class ManualAPIImpl implements ManualAPI {
     @Override
     public void addTab(final TabIconRenderer renderer, @Nullable final String tooltip, final String path) {
         tabs.add(new Tab(renderer, tooltip, path));
+        if (tabs.size() > 7) {
+            Technicalities.log.warn("Gosh I'm popular! Too many tabs were added to the in-game manual, so some won't be shown. In case this actually happens, let me know and I'll look into making them scrollable or something...");
+        }
+    }
+
+    @Override
+    public void addTab(TabProvider tabProvider) {
+        tabs.add(tabProvider);
         if (tabs.size() > 7) {
             Technicalities.log.warn("Gosh I'm popular! Too many tabs were added to the in-game manual, so some won't be shown. In case this actually happens, let me know and I'll look into making them scrollable or something...");
         }
@@ -298,15 +306,30 @@ public final class ManualAPIImpl implements ManualAPI {
         }
     }
 
-    public static final class Tab {
-        public final TabIconRenderer renderer;
-        public final String tooltip;
-        public final String path;
+    public static final class Tab implements TabProvider {
+        private final TabIconRenderer renderer;
+        private final String tooltip;
+        private final String path;
 
         public Tab(final TabIconRenderer renderer, @Nullable final String tooltip, final String path) {
             this.renderer = renderer;
             this.tooltip = tooltip;
             this.path = path;
+        }
+
+        @Override
+        public TabIconRenderer getRenderer() {
+            return renderer;
+        }
+
+        @Override
+        public String getTooltip() {
+            return tooltip;
+        }
+
+        @Override
+        public String getPath() {
+            return path;
         }
     }
 

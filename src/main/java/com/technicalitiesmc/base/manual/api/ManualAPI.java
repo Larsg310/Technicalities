@@ -36,6 +36,12 @@ public final class ManualAPI {
         }
     }
 
+    public static void addTab(TabProvider tabProvider) {
+        if (API.manualAPI != null) {
+            API.manualAPI.addTab(tabProvider);
+        }
+    }
+
     /**
      * Register a path provider.
      * <p>

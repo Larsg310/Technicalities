@@ -23,6 +23,8 @@ public interface ManualAPI {
      */
     void addTab(TabIconRenderer renderer, @Nullable String tooltip, String path);
 
+    void addTab(TabProvider tabProvider);
+
     /**
      * Register a path provider.
      * <p>

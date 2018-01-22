@@ -1,6 +1,7 @@
 package com.technicalitiesmc.base.manual.client.gui;
 
 import com.technicalitiesmc.base.manual.api.ManualAPI;
+import com.technicalitiesmc.base.manual.api.manual.TabProvider;
 import com.technicalitiesmc.base.manual.client.manual.Document;
 import com.technicalitiesmc.base.manual.client.manual.segment.InteractiveSegment;
 import com.technicalitiesmc.base.manual.client.manual.segment.Segment;
@@ -102,11 +103,11 @@ public final class GuiManual extends GuiScreen {
         scrollButton.hoverOverride = isDragging;
 
         for (int i = 0; i < ManualAPIImpl.getTabs().size() && i < maxTabsPerSide; i++) {
-            final ManualAPIImpl.Tab tab = ManualAPIImpl.getTabs().get(i);
+            final TabProvider tab = ManualAPIImpl.getTabs().get(i);
             final ImageButton button = (ImageButton) buttonList.get(i);
             GlStateManager.pushMatrix();
             GlStateManager.translate(button.x + 30, button.y + 4 - tabOverlap / 2, zLevel);
-            tab.renderer.render();
+            tab.getRenderer().render();
             GlStateManager.popMatrix();
         }
 
@@ -116,11 +117,11 @@ public final class GuiManual extends GuiScreen {
             currentSegment.ifPresent(s -> s.tooltip().ifPresent(t -> drawHoveringText(Collections.singletonList(I18n.format(t)), mouseX, mouseY, getFontRenderer())));
 
             for (int i = 0; i < ManualAPIImpl.getTabs().size() && i < maxTabsPerSide; i++) {
-                final ManualAPIImpl.Tab tab = ManualAPIImpl.getTabs().get(i);
+                final TabProvider tab = ManualAPIImpl.getTabs().get(i);
                 final ImageButton button = (ImageButton) buttonList.get(i);
                 if (mouseX > button.x && mouseX < button.x + button.width && mouseY > button.y && mouseY < button.y + button.height) {
-                    if (tab.tooltip != null) {
-                        drawHoveringText(Collections.singletonList(I18n.format(tab.tooltip)), mouseX, mouseY, getFontRenderer());
+                    if (tab.getTooltip() != null) {
+                        drawHoveringText(Collections.singletonList(I18n.format(tab.getTooltip())), mouseX, mouseY, getFontRenderer());
                     }
                 }
             }
@@ -186,9 +187,10 @@ public final class GuiManual extends GuiScreen {
     }
 
     @Override
-    protected void actionPerformed(final GuiButton button) throws IOException {
+    protected void actionPerformed(final GuiButton button) {
         if (button.id >= 0 && button.id < ManualAPIImpl.getTabs().size()) {
-            ManualAPI.navigate(ManualAPIImpl.getTabs().get(button.id).path);
+            String path = ManualAPIImpl.getTabs().get(button.id).getPath();
+            if (path != null) ManualAPI.navigate(path);
         }
     }
 
