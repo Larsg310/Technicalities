@@ -44,7 +44,7 @@ public class TKClientProxy extends TKCommonProxy {
 
         ManualAPI.addProvider(new DefinitionPathProvider());
         ManualAPI.addProvider(new ResourceContentProvider(Technicalities.MODID, "docs/", false));
-        ManualAPI.addProvider(new ResourceContentProvider(Technicalities.MODID, "tldr_docs/", true));
+        ManualAPI.addProvider(new ResourceContentProvider(Technicalities.MODID, "docs_tldr/", true));
         ManualAPI.addProvider("", new TextureImageProvider());
         ManualAPI.addProvider("item", new ItemImageProvider());
         ManualAPI.addProvider("block", new BlockImageProvider());
