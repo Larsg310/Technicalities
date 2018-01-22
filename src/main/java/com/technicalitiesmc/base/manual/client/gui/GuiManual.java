@@ -217,7 +217,7 @@ public final class GuiManual extends GuiScreen {
         return documentHeight - documentMaxHeight;
     }
 
-    private void refreshPage() {
+    public void refreshPage() {
         final Iterable<String> content = ManualAPI.contentFor(ManualAPIImpl.peekPath());
         document = Document.parse(content != null ? content : Collections.singletonList("Document not found: " + ManualAPIImpl.peekPath()));
         documentHeight = Document.height(document, documentMaxWidth, getFontRenderer());

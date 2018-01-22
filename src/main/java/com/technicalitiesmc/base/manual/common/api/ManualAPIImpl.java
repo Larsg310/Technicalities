@@ -63,6 +63,19 @@ public final class ManualAPIImpl implements ManualAPI {
         return INSTANCE.tabs;
     }
 
+    public static boolean isTLDRMode() {
+        return INSTANCE.tldrMode;
+    }
+
+    public static void setTLDRMode(boolean tldr) {
+        INSTANCE.tldrMode = tldr;
+        INSTANCE.refresh();
+    }
+
+    public static void toggleTLDRMode() {
+        setTLDRMode(!isTLDRMode());
+    }
+
     // --------------------------------------------------------------------- //
 
     /**
@@ -94,6 +107,11 @@ public final class ManualAPIImpl implements ManualAPI {
      * The default page to open when resetting / the history becomes empty.
      */
     private String defaultPage = String.format("%s/index.md", LANGUAGE_KEY);
+
+    /**
+     * Is the TL;DR mode enabled?
+     */
+    private boolean tldrMode = false;
 
     // --------------------------------------------------------------------- //
 
@@ -196,6 +214,14 @@ public final class ManualAPIImpl implements ManualAPI {
     public void reset() {
         history.clear();
         history.push(new History(defaultPage));
+    }
+
+    @Override
+    public void refresh() {
+        final GuiScreen screen = Minecraft.getMinecraft().currentScreen;
+        if (screen instanceof GuiManual) {
+            ((GuiManual) screen).refreshPage();
+        }
     }
 
     @Override

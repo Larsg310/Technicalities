@@ -131,6 +131,11 @@ public interface ManualAPI {
     void reset();
 
     /**
+     * Refresh the current page.
+     */
+    void refresh();
+
+    /**
      * Navigate to a page in the manual.
      *
      * @param path the path to navigate to.

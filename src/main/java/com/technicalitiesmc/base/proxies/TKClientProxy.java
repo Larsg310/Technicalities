@@ -7,6 +7,7 @@ import com.technicalitiesmc.base.manual.api.ManualAPI;
 import com.technicalitiesmc.base.manual.api.prefab.manual.ResourceContentProvider;
 import com.technicalitiesmc.base.manual.api.prefab.manual.TextureTabIconRenderer;
 import com.technicalitiesmc.base.manual.client.manual.provider.*;
+import com.technicalitiesmc.base.manual.common.api.ManualAPIImpl;
 import com.technicalitiesmc.base.network.TKGuiHandler;
 import com.technicalitiesmc.lib.client.SpecialRenderer;
 import net.minecraft.client.Minecraft;
@@ -42,7 +43,8 @@ public class TKClientProxy extends TKCommonProxy {
         NetworkRegistry.INSTANCE.registerGuiHandler(Technicalities.instance, new TKGuiHandler());
 
         ManualAPI.addProvider(new DefinitionPathProvider());
-        ManualAPI.addProvider(new ResourceContentProvider(Technicalities.MODID, "docs/"));
+        ManualAPI.addProvider(new ResourceContentProvider(Technicalities.MODID, "docs/", false));
+        ManualAPI.addProvider(new ResourceContentProvider(Technicalities.MODID, "tldr_docs/", true));
         ManualAPI.addProvider("", new TextureImageProvider());
         ManualAPI.addProvider("item", new ItemImageProvider());
         ManualAPI.addProvider("block", new BlockImageProvider());
@@ -52,9 +54,12 @@ public class TKClientProxy extends TKCommonProxy {
         final ResourceLocation enterTLDRMode = new ResourceLocation(Technicalities.MODID, "textures/gui/tldr.png");
         final ResourceLocation exitTLDRMode = new ResourceLocation(Technicalities.MODID, "textures/gui/tldr_exit.png");
         ManualAPI.addTab(new PageDependentTabProvider(
-            i -> isPathTldr(i) ? exitTLDRMode : enterTLDRMode,
-            i -> isPathTldr(i) ? "technicalities.manual.tldr_exit" : "technicalities.manual.tldr",
-            TKClientProxy::getCEntry
+            i -> ManualAPIImpl.isTLDRMode() ? exitTLDRMode : enterTLDRMode,
+            i -> ManualAPIImpl.isTLDRMode() ? "technicalities.manual.tldr_exit" : "technicalities.manual.tldr",
+            i -> {
+                ManualAPIImpl.toggleTLDRMode();
+                return i;
+            }
         ));
     }
 
@@ -93,24 +98,5 @@ public class TKClientProxy extends TKCommonProxy {
     @Override
     public InputStream readResource(ResourceLocation path) throws IOException {
         return Minecraft.getMinecraft().getResourceManager().getResource(path).getInputStream();
-    }
-
-    // TLDR (Manual) stuff.
-
-    private static boolean isPathTldr(String path) {
-        return cleanPath(path).startsWith("tldr/");
-    }
-
-    private static String cleanPath(String path) {
-        while (path.startsWith("/")) path = path.substring(1);
-        return path;
-    }
-
-    private static String getCEntry(String path) {
-        if (isPathTldr(path)) {
-            return cleanPath(path).substring(5);
-        } else {
-            return "tldr/" + path;
-        }
     }
 }

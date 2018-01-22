@@ -2,6 +2,7 @@ package com.technicalitiesmc.base.manual.api.prefab.manual;
 
 import com.google.common.base.Charsets;
 import com.technicalitiesmc.base.manual.api.manual.ContentProvider;
+import com.technicalitiesmc.base.manual.common.api.ManualAPIImpl;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
@@ -27,21 +28,24 @@ import java.util.ArrayList;
 @SuppressWarnings("UnusedDeclaration")
 public class ResourceContentProvider implements ContentProvider {
     private final String resourceDomain;
-
     private final String basePath;
+    private final boolean tldr;
 
-    public ResourceContentProvider(final String resourceDomain, final String basePath) {
+    public ResourceContentProvider(final String resourceDomain, final String basePath, final boolean tldr) {
         this.resourceDomain = resourceDomain;
         this.basePath = basePath;
+        this.tldr = tldr;
     }
 
-    public ResourceContentProvider(final String resourceDomain) {
-        this(resourceDomain, "");
+    public ResourceContentProvider(final String resourceDomain, final boolean tldr) {
+        this(resourceDomain, "", tldr);
     }
 
     @Override
     @Nullable
     public Iterable<String> getContent(final String path) {
+        if (ManualAPIImpl.isTLDRMode() ^ tldr) return null;
+
         final ResourceLocation location = new ResourceLocation(resourceDomain, basePath + (path.startsWith("/") ? path.substring(1) : path));
         InputStream is = null;
         try {
@@ -59,8 +63,7 @@ public class ResourceContentProvider implements ContentProvider {
             if (is != null) {
                 try {
                     is.close();
-                } catch (final IOException ignored) {
-                }
+                } catch (final IOException ignored) { }
             }
         }
     }
