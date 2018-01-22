@@ -1,6 +1,7 @@
 package com.technicalitiesmc.base.manual.api;
 
 import com.technicalitiesmc.base.manual.api.manual.*;
+import com.technicalitiesmc.base.manual.common.api.ManualAPIImpl;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -31,15 +32,11 @@ public final class ManualAPI {
      * @param path     the path to the page to open when the tab is clicked.
      */
     public static void addTab(final TabIconRenderer renderer, final String tooltip, final String path) {
-        if (API.manualAPI != null) {
-            API.manualAPI.addTab(renderer, tooltip, path);
-        }
+        ManualAPIImpl.INSTANCE.addTab(renderer, tooltip, path);
     }
 
     public static void addTab(TabProvider tabProvider) {
-        if (API.manualAPI != null) {
-            API.manualAPI.addTab(tabProvider);
-        }
+        ManualAPIImpl.INSTANCE.addTab(tabProvider);
     }
 
     /**
@@ -51,9 +48,7 @@ public final class ManualAPI {
      * @param provider the provider to register.
      */
     public static void addProvider(final PathProvider provider) {
-        if (API.manualAPI != null) {
-            API.manualAPI.addProvider(provider);
-        }
+        ManualAPIImpl.INSTANCE.addProvider(provider);
     }
 
     /**
@@ -67,9 +62,7 @@ public final class ManualAPI {
      * @param provider the provider to register.
      */
     public static void addProvider(final ContentProvider provider) {
-        if (API.manualAPI != null) {
-            API.manualAPI.addProvider(provider);
-        }
+        ManualAPIImpl.INSTANCE.addProvider(provider);
     }
 
     /**
@@ -91,9 +84,7 @@ public final class ManualAPI {
      * @param provider the provider to register.
      */
     public static void addProvider(final String prefix, final ImageProvider provider) {
-        if (API.manualAPI != null) {
-            API.manualAPI.addProvider(prefix, provider);
-        }
+        ManualAPIImpl.INSTANCE.addProvider(prefix, provider);
     }
 
     /**
@@ -108,10 +99,7 @@ public final class ManualAPI {
      */
     @Nullable
     public static ImageRenderer imageFor(final String path) {
-        if (API.manualAPI != null) {
-            return API.manualAPI.imageFor(path);
-        }
-        return null;
+        return ManualAPIImpl.INSTANCE.imageFor(path);
     }
 
     // ----------------------------------------------------------------------- //
@@ -124,10 +112,7 @@ public final class ManualAPI {
      */
     @Nullable
     public static String pathFor(final ItemStack stack) {
-        if (API.manualAPI != null) {
-            return API.manualAPI.pathFor(stack);
-        }
-        return null;
+        return ManualAPIImpl.INSTANCE.pathFor(stack);
     }
 
     /**
@@ -139,10 +124,7 @@ public final class ManualAPI {
      */
     @Nullable
     public static String pathFor(final World world, final BlockPos pos) {
-        if (API.manualAPI != null) {
-            return API.manualAPI.pathFor(world, pos);
-        }
-        return null;
+        return ManualAPIImpl.INSTANCE.pathFor(world, pos);
     }
 
     /**
@@ -153,10 +135,7 @@ public final class ManualAPI {
      */
     @Nullable
     public static Iterable<String> contentFor(final String path) {
-        if (API.manualAPI != null) {
-            return API.manualAPI.contentFor(path);
-        }
-        return null;
+        return ManualAPIImpl.INSTANCE.contentFor(path);
     }
 
     // ----------------------------------------------------------------------- //
@@ -170,18 +149,14 @@ public final class ManualAPI {
      * @param player the player to open the manual for.
      */
     public static void openFor(final EntityPlayer player) {
-        if (API.manualAPI != null) {
-            API.manualAPI.openFor(player);
-        }
+        ManualAPIImpl.INSTANCE.openFor(player);
     }
 
     /**
      * Reset the history of the manual.
      */
     public static void reset() {
-        if (API.manualAPI != null) {
-            API.manualAPI.reset();
-        }
+        ManualAPIImpl.INSTANCE.reset();
     }
 
     /**
@@ -190,9 +165,7 @@ public final class ManualAPI {
      * @param path the path to navigate to.
      */
     public static void navigate(final String path) {
-        if (API.manualAPI != null) {
-            API.manualAPI.navigate(path);
-        }
+        ManualAPIImpl.INSTANCE.navigate(path);
     }
 
     // ----------------------------------------------------------------------- //

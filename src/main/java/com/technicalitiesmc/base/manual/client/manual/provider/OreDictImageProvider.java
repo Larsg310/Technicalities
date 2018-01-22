@@ -1,7 +1,6 @@
 package com.technicalitiesmc.base.manual.client.manual.provider;
 
 import com.technicalitiesmc.base.Technicalities;
-import com.technicalitiesmc.base.manual.api.API;
 import com.technicalitiesmc.base.manual.api.manual.ImageProvider;
 import com.technicalitiesmc.base.manual.api.manual.ImageRenderer;
 import com.technicalitiesmc.base.manual.client.manual.segment.render.ItemStackImageRenderer;
@@ -18,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 public final class OreDictImageProvider implements ImageProvider {
-    private static final String WARNING_ORE_DICT_MISSING = API.MOD_ID + ".manual.warning.missing.oreDict";
+    private static final String WARNING_ORE_DICT_MISSING = Technicalities.MODID + ".manual.warning.missing.oreDict";
 
     @Override
     public ImageRenderer getImage(final String data) {

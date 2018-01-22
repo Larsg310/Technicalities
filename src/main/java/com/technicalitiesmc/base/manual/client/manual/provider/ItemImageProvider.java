@@ -1,7 +1,7 @@
 package com.technicalitiesmc.base.manual.client.manual.provider;
 
 import com.google.common.base.Strings;
-import com.technicalitiesmc.base.manual.api.API;
+import com.technicalitiesmc.base.Technicalities;
 import com.technicalitiesmc.base.manual.api.manual.ImageProvider;
 import com.technicalitiesmc.base.manual.api.manual.ImageRenderer;
 import com.technicalitiesmc.base.manual.client.manual.segment.render.ItemStackImageRenderer;
@@ -13,7 +13,7 @@ import net.minecraft.util.ResourceLocation;
 import javax.annotation.Nullable;
 
 public final class ItemImageProvider implements ImageProvider {
-    private static final String WARNING_ITEM_MISSING = API.MOD_ID + ".manual.warning.missing.item";
+    private static final String WARNING_ITEM_MISSING = Technicalities.MODID + ".manual.warning.missing.item";
 
     @Override
     @Nullable

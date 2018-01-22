@@ -8,7 +8,6 @@ import com.technicalitiesmc.base.manual.api.prefab.manual.ResourceContentProvide
 import com.technicalitiesmc.base.manual.api.prefab.manual.TextureTabIconRenderer;
 import com.technicalitiesmc.base.manual.client.manual.provider.*;
 import com.technicalitiesmc.base.manual.common.api.ManualAPIImpl;
-import com.technicalitiesmc.base.network.TKGuiHandler;
 import com.technicalitiesmc.lib.client.SpecialRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -29,7 +28,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class TKClientProxy extends TKCommonProxy {
-
     @Override
     public void preInit() {
         super.preInit();
@@ -39,9 +37,11 @@ public class TKClientProxy extends TKCommonProxy {
     @Override
     public void init() {
         super.init();
+        NetworkRegistry.INSTANCE.registerGuiHandler(Technicalities.instance, Technicalities.guiHandler);
+        initManual();
+    }
 
-        NetworkRegistry.INSTANCE.registerGuiHandler(Technicalities.instance, new TKGuiHandler());
-
+    private void initManual() {
         ManualAPI.addProvider(new DefinitionPathProvider());
         ManualAPI.addProvider(new ResourceContentProvider(Technicalities.MODID, "docs/", false));
         ManualAPI.addProvider(new ResourceContentProvider(Technicalities.MODID, "docs_tldr/", true));

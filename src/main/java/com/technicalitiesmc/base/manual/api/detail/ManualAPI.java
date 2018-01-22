@@ -23,6 +23,16 @@ public interface ManualAPI {
      */
     void addTab(TabIconRenderer renderer, @Nullable String tooltip, String path);
 
+    /**
+     * Register a tab to be displayed next to the manual.
+     * <p>
+     * These are intended to link to index pages, and for the time being there
+     * a relatively low number of tabs that can be displayed, so I'd ask you to
+     * only register as many tabs as actually, technically *needed*. Which will
+     * usually be one, for your main index page.
+     *
+     * @param tabProvider the tab provider.
+     */
     void addTab(TabProvider tabProvider);
 
     /**
