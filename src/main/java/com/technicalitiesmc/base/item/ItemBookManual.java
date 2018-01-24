@@ -18,6 +18,10 @@ import javax.annotation.Nullable;
  * The manual!
  */
 public final class ItemBookManual extends ItemBase {
+    public ItemBookManual() {
+        setMaxStackSize(1);
+    }
+
     public static boolean tryOpenManual(final World world, final EntityPlayer player, @Nullable final String path) {
         if (path == null) {
             return false;
@@ -48,15 +52,5 @@ public final class ItemBookManual extends ItemBase {
             ManualAPI.openFor(player);
         }
         return super.onItemRightClickC(player, hand, world);
-    }
-
-    @Override
-    public boolean isEnchantable(final ItemStack stack) {
-        return false;
-    }
-
-    @Override
-    public int getItemEnchantability() {
-        return 0;
     }
 }
