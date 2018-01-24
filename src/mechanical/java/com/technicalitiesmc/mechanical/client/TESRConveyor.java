@@ -24,12 +24,6 @@ public class TESRConveyor extends TileEntitySpecialRenderer<TileEntity> {
         pushMatrix();
         translate(x + 0.5f, y + conveyor.getHeight() + 0.25f, z + 0.5f);
 
-        // GlStateManager.disableTexture2D();
-        // GlStateManager.color(1,1,1,0.2f);
-        // host.getObjectBoundingBoxes(5,2, unused -> true).forEach(RenderHelper::renderCuboid);
-        // host.getWorldBoundingBoxes(5,2).forEach(RenderHelper::renderCuboid);
-        // GlStateManager.enableTexture2D();
-
         if (host.getMovementAxis() == EnumFacing.Axis.X) {
             rotate(90, 0, 1, 0);
         }

@@ -23,6 +23,9 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.min;
+
 public class ConveyorBeltLogic implements IConveyorBelt {
     private final IConveyorBeltHost host;
     private final float height;
@@ -76,7 +79,7 @@ public class ConveyorBeltLogic implements IConveyorBelt {
                 float rx = (float) relativePos.x;
                 float rz = (float) relativePos.z;
                 if (rx >= 0 && rx <= 1 && rz >= 0 && rz <= 1) {
-                    IPath path = new PathStraight(0.5f);
+                    IPath path = new PathStraight(0.5f, 0f);
                     objects.put(co.uuid(), Pair.of(co, path));
                     host.notifyObjectAdd(co.uuid());
                     return true;
@@ -100,9 +103,9 @@ public class ConveyorBeltLogic implements IConveyorBelt {
     public void insert(EnumFacing side, IConveyorObject object) {
         IPath path;
         if (side.getAxis() == getOrientation()) {
-            path = new PathStraight(side.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE ? 1 : 0);
+            path = new PathStraight(side.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE ? 1 : 0, 0f);
         } else {
-            path = new PathCurved(side.getAxisDirection().getOffset() > 0 ^ getOrientation() == EnumFacing.Axis.X);
+            path = new PathCurved(side.getAxisDirection().getOffset() > 0 ^ getOrientation() == EnumFacing.Axis.X, 0f);
         }
         objects.put(object.uuid(), Pair.of(object, path));
         host.notifyObjectAdd(object.uuid());
@@ -186,7 +189,39 @@ public class ConveyorBeltLogic implements IConveyorBelt {
         return Optional.ofNullable(o);
     }
 
+    // Interpolates (linearly) two values
     private static float interp(float a, float b, float partialTicks) { return a + (b - a) * partialTicks; }
+
+    // Returns the closer of the two possible directions to the target
+    private static float flow(float src, float speed, float target, float min, float max) {
+        float rspeed = min(speed, wcmp(src, target, min, max));
+        if (rspeed == 0f) return src;
+        float next = wheel(src + rspeed, min, max);
+        float prev = wheel(src - rspeed, min, max);
+        boolean increase = wcmp(next, target, min, max) < wcmp(prev, target, min, max);
+        return increase ? next : prev;
+    }
+
+    // modulo but with a minimal value (instead of 0)
+    private static float wheel(float value, float min, float max) {
+        return mod(value - min, max - min) + min;
+    }
+
+    // Returns how close the value is to the target if limited by min and max (parameters need to be in the range [min, max])
+    private static float wcmp(float value, float target, float min, float max) {
+        float size = max - min;
+        float v1 = abs(target - value - size);
+        float v2 = abs(target - value);
+        float v3 = abs(target - value + size);
+        return min(v1, min(v2, v3));
+    }
+
+    // java's modulo is kinda stupid if given a negative value
+    private static float mod(float value, float limit) {
+        float r = value % limit;
+        if (r < 0) r += limit;
+        return r;
+    }
 
     private static boolean canMoveDistance(AxisAlignedBB box, float dist, EnumFacing.Axis axis, Collection<AxisAlignedBB> obstacles) {
         Vec3d d = getDirectionVec(axis).scale(dist);
@@ -234,32 +269,42 @@ public class ConveyorBeltLogic implements IConveyorBelt {
     }
 
     private static class PathStraight implements IPath {
-        private float prevProgress;
-        private float progress;
+        protected float prevProgress;
+        protected float progress;
+        protected float prevRotation;
+        protected float rotation;
+        protected float rotationTarget;
 
         public PathStraight() {
-            this(0.5f);
+            this(0.5f, 0f);
         }
 
-        public PathStraight(float progress) {
+        public PathStraight(float progress, float rotation) {
             this.prevProgress = progress;
             this.progress = progress;
+            this.rotation = rotation;
+            this.rotationTarget = rotation;
         }
 
         @Nonnull
         @Override
         public Matrix4f transform(float partialTicks) {
             return new Matrix4f()
-                .translate(new Vector3f(0f, 0f, interp(prevProgress, progress, partialTicks) - 0.5f));
+                .translate(new Vector3f(0f, 0f, interp(prevProgress, progress, partialTicks) - 0.5f))
+                .rotate((float) Math.toRadians(interp(prevRotation, rotation, partialTicks)), new Vector3f(0f, 1f, 0f));
         }
 
         @Override
         public boolean move(IConveyorObject obj, EnumFacing.Axis axis, Collection<AxisAlignedBB> world, float speed) {
             prevProgress = progress;
+            prevRotation = rotation;
 
             boolean check = obj.bounds().stream().allMatch(c -> canMoveDistance(c.offset(getDirectionVec(axis).scale(progress - 0.5)), speed, axis, world));
 
-            if (check) progress += speed;
+            if (check) {
+                progress += speed;
+                rotation = flow(rotation, speed, rotationTarget, 0, 360);
+            }
             return check;
         }
 
@@ -271,7 +316,7 @@ public class ConveyorBeltLogic implements IConveyorBelt {
         @Override
         public boolean canTransferToNext(float speed) {
             float p = (this.progress - 0.5f) * 2f;
-            return speed * p > 0 && Math.abs(p) > 1;
+            return speed * p > 0 && abs(p) > 1;
         }
 
         @Override
@@ -296,21 +341,21 @@ public class ConveyorBeltLogic implements IConveyorBelt {
     private static class PathCurved extends PathStraight {
         private float prevOffsetX = 0.0f;
         private float offsetX = 0.0f;
-        private float prevRotation = 0f;
-        private float rotation = 0f;
 
         public PathCurved() {
-            this(false);
+            this(false, 0f);
         }
 
-        public PathCurved(boolean right) {
-            super(0.5f);
+        public PathCurved(boolean right, float rotation) {
+            super(0.5f, rotation);
             if (right) {
                 prevOffsetX = offsetX = 0.5f;
-                rotation = -90.0f;
+                this.rotation += -90.0f;
+                rotationTarget = rotation;
             } else {
                 prevOffsetX = offsetX = -0.5f;
-                rotation = 90.0f;
+                this.rotation += 90.0f;
+                rotationTarget = rotation + 180f;
             }
         }
 
@@ -328,18 +373,23 @@ public class ConveyorBeltLogic implements IConveyorBelt {
 
         private float converge(float value, float speed) {
             float sgn = Math.signum(value);
-            float abs = Math.abs(value);
-            float sabs = Math.abs(speed);
+            float abs = abs(value);
+            float sabs = abs(speed);
             return Math.max(0, abs - sabs) * sgn;
         }
 
         @Nonnull
         @Override
         public Matrix4f transform(float partialTicks) {
-            return super.transform(partialTicks)
-                .translate(new Vector3f(interp(prevOffsetX, offsetX, partialTicks), 0f, 0f))
-                .rotate((float) Math.toRadians(interp(prevRotation, rotation, partialTicks)), new Vector3f(0f, 1f, 0f));
+            float x = interp(prevOffsetX, offsetX, partialTicks);
+            float z = interp(prevProgress, progress, partialTicks) - 0.5f;
+            float angle = (float) Math.toRadians(interp(prevRotation, rotation, partialTicks));
+
+            return new Matrix4f()
+                .translate(new Vector3f(x, 0f, z))
+                .rotate(angle, new Vector3f(0f, 1f, 0f));
         }
+
 
         @Override
         public void loadData(NBTTagCompound nbt) {
