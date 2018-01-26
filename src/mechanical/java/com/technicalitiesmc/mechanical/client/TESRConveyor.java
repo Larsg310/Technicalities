@@ -24,15 +24,32 @@ public class TESRConveyor extends TileEntitySpecialRenderer<TileEntity> {
         pushMatrix();
         translate(x + 0.5f, y + conveyor.getHeight() + 0.25f, z + 0.5f);
 
+        // debug bb render to test convertToWorldCoords
+
+        // for (Pair<IConveyorObject, ConveyorBeltLogic.Path> object : conveyor.getObjects().values()) {
+        //     pushMatrix();
+        //     translate(-0.5f, 0, -0.5f);
+        //     Vec3d t = conveyor.convertToWorldCoords(object.getRight().getXOffset(), object.getRight().getProgress());
+        //     translate(t.x, t.y, t.z);
+        //     disableTexture2D();
+        //     enableAlpha();
+        //     enableBlend();
+        //     color(1, 1, 1, 0.25f);
+        //     object.getLeft().bounds().forEach(RenderHelper::renderCuboid);
+        //     color(1, 1, 1, 1);
+        //     enableTexture2D();
+        //     popMatrix();
+        // }
+
         if (host.getMovementAxis() == EnumFacing.Axis.X) {
             rotate(90, 0, 1, 0);
         }
 
-        for (Pair<IConveyorObject, ConveyorBeltLogic.IPath> object : conveyor.getObjects().values()) {
+        for (Pair<IConveyorObject, ConveyorBeltLogic.Path> object : conveyor.getObjects().values()) {
             pushMatrix();
             if (object.getKey() instanceof IConveyorObject.Stack) {
                 ItemStack stack = ((IConveyorObject.Stack) object.getKey()).getStack();
-                ConveyorBeltLogic.IPath path = object.getValue();
+                ConveyorBeltLogic.Path path = object.getValue();
                 RenderHelper.glMultMatrix(path.transform(partialTicks));
 
                 RenderHelper.renderStack(stack, TransformType.FIXED, alpha);

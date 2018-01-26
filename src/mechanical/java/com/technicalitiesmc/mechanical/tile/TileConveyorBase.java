@@ -3,7 +3,7 @@ package com.technicalitiesmc.mechanical.tile;
 import com.technicalitiesmc.api.mechanical.conveyor.IConveyorBelt;
 import com.technicalitiesmc.api.mechanical.conveyor.IConveyorObject;
 import com.technicalitiesmc.lib.block.TileBase;
-import com.technicalitiesmc.mechanical.block.BlockConveyorSmall;
+import com.technicalitiesmc.mechanical.block.BlockConveyorBase;
 import com.technicalitiesmc.mechanical.conveyor.ConveyorBeltLogic;
 import com.technicalitiesmc.mechanical.conveyor.IConveyorBeltHost;
 import com.technicalitiesmc.mechanical.conveyor.object.ConveyorStack;
@@ -57,12 +57,12 @@ public abstract class TileConveyorBase extends TileBase implements ITickable, IC
     @Nonnull
     @Override
     public EnumFacing.Axis getMovementAxis() {
-        return getWorld().getBlockState(getPos()).getValue(BlockConveyorSmall.PROPERTY_ROTATION) == 1 ? EnumFacing.Axis.X : EnumFacing.Axis.Z;
+        return getWorld().getBlockState(getPos()).getValue(BlockConveyorBase.PROPERTY_ROTATION) == 1 ? EnumFacing.Axis.X : EnumFacing.Axis.Z;
     }
 
     @Override
     public float getMovementSpeed() {
-        return 0.1f * (b ? -1 : 1);
+        return 0.01f * (b ? -1 : 1);
     }
 
     @Override
@@ -138,7 +138,7 @@ public abstract class TileConveyorBase extends TileBase implements ITickable, IC
     public void notifyObjectAdd(UUID id) {
         if (getWorld().isRemote) return;
         System.out.println("notify add");
-        Pair<IConveyorObject, ConveyorBeltLogic.IPath> o = logic.getObjects().get(id);
+        Pair<IConveyorObject, ConveyorBeltLogic.Path> o = logic.getObjects().get(id);
         NBTTagCompound nbt = logic.createData(o);
         sendPacket(PACKET_OBJ_ADD, nbt);
     }
@@ -159,7 +159,7 @@ public abstract class TileConveyorBase extends TileBase implements ITickable, IC
                 IConveyorObject co = new ConveyorStack(); // TODO: make this work for non-stacks!!!
                 NBTTagCompound objData = tag.getCompoundTag("object");
                 NBTTagCompound pathData = tag.getCompoundTag("path");
-                ConveyorBeltLogic.IPath path = ConveyorBeltLogic.IPath.createFromNBT(pathData);
+                ConveyorBeltLogic.Path path = ConveyorBeltLogic.Path.createFromNBT(pathData);
                 co.loadData(objData);
                 logic.getObjects().put(co.uuid(), Pair.of(co, path));
                 break;

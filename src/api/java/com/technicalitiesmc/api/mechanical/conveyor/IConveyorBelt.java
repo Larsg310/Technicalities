@@ -2,6 +2,7 @@ package com.technicalitiesmc.api.mechanical.conveyor;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 
@@ -23,6 +24,9 @@ public interface IConveyorBelt {
 
     @Nonnull
     public EnumFacing.Axis getOrientation();
+
+    @Nonnull
+    public Vec3d getMovementVector();
 
     public void onHostDestroyed();
 }
