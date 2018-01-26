@@ -6,6 +6,7 @@ import com.technicalitiesmc.api.heat.IWorldHeatHandler;
 import com.technicalitiesmc.base.event.OreEventHandler;
 import com.technicalitiesmc.base.init.TKHeatObjects;
 import com.technicalitiesmc.base.network.PacketGuiButton;
+import com.technicalitiesmc.base.network.TKGuiHandler;
 import com.technicalitiesmc.base.proxies.TKCommonProxy;
 import com.technicalitiesmc.base.weather.WeatherHandler;
 import com.technicalitiesmc.energy.electricity.grid.ElectricityGridHandler;
@@ -41,8 +42,13 @@ public class Technicalities {
 
     public static final String MODID = "technicalities", NAME = "Technicalities", VERSION = "%VERSION%";
 
+    @Mod.Instance
+    public static Technicalities instance;
+
     @SidedProxy(serverSide = "com.technicalitiesmc.base.proxies.TKCommonProxy", clientSide = "com.technicalitiesmc.base.proxies.TKClientProxy")
     public static TKCommonProxy proxy;
+
+    public static TKGuiHandler guiHandler;
 
     public static Logger log;
     public static File baseFolder; //All config files of submods can go in here
@@ -62,7 +68,9 @@ public class Technicalities {
 
         baseFolder = new File(event.getModConfigurationDirectory(), MODID);
         ElecCoreRegistrar.GRIDHANDLERS.register(electricityGridHandler = new ElectricityGridHandler());
-        WindowManager.INSTANCE.register(proxy);
+
+        guiHandler = TKGuiHandler.instance;
+        WindowManager.INSTANCE.register(guiHandler);
 
         // Init capabilities
         SimpleCapabilityManager.INSTANCE.init(asmTable);
@@ -71,7 +79,7 @@ public class Technicalities {
         MinecraftForge.EVENT_BUS.register(new OreEventHandler());
         try {
             ReflectionHelper.makeFinalFieldModifiable(TechnicalitiesAPI.class.getDeclaredField("heatPropertyRegistry")).set(null, HeatPropertyRegistry.INSTANCE);
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         RegistryHelper.registerEmptyCapability(IHeatConductor.class);
@@ -89,7 +97,7 @@ public class Technicalities {
     public void init(FMLInitializationEvent event) {
         // Register TESRs
         proxy.bindSpecialRenderers(asmTable);
-
+        proxy.init();
     }
 
     @Mod.EventHandler
