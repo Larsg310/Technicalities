@@ -198,7 +198,7 @@ public class BlockBase extends AbstractBlock {
     }
 
     public boolean openTileWindow(EntityPlayer player, World world, BlockPos pos) {
-        return openWindow(player, Technicalities.proxy, world, pos, -1);
+        return openWindow(player, Technicalities.guiHandler, world, pos, -1);
     }
 
     public boolean openWindow(EntityPlayer player, IWindowHandler windowHandler, World world, BlockPos pos, int id) {
