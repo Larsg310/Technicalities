@@ -1,8 +1,10 @@
 package com.technicalitiesmc.electricity.client.model;
 
+import com.technicalitiesmc.api.electricity.EnumElectricityType;
 import com.technicalitiesmc.electricity.block.BlockBundledElectricWire;
 import com.technicalitiesmc.electricity.client.ModelCache;
-import com.technicalitiesmc.electricity.util.TKEResourceLocation;
+import com.technicalitiesmc.electricity.tile.WirePart;
+import com.technicalitiesmc.electricity.util.*;
 import elec332.core.api.client.IIconRegistrar;
 import elec332.core.api.client.model.IElecModelBakery;
 import elec332.core.api.client.model.IElecQuadBakery;
@@ -32,49 +34,61 @@ import java.util.List;
 public class ModelCacheElectricWire extends ModelCache<BlockBundledElectricWire.RenderData> implements IModelAndTextureLoader {
 
     private IElecQuadBakery quadBakery;
-    private TextureAtlasSprite wire, connector, black;
+    private TextureAtlasSprite connector, black;
+    private TextureAtlasSprite[] individualWires, wireTypes;
 
     @Override
-    protected void bakeQuads(List<BakedQuad> quads, EnumFacing side, BlockBundledElectricWire.RenderData data) {
+    protected void bakeQuads(List<BakedQuad> quads, EnumFacing side, BlockBundledElectricWire.RenderData data_) {
         if (side != null) {
             return;
         }
-        List<EnumDyeColor> colors = data.getColors();
-        float posStart;
-        int total = colors.size();
-        EnumSet<EnumFacing> conn = data.getSides();
-        float ft = (16 - (total + 2)) / 2f;
-        for (EnumFacing facing : conn) {
-            posStart = ft + 1;
-            ITransformation baseTransformation = RenderHelper.defaultFor(facing);
-            for (int i = 0; i < colors.size(); i++) {
-                EnumDyeColor color = colors.get(facing.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE ? i : colors.size() - 1 - i);
-                if (i == 0) {
-                    quads.add(quadBakery.bakeQuad(new Vector3f(1, 16 - posStart, 8), new Vector3f(0, 16 - posStart, 0), wire, EnumFacing.UP, merge(RenderHelper.getTransformation(0, 0, 90), baseTransformation), color.ordinal() + 1, facing.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE ? 8 : 16, color.ordinal(), facing.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE ? 0 : 8));
-                }
-                if (conn.size() == 1) {
-                    quads.add(quadBakery.bakeQuad(new Vector3f(posStart, 0, 8), new Vector3f(posStart + 1, 1, 8), wire, EnumFacing.SOUTH, baseTransformation, color.ordinal(), 0.0F, color.ordinal() + 1, 2.0F));
-                }
-                quads.add(quadBakery.bakeQuad(new Vector3f(posStart, 1, 0), new Vector3f(posStart + 1, 1, 8), wire, EnumFacing.UP, baseTransformation, color.ordinal(), facing.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE ? 0 : 8, color.ordinal() + 1, facing.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE ? 8 : 16));
-                posStart += 1;
-                if (i == colors.size() - 1) {
-                    quads.add(quadBakery.bakeQuad(new Vector3f(1, posStart, 16), new Vector3f(0, posStart, 8), wire, EnumFacing.UP, merge(RenderHelper.getTransformation(0, 180, 90), baseTransformation), color.ordinal() + 1, facing.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE ? 8 : 16, color.ordinal(), facing.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE ? 0 : 8));
-                }
+        ITransformation placementTransformation = TRSRTransformation.identity();
+        for (WirePart data : data_.getWires()) {
+            List<WireColor> colors = ColorHelper.getColors(data.getColorBits());
+            if (data_.isItem() && Config.singleWirePNGRendering && colors.size() == 1) {
+                quads.addAll(quadBakery.getGeneralItemQuads(individualWires[colors.get(0).getColor().ordinal()]));
+                return;
             }
-            if (data.getWirechange().contains(facing)){
-                quads.add(quadBakery.bakeQuad(new Vector3f(ft, 1.1f, 0), new Vector3f(16 - ft, 1.1f, 1), black, EnumFacing.UP, baseTransformation));
-                for (EnumFacing f : EnumFacing.VALUES){
-                    if (f.getAxis() != EnumFacing.Axis.Y){
-                        quads.add(quadBakery.bakeQuad(new Vector3f(f == EnumFacing.EAST ? 16 - ft : ft, 0, 0), new Vector3f(f == EnumFacing.WEST ? ft : 16 - ft, 1.1f, f == EnumFacing.NORTH ? 0 : 1), black, f, baseTransformation));
+            float posStart;
+            int total = colors.size();
+            EnumBitSet<EnumFacing> conn = data.connections;
+            float ft = (16 - (total + 2)) / 2f;
+            for (EnumFacing facing : conn) {
+                boolean neg = facing.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE;
+                posStart = ft + 1;
+                ITransformation baseTransformation = RenderHelper.defaultFor(facing);
+                for (int i = 0; i < colors.size(); i++) {
+                    WireColor wireColor = colors.get(neg ? i : colors.size() - 1 - i);
+                    EnumDyeColor color = wireColor.getColor();
+                    TextureAtlasSprite wire = wireTypes[wireColor.getType().ordinal()];
+                    if (i == 0) {
+                        quads.add(quadBakery.bakeQuad(new Vector3f(1, 16 - posStart, 8), new Vector3f(0, 16 - posStart, 0), wire, EnumFacing.UP, merge(RenderHelper.getTransformation(0, 0, 90), baseTransformation), color.ordinal() + 1, neg ? 8 : 16, color.ordinal(), neg ? 0 : 8));
+                    }
+                    if (conn.size() == 1) {
+                        quads.add(quadBakery.bakeQuad(new Vector3f(posStart, 0, 8), new Vector3f(posStart + 1, 1, 8), wire, EnumFacing.SOUTH, baseTransformation, color.ordinal(), 0.0F, color.ordinal() + 1, 2.0F));
+                    }
+                    quads.add(quadBakery.bakeQuad(new Vector3f(posStart, 1, 0), new Vector3f(posStart + 1, 1, 8), wire, EnumFacing.UP, baseTransformation, color.ordinal(), (neg ? 0 : 8), color.ordinal() + 1, (neg ? 8 : 16)));
+                    posStart += 1;
+                    if (i == colors.size() - 1) {
+                        quads.add(quadBakery.bakeQuad(new Vector3f(1, posStart, 16), new Vector3f(0, posStart, 8), wire, EnumFacing.UP, merge(RenderHelper.getTransformation(0, 180, 90), baseTransformation), color.ordinal() + 1, (neg ? 8 : 16), color.ordinal(), (neg ? 0 : 8)));
+                    }
+                }
+                if (data.change.contains(facing)) {
+                    quads.add(quadBakery.bakeQuad(new Vector3f(ft, 1.1f, 0), new Vector3f(16 - ft, 1.1f, 1), black, EnumFacing.UP, baseTransformation));
+                    for (EnumFacing f : EnumFacing.VALUES) {
+                        if (f.getAxis() != EnumFacing.Axis.Y) {
+                            quads.add(quadBakery.bakeQuad(new Vector3f(f == EnumFacing.EAST ? 16 - ft : ft, 0, 0), new Vector3f(f == EnumFacing.WEST ? ft : 16 - ft, 1.1f, f == EnumFacing.NORTH ? 0 : 1), black, f, baseTransformation));
+                        }
                     }
                 }
             }
-        }
-        if (conn.size() != 1 && !data.isStraightLine()) {
-            quads.add(quadBakery.bakeQuad(new Vector3f(ft, 1.1f, ft), new Vector3f(16 - ft, 1.1f, 16 - ft), black, EnumFacing.UP));
-            for (EnumFacing facing : EnumFacing.VALUES) {
-                if (facing.getAxis() != EnumFacing.Axis.Y) {
-                    quads.add(quadBakery.bakeQuad(new Vector3f(ft, 0, ft), new Vector3f(16 - ft, 1.1f, ft), black, EnumFacing.NORTH, RenderHelper.defaultFor(facing)));
+
+            if (conn.size() != 1 && !data.isStraightLine()) {
+                quads.add(quadBakery.bakeQuad(new Vector3f(ft, 1.1f, ft), new Vector3f(16 - ft, 1.1f, 16 - ft), black, EnumFacing.UP));
+                for (EnumFacing facing : EnumFacing.VALUES) {
+                    if (facing.getAxis() != EnumFacing.Axis.Y) {
+                        quads.add(quadBakery.bakeQuad(new Vector3f(ft, 0, ft), new Vector3f(16 - ft, 1.1f, ft), black, EnumFacing.NORTH, RenderHelper.defaultFor(facing)));
+                    }
                 }
             }
         }
@@ -88,9 +102,16 @@ public class ModelCacheElectricWire extends ModelCache<BlockBundledElectricWire.
 
     @Override
     public void registerTextures(IIconRegistrar iiconRegistrar) {
-        wire = iiconRegistrar.registerSprite(new TKEResourceLocation("blocks/flatwire"));
+        wireTypes = new TextureAtlasSprite[EnumElectricityType.values().length];
+        for (int i = 0; i < wireTypes.length; i++) {
+            wireTypes[i] = iiconRegistrar.registerSprite(new TKEResourceLocation("blocks/flatwire_"+EnumElectricityType.values()[i].toString().toLowerCase()));
+        }
         connector = iiconRegistrar.registerSprite(new TKEResourceLocation("blocks/flatwire_connector"));
         black = iiconRegistrar.registerSprite(new TKEResourceLocation("blocks/black"));
+        individualWires = new TextureAtlasSprite[EnumDyeColor.values().length];
+        for (int i = 0; i < individualWires.length; i++) {
+            individualWires[i] = iiconRegistrar.registerSprite(new TKEResourceLocation("items/wire_"+EnumDyeColor.values()[i].getDyeColorName()));
+        }
     }
 
     @Override

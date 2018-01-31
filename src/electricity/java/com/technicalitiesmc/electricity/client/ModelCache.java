@@ -35,8 +35,8 @@ import java.util.concurrent.TimeUnit;
 public abstract class ModelCache<K> implements IBakedModel {
 
     public ModelCache(){
-        quads = CacheBuilder.newBuilder().expireAfterAccess(2, TimeUnit.MINUTES).build();
-        itemModels = CacheBuilder.newBuilder().expireAfterAccess(2, TimeUnit.MINUTES).build();
+        quads = CacheBuilder.newBuilder()/*.expireAfterAccess(2, TimeUnit.MINUTES)*/.build();
+        itemModels = CacheBuilder.newBuilder()/*.expireAfterAccess(2, TimeUnit.MINUTES)*/.build();
         iol = new ItemOverrideList(ImmutableList.of()){
 
             @Override

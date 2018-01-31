@@ -1,7 +1,7 @@
 package com.technicalitiesmc.electricity.tile;
 
 import com.technicalitiesmc.api.TechnicalitiesAPI;
-import com.technicalitiesmc.api.electricity.EnergyType;
+import com.technicalitiesmc.api.electricity.EnumElectricityType;
 import com.technicalitiesmc.api.electricity.IEnergySource;
 import com.technicalitiesmc.api.util.BreakReason;
 import com.technicalitiesmc.api.util.ConnectionPoint;
@@ -218,8 +218,8 @@ public class TileTestGenerator extends TileBase implements IEnergySource, ISimpl
 
 	@Nonnull
 	@Override
-	public EnergyType getEnergyType(int post) {
-		return EnergyType.AC;
+	public EnumElectricityType getEnergyType(int post) {
+		return EnumElectricityType.AC;
 	}
 
 	@Nonnull

@@ -1,6 +1,6 @@
 package com.technicalitiesmc.electricity.compat.tkmechanical;
 
-import com.technicalitiesmc.api.electricity.EnergyType;
+import com.technicalitiesmc.api.electricity.EnumElectricityType;
 import com.technicalitiesmc.api.electricity.IEnergyReceiver;
 import com.technicalitiesmc.api.mechanical.IKineticNode;
 import com.technicalitiesmc.api.util.ConnectionPoint;
@@ -54,8 +54,8 @@ public class TileElectricalEngine extends TileBase implements IEnergyReceiver, I
 
 	@Nonnull
 	@Override
-	public EnergyType getEnergyType(int post) {
-		return EnergyType.AC;
+	public EnumElectricityType getEnergyType(int post) {
+		return EnumElectricityType.AC;
 	}
 
 	@Nonnull

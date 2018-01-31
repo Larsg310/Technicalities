@@ -1,7 +1,10 @@
 package com.technicalitiesmc.electricity.init;
 
+import com.google.common.collect.Sets;
+import com.technicalitiesmc.api.electricity.EnumElectricityType;
 import com.technicalitiesmc.electricity.item.ItemBundledWire;
 import com.technicalitiesmc.electricity.util.TKEResourceLocation;
+import com.technicalitiesmc.electricity.util.WireColor;
 import elec332.core.api.registration.IObjectRegister;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.EnumDyeColor;
@@ -14,6 +17,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Elec332 on 19-1-2018.
@@ -26,15 +30,15 @@ public class RecipeRegister implements IObjectRegister<IRecipe> {
 
             @Override
             public boolean matches(InventoryCrafting inv, World worldIn) {
-                EnumSet<EnumDyeColor> colors = EnumSet.noneOf(EnumDyeColor.class);
+                Set<WireColor> colors = Sets.newHashSet();
                 int items = 0;
                 for (ItemStack stack : inv.stackList){
                     if (stack.isEmpty()){
                         continue;
                     }
                     if (stack.getItem() == ItemRegister.bundledWire){
-                        List<EnumDyeColor> c = ItemBundledWire.getColorsFromStack(stack);
-                        for (EnumDyeColor color : c){
+                        List<WireColor> c = ItemBundledWire.getColorsFromStack(stack);
+                        for (WireColor color : c){
                             if (colors.contains(color)){
                                 return false;
                             }
@@ -50,7 +54,7 @@ public class RecipeRegister implements IObjectRegister<IRecipe> {
 
             @Override
             public ItemStack getCraftingResult(InventoryCrafting inv) {
-                EnumSet<EnumDyeColor> colors = EnumSet.noneOf(EnumDyeColor.class);
+                Set<WireColor> colors = Sets.newHashSet();
                 for (ItemStack stack : inv.stackList){
                     if (stack.isEmpty()){
                         continue;
@@ -69,7 +73,7 @@ public class RecipeRegister implements IObjectRegister<IRecipe> {
 
             @Override
             public ItemStack getRecipeOutput() {
-                return ItemBundledWire.withCables(EnumDyeColor.BLACK);
+                return ItemBundledWire.withCables(WireColor.getWireColor(EnumDyeColor.WHITE, EnumElectricityType.AC));
             }
 
             @Override

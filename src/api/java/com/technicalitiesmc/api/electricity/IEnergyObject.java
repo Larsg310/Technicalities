@@ -20,7 +20,7 @@ public interface IEnergyObject {
 	}
 
 	@Nonnull
-	public EnergyType getEnergyType(int post);
+	public EnumElectricityType getEnergyType(int post);
 
 	@Nonnull
 	public ConnectionPoint getConnectionPoint(int post);

@@ -79,7 +79,7 @@ public class ItemOverheadWireCoil extends AbstractItem {
 				return EnumActionResult.FAIL;
 			}
 			stack.setTagCompound(null);
-			Wire wire = new Wire(newcp, otherHVec, cp, hitVec, new WireData(EnumWireType.TEST, WireThickness.AWG_00, WireConnectionMethod.OVERHEAD, EnergyType.AC));
+			Wire wire = new Wire(newcp, otherHVec, cp, hitVec, new WireData(EnumWireType.TEST, WireThickness.AWG_00, WireConnectionMethod.OVERHEAD, EnumElectricityType.AC));
 			Technicalities.electricityGridHandler.addWire(wire);
 			//PlayerHelper.sendMessageToPlayer(player, "addedWire");
 		}

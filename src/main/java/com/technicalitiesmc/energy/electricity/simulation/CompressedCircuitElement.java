@@ -1,7 +1,7 @@
 package com.technicalitiesmc.energy.electricity.simulation;
 
 import com.google.common.collect.Lists;
-import com.technicalitiesmc.api.electricity.EnergyType;
+import com.technicalitiesmc.api.electricity.EnumElectricityType;
 import com.technicalitiesmc.api.electricity.IEnergyObject;
 import com.technicalitiesmc.api.electricity.component.CircuitElement;
 import com.technicalitiesmc.api.util.ConnectionPoint;
@@ -22,7 +22,7 @@ public abstract class CompressedCircuitElement<T extends CircuitElement> extends
 
 			@Nonnull
 			@Override
-			public EnergyType getEnergyType(int post) {
+			public EnumElectricityType getEnergyType(int post) {
 				throw new RuntimeException();
 			}
 

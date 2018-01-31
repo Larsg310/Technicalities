@@ -1,6 +1,6 @@
 package com.technicalitiesmc.electricity.util;
 
-import com.technicalitiesmc.api.electricity.EnergyType;
+import com.technicalitiesmc.api.electricity.EnumElectricityType;
 import com.technicalitiesmc.api.electricity.IEnergyObject;
 import com.technicalitiesmc.api.electricity.WireConnectionMethod;
 import com.technicalitiesmc.api.util.ConnectionPoint;
@@ -57,7 +57,7 @@ public class Wire implements IEnergyObject {
 
 	@Nonnull
 	@Override
-	public EnergyType getEnergyType(int post) {
+	public EnumElectricityType getEnergyType(int post) {
 		return wireData.getEnergyType();
 	}
 

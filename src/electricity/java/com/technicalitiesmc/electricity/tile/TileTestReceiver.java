@@ -1,7 +1,7 @@
 package com.technicalitiesmc.electricity.tile;
 
 import com.technicalitiesmc.api.TechnicalitiesAPI;
-import com.technicalitiesmc.api.electricity.EnergyType;
+import com.technicalitiesmc.api.electricity.EnumElectricityType;
 import com.technicalitiesmc.api.electricity.IEnergyReceiver;
 import com.technicalitiesmc.api.util.ConnectionPoint;
 import elec332.core.api.info.IInfoDataAccessorBlock;
@@ -44,8 +44,8 @@ public class TileTestReceiver extends TileBase implements IEnergyReceiver, IInfo
 
 	@Nonnull
 	@Override
-	public EnergyType getEnergyType(int post) {
-		return EnergyType.AC;
+	public EnumElectricityType getEnergyType(int post) {
+		return EnumElectricityType.AC;
 	}
 
 	@Nonnull

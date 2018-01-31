@@ -1,7 +1,7 @@
 package com.technicalitiesmc.electricity.util;
 
 import com.google.common.base.Preconditions;
-import com.technicalitiesmc.api.electricity.EnergyType;
+import com.technicalitiesmc.api.electricity.EnumElectricityType;
 import com.technicalitiesmc.api.electricity.IWireType;
 import com.technicalitiesmc.api.electricity.WireConnectionMethod;
 import com.technicalitiesmc.api.electricity.WireThickness;
@@ -16,12 +16,12 @@ import java.awt.*;
  */
 public class WireData {
 
-	public WireData(IWireType wireType, WireThickness thickness, WireConnectionMethod connectionMethod, EnergyType energyType){
+	public WireData(IWireType wireType, WireThickness thickness, WireConnectionMethod connectionMethod, EnumElectricityType energyType){
 		this(wireType, thickness, connectionMethod, energyType, null);
 
 	}
 
-	public WireData(IWireType wireType, WireThickness thickness, WireConnectionMethod connectionMethod, EnergyType energyType, EnumDyeColor color){
+	public WireData(IWireType wireType, WireThickness thickness, WireConnectionMethod connectionMethod, EnumElectricityType energyType, EnumDyeColor color){
 		this.wireType = Preconditions.checkNotNull(wireType);
 		this.thickness = Preconditions.checkNotNull(thickness);
 		this.connectionMethod = Preconditions.checkNotNull(connectionMethod);
@@ -32,7 +32,7 @@ public class WireData {
 	private IWireType wireType;
 	private WireConnectionMethod connectionMethod;
 	private WireThickness thickness;
-	private EnergyType energyType;
+	private EnumElectricityType energyType;
 	@Nullable
 	private EnumDyeColor color;
 
@@ -42,7 +42,7 @@ public class WireData {
 	}
 
 	@Nonnull
-	public EnergyType getEnergyType() {
+	public EnumElectricityType getEnergyType() {
 		return energyType;
 	}
 
