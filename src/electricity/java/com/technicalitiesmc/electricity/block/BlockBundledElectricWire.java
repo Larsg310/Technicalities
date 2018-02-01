@@ -9,6 +9,7 @@ import com.technicalitiesmc.electricity.tile.WirePart;
 import com.technicalitiesmc.electricity.util.ColorHelper;
 import com.technicalitiesmc.electricity.util.EnumBitSet;
 import com.technicalitiesmc.electricity.util.WireColor;
+import com.technicalitiesmc.lib.IndexedAABB;
 import com.technicalitiesmc.lib.block.BlockBase;
 import elec332.core.api.client.IColoredBlock;
 import elec332.core.util.UniversalUnlistedProperty;
@@ -43,6 +44,7 @@ import java.util.BitSet;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * Created by Elec332 on 19-1-2018.
@@ -76,7 +78,9 @@ public class BlockBundledElectricWire extends BlockBase implements ITileEntityPr
     public void addBoxes(IBlockState state, World world, BlockPos pos, List<AxisAlignedBB> boxes) {
         TileBundledElectricWire wire = getTile(world, pos, TileBundledElectricWire.class);
         for (WirePart wirePart : wire.wires){
-            wirePart.addBoxes(state, world, pos, boxes);
+            List<AxisAlignedBB> boxez = Lists.newArrayList();
+            wirePart.addBoxes(state, world, pos, boxez);
+            boxes.forEach(axisAlignedBB -> boxes.add(new IndexedAABB(axisAlignedBB, wirePart.placement.ordinal())));
         }
     }
 

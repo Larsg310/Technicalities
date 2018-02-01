@@ -68,7 +68,7 @@ public class ItemBundledWire extends ItemBlockBase implements INoJsonItem, IHasS
                 if (event.getItemStack().getItem() != ItemRegister.bundledWire){
                     return;
                 }
-                /*World world = event.getWorld();
+               /* World world = event.getWorld();
                 BlockPos pos = event.getPos();
                 if (WorldHelper.chunkLoaded(world, pos)){ //You never know...
                     TileEntity tile = WorldHelper.getTileAt(world, pos);
@@ -77,6 +77,7 @@ public class ItemBundledWire extends ItemBlockBase implements INoJsonItem, IHasS
                         event.setCanceled(true);
                         if (!world.isRemote) {
                             ItemStack stack = event.getEntityPlayer().getHeldItem(event.getHand());
+                            event.
                             if (((TileBundledElectricWire) tile).addWires(getColorsFromStack(stack)) && !PlayerHelper.isPlayerInCreative(event.getEntityPlayer())) {
                                 stack.shrink(1);
                             }
@@ -101,8 +102,20 @@ public class ItemBundledWire extends ItemBlockBase implements INoJsonItem, IHasS
         }
     }
 
+    @Nonnull
+    @Override
+    public EnumActionResult onItemUseC(EntityPlayer player, EnumHand hand, World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        IBlockState state = WorldHelper.getBlockState(world, pos);
+        if (state.getBlock() != block) {
+            return super.onItemUseC(player, hand, world, pos, facing, hitX, hitY, hitZ);
+        } else {
+            return EnumActionResult.PASS;
+        }
+    }
+
     @Override
     public boolean placeBlockAt(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, World world, @Nonnull BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull IBlockState newState) {
+
         boolean ret = WorldHelper.getBlockState(world, pos.offset(side.getOpposite())).isSideSolid(world, pos, side) && super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState);
         if (ret){
             TileEntity tile = WorldHelper.getTileAt(world, pos);
