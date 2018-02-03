@@ -68,21 +68,45 @@ public class ItemBundledWire extends ItemBlockBase implements INoJsonItem, IHasS
                 if (event.getItemStack().getItem() != ItemRegister.bundledWire){
                     return;
                 }
-                /*World world = event.getWorld();
+                World world = event.getWorld();
                 BlockPos pos = event.getPos();
                 if (WorldHelper.chunkLoaded(world, pos)){ //You never know...
                     TileEntity tile = WorldHelper.getTileAt(world, pos);
-                    if (tile instanceof TileBundledElectricWire){
+                    if (tile instanceof TileBundledElectricWire){ //attempt to add wire
+                        //System.out.println("aw" + event.getFace());
                         event.setUseItem(Event.Result.DENY);
                         event.setCanceled(true);
                         if (!world.isRemote) {
                             ItemStack stack = event.getEntityPlayer().getHeldItem(event.getHand());
-                            if (((TileBundledElectricWire) tile).addWires(getColorsFromStack(stack)) && !PlayerHelper.isPlayerInCreative(event.getEntityPlayer())) {
+                            WirePart wire = ((TileBundledElectricWire) tile).getWire(event.getFace().getOpposite());
+                            if (wire != null && wire.addWires(getColorsFromStack(stack)) && !PlayerHelper.isPlayerInCreative(event.getEntityPlayer())) {
                                 stack.shrink(1);
                             }
                         }
+                    } else if (event.getFace() != null){ //attempt to place at face
+                        //System.out.println("paf");
+                        IBlockState state = WorldHelper.getBlockState(world, pos);
+                        if (state.isSideSolid(world, pos, event.getFace())){
+                            tile = WorldHelper.getTileAt(world, pos.offset(event.getFace()));
+                            if (tile instanceof TileBundledElectricWire){
+                                event.setUseItem(Event.Result.DENY);
+                                event.setCanceled(true);
+                                if (!world.isRemote) {
+                                    EnumFacing rf = event.getFace().getOpposite();
+                                    if (((TileBundledElectricWire) tile).getWire(rf) == null) {
+                                        WirePart wire = new WirePart(rf);
+                                        ItemStack stack = event.getEntityPlayer().getHeldItem(event.getHand());
+                                        wire.setColors(getColorsFromStack(stack));
+                                        ((TileBundledElectricWire) tile).addWire(wire);
+                                        if (!PlayerHelper.isPlayerInCreative(event.getEntityPlayer())){
+                                            stack.shrink(1);
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
-                }*/
+                }
 
             }
 
@@ -103,14 +127,15 @@ public class ItemBundledWire extends ItemBlockBase implements INoJsonItem, IHasS
 
     @Override
     public boolean placeBlockAt(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, World world, @Nonnull BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull IBlockState newState) {
-        boolean ret = WorldHelper.getBlockState(world, pos.offset(side.getOpposite())).isSideSolid(world, pos, side) && super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState);
+        boolean ret = WorldHelper.getBlockState(world, pos.offset(side.getOpposite())).isSideSolid(world, pos.offset(side.getOpposite()), side) && super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState);
         if (ret){
             TileEntity tile = WorldHelper.getTileAt(world, pos);
             if (tile != null){
                 TileBundledElectricWire wire = (TileBundledElectricWire) tile;
-                WirePart wp = new WirePart(side);
+                WirePart wp = new WirePart(side.getOpposite());
                 wp.setColors(getColorsFromStack(stack));
-                wire.wires.add(wp);
+                wire.addWire(wp);
+                //System.out.println(side);
                 //wire.setColors(getColorsFromStack(stack));
             }
         }

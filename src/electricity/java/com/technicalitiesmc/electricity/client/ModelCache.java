@@ -26,6 +26,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -35,8 +36,8 @@ import java.util.concurrent.TimeUnit;
 public abstract class ModelCache<K> implements IBakedModel {
 
     public ModelCache(){
-        quads = CacheBuilder.newBuilder()/*.expireAfterAccess(2, TimeUnit.MINUTES)*/.build();
-        itemModels = CacheBuilder.newBuilder()/*.expireAfterAccess(2, TimeUnit.MINUTES)*/.build();
+        quads = CacheBuilder.newBuilder().expireAfterAccess(2, TimeUnit.MINUTES).build();
+        itemModels = CacheBuilder.newBuilder().expireAfterAccess(2, TimeUnit.MINUTES).build();
         iol = new ItemOverrideList(ImmutableList.of()){
 
             @Override
@@ -46,8 +47,10 @@ public abstract class ModelCache<K> implements IBakedModel {
             }
 
         };
+        debug = false;
     }
 
+    protected boolean debug;
     private final Cache<K, Map<EnumFacing, List<BakedQuad>>> quads;
     private final Cache<K, IBakedModel> itemModels;
     private final ItemOverrideList iol;
@@ -59,19 +62,20 @@ public abstract class ModelCache<K> implements IBakedModel {
     protected abstract void bakeQuads(List<BakedQuad> quads, EnumFacing side, K key);
 
     protected final Map<EnumFacing, List<BakedQuad>> getQuads(K key){
-        try {
-            return quads.get(key, () -> {
-                Map<EnumFacing, List<BakedQuad>> ret = Maps.newHashMap();
-                for (EnumFacing f : EnumFacing.VALUES){
-                    List<BakedQuad> q = Lists.newArrayList();
-                    bakeQuads(q, f, key);
-                    ret.put(f, ImmutableList.copyOf(q));
-                }
+        Callable<Map<EnumFacing, List<BakedQuad>>> loader = () -> {
+            Map<EnumFacing, List<BakedQuad>> ret = Maps.newHashMap();
+            for (EnumFacing f : EnumFacing.VALUES){
                 List<BakedQuad> q = Lists.newArrayList();
-                bakeQuads(q, null, key);
-                ret.put(null, ImmutableList.copyOf(q));
-                return ret;
-            });
+                bakeQuads(q, f, key);
+                ret.put(f, ImmutableList.copyOf(q));
+            }
+            List<BakedQuad> q = Lists.newArrayList();
+            bakeQuads(q, null, key);
+            ret.put(null, ImmutableList.copyOf(q));
+            return ret;
+        };
+        try {
+            return debug ? loader.call() : quads.get(key, loader);
         } catch (Exception e){
             throw new RuntimeException(e);
         }
@@ -79,17 +83,18 @@ public abstract class ModelCache<K> implements IBakedModel {
 
     public final IBakedModel getModel(ItemStack stack){
         K key = get(stack);
+        Callable<IBakedModel> loader = () -> new WrappedModel(ModelCache.this) {
+
+            Map<EnumFacing, List<BakedQuad>> quads = ModelCache.this.getQuads(key);
+
+            @Override
+            public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
+                return quads.get(side);
+            }
+
+        };
         try {
-            return itemModels.get(key, () -> new WrappedModel(ModelCache.this) {
-
-                Map<EnumFacing, List<BakedQuad>> quads = ModelCache.this.getQuads(key);
-
-                @Override
-                public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
-                    return quads.get(side);
-                }
-
-            });
+            return debug ? loader.call() : itemModels.get(key, loader);
         } catch (Exception e){
             throw new RuntimeException(e);
         }

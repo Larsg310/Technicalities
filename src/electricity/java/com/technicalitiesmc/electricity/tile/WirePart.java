@@ -5,20 +5,23 @@ import com.technicalitiesmc.electricity.item.ItemBundledWire;
 import com.technicalitiesmc.electricity.util.ColorHelper;
 import com.technicalitiesmc.electricity.util.EnumBitSet;
 import com.technicalitiesmc.electricity.util.WireColor;
+import com.technicalitiesmc.lib.AABBHelper;
+import com.technicalitiesmc.lib.IndexedAABB;
+import elec332.core.java.JavaHelper;
 import elec332.core.world.WorldHelper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
-import java.util.BitSet;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Elec332 on 25-1-2018.
@@ -31,8 +34,13 @@ public class WirePart {
 
     public EnumFacing placement;
 
+    protected TileBundledElectricWire wire;
+
+    private static final EnumFacing[] indexToFacing, st1, st2;
+    private static final EnumFacing[][] placementToIndex;
+
     private int colors = 0;
-    public EnumBitSet<EnumFacing> connections = EnumBitSet.noneOf(EnumFacing.class), change = EnumBitSet.noneOf(EnumFacing.class);
+    public EnumBitSet<EnumFacing> connections = EnumBitSet.noneOf(EnumFacing.class), change = EnumBitSet.noneOf(EnumFacing.class), realConnections = EnumBitSet.noneOf(EnumFacing.class);
     public BitSet ud = new BitSet(EnumFacing.VALUES.length);
 
     @Nonnull
@@ -45,27 +53,68 @@ public class WirePart {
         this.colors = compound.getInteger("wrclr");
     }
 
+    public void writeClientData(NBTTagCompound tag){
+        System.out.println("send "+wire.getPos());
+        tag.setLong("conn", connections.getSerialized());
+        tag.setLong("change", change.getSerialized());
+        int i = new Random().nextInt();
+        System.out.println(i);
+        tag.setInteger("inte", i);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void readClientData(NBTTagCompound tag){
+        System.out.println("receiuve");
+        connections = EnumBitSet.noneOf(EnumFacing.class);
+        connections.deserialize(tag.getLong("conn"));
+        change.deserialize(tag.getLong("change"));
+        System.out.println(tag.getInteger("inte"));
+    }
+
     public boolean canStay(World world, BlockPos pos){
-        return WorldHelper.getBlockState(world, pos.offset(placement)).isSideSolid(world, pos, placement.getOpposite());
+        return WorldHelper.getBlockState(world, pos.offset(placement)).isSideSolid(world, pos.offset(placement), placement.getOpposite());
     }
 
     public ItemStack getDropStack(){
         return ItemBundledWire.withCables(ColorHelper.getColors(getColorBits()));
     }
 
-    public void addBoxes(IBlockState state, World world, BlockPos pos, List<AxisAlignedBB> boxes) {
-        if (placement != EnumFacing.DOWN){
-            return;
+    public void pong(BlockPos pos_, World world){
+        System.out.println("pong "+pos_);
+        connections.clear();
+        change.clear();
+        realConnections.clear();
+        for (int i = 0; i < 4; i++) {
+            EnumFacing facing = placementToIndex[placement.ordinal()][i];
+
+            BlockPos pos = pos_.offset(facing);
+            if (WorldHelper.chunkLoaded(world, pos)) {
+                TileEntity tile = WorldHelper.getTileAt(world, pos);
+                if (tile instanceof TileBundledElectricWire) {
+                    TileBundledElectricWire wireO = (TileBundledElectricWire) tile;
+                    WirePart oWp = wireO.getWire(placement);
+                    if (oWp != null && JavaHelper.hasAtLeastOneMatch(ColorHelper.getColors(oWp.getColorBits()), ColorHelper.getColors(getColorBits()))) {
+                        connections.add(indexToFacing[i]);
+                        if (oWp.colors != colors) {
+                            change.add(indexToFacing[i]);
+                        }
+                        realConnections.add(facing);
+                    }
+                }
+            }
         }
+        wire.syncWireData();
+    }
+
+    public void addBoxes(IBlockState state, World world, BlockPos pos, List<AxisAlignedBB> boxes) {
         float width = ColorHelper.getColors(getColorBits()).size();
         float stuff = ((16 - width) / 2) / 16;
         float stuff2 = .5f;
         if (connections.size() != 1) {
-            float ft = stuff;
             if (!isStraightLine()) {
-                ft = (16 - (width + 2)) / 32f;
+                float ft = (16 - (width + 2)) / 32f;
+                boxes.add(new IndexedAABB(AABBHelper.rotateFromDown(new AxisAlignedBB(ft, 0, ft, 1 - ft, 1 / 16f, 1 - ft), placement), placement.ordinal()));
             }
-            boxes.add(new AxisAlignedBB(ft, 0, ft, 1 - ft, 1 / 16f, 1 - ft));
             stuff2 = stuff;
         }
         for (EnumFacing facing : connections){
@@ -76,7 +125,7 @@ public class WirePart {
                 float offset = -(1 - stuff2);
                 aabb = aabb.offset(z ? 0 : offset, 0, z ? offset : 0);
             }
-            boxes.add(aabb);
+            boxes.add(new IndexedAABB(AABBHelper.rotateFromDown(aabb, placement), placement.ordinal()));
         }
     }
 
@@ -103,7 +152,7 @@ public class WirePart {
             }
         }
         colors.forEach(this::addWire);
-        //syncColors(true);
+        cS();
         return true;
     }
 
@@ -112,18 +161,21 @@ public class WirePart {
             return false;
         }
         colors = ColorHelper.addWire(color, colors);
-        //notifyNeighborsOfChangeExtensively();
-        //WorldHelper.markBlockForUpdate(world, pos);
-        //syncColors(true);
+        cS();
         return true;
+    }
+
+    private void cS(){
+        if (wire != null){
+            wire.notifyNeighborsOfChangeExtensively();
+            wire.syncWireData();
+        }
     }
 
     public boolean removeWire(WireColor color) {
         if (hasWire(color)) {
             colors = ColorHelper.removeWire(color, colors);
-            //notifyNeighborsOfChangeExtensively();
-            //WorldHelper.markBlockForUpdate(world, pos);
-           //syncColors(true);
+            cS();
             return true;
         }
         return false;
@@ -134,9 +186,52 @@ public class WirePart {
         for (WireColor color : colors){
             addWire(color);
         }
-        //notifyNeighborsOfChangeExtensively();
-        //WorldHelper.markBlockForUpdate(world, pos);
-        //syncColors(true);
+        cS();
+    }
+
+    static {
+        indexToFacing = new EnumFacing[]{
+                EnumFacing.NORTH, EnumFacing.EAST, EnumFacing.SOUTH, EnumFacing.WEST
+        };
+        st1 = new EnumFacing[]{
+                EnumFacing.UP, EnumFacing.EAST, EnumFacing.DOWN, EnumFacing.WEST
+        };
+        st2 = new EnumFacing[]{
+                EnumFacing.NORTH, EnumFacing.DOWN, EnumFacing.SOUTH, EnumFacing.UP
+        };
+        placementToIndex = new EnumFacing[EnumFacing.VALUES.length][];
+        for (EnumFacing placement : EnumFacing.VALUES){
+            int p = placement.ordinal();
+            placementToIndex[p] = new EnumFacing[4];
+            for (int i = 0; i < 4; i++) {
+                placementToIndex[p][i] = getFacingStuff(placement, i);
+            }
+        }
+    }
+
+    private static EnumFacing getFacingStuff(EnumFacing placement, int index){
+        switch (placement){
+            case UP:
+                if (index % 2 == 0){
+                    return indexToFacing[index].getOpposite();
+                }
+            case DOWN:
+                return indexToFacing[index];
+            case SOUTH:
+                if (index % 2 == 0){
+                    return st1[index].getOpposite();
+                }
+            case NORTH:
+                return st1[index];
+            case EAST:
+                if (index % 2 == 1){
+                    return st2[index].getOpposite();
+                }
+            case WEST:
+                return st2[index];
+            default:
+                return null;
+        }
     }
 
 }

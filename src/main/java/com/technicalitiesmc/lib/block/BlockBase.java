@@ -26,6 +26,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,7 +69,7 @@ public class BlockBase extends AbstractBlock {
         boxes.add(state.getBoundingBox(world, pos));
     }
 
-    public void addSelectionBoxes(IBlockState state, World world, BlockPos pos, List<AxisAlignedBB> boxes) {
+    public void addSelectionBoxes(IBlockState state, World world, BlockPos pos, List<AxisAlignedBB> boxes, @Nullable RayTraceResult hit) {
         addBoxes(state, world, pos, boxes);
     }
 
@@ -76,11 +77,15 @@ public class BlockBase extends AbstractBlock {
         addBoxes(state, world, pos, boxes);
     }
 
+    public void addRayTraceBoxes(IBlockState state, World world, BlockPos pos, List<AxisAlignedBB> boxes) {
+        addSelectionBoxes(state, world, pos, boxes, null);
+    }
+
     @Override
     @SuppressWarnings("deprecation")
     public RayTraceResult collisionRayTrace(IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Vec3d start, @Nonnull Vec3d end) {
         List<AxisAlignedBB> boxes = new ArrayList<>();
-        addSelectionBoxes(state, world, pos, boxes);
+        addRayTraceBoxes(state, world, pos, boxes);
         return boxes.stream().reduce(null, (prev, box) -> {
             RayTraceResult hit = rayTrace(pos, start, end, box);
             if (hit != null && box instanceof IndexedAABB) {
@@ -114,7 +119,7 @@ public class BlockBase extends AbstractBlock {
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World world, BlockPos pos, RayTraceResult hit) {
         List<AxisAlignedBB> list = new ArrayList<>();
-        addSelectionBoxes(state, world, pos, list);
+        addSelectionBoxes(state, world, pos, list, hit);
         if (!list.isEmpty()) {
             AxisAlignedBB aabb = null;
             for (AxisAlignedBB box : list) {
