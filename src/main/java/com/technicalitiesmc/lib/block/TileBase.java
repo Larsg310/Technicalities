@@ -1,6 +1,9 @@
 package com.technicalitiesmc.lib.block;
 
 import elec332.core.tile.TileEntityBase;
+import net.minecraft.nbt.NBTTagCompound;
+
+import javax.annotation.Nonnull;
 
 public class TileBase extends TileEntityBase {
 
@@ -27,5 +30,4 @@ public class TileBase extends TileEntityBase {
             syncTile();
         }
     }
-
 }
