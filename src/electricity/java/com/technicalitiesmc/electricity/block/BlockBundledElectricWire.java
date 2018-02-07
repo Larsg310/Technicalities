@@ -6,8 +6,6 @@ import com.technicalitiesmc.electricity.TKElectricity;
 import com.technicalitiesmc.electricity.item.ItemBundledWire;
 import com.technicalitiesmc.electricity.tile.TileBundledElectricWire;
 import com.technicalitiesmc.electricity.tile.WirePart;
-import com.technicalitiesmc.electricity.util.ColorHelper;
-import com.technicalitiesmc.electricity.util.EnumBitSet;
 import com.technicalitiesmc.electricity.util.WireColor;
 import com.technicalitiesmc.lib.RayTraceHelper;
 import com.technicalitiesmc.lib.block.BlockBase;
@@ -23,7 +21,6 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -39,15 +36,11 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.BitSet;
-import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Elec332 on 19-1-2018.
@@ -140,9 +133,9 @@ public class BlockBundledElectricWire extends BlockBase implements ITileEntityPr
             WirePart wirePart = tile.getWire(EnumFacing.VALUES[hit.subHit]);
             if (wirePart != null) {
                 tile.remove(wirePart);
-                if (!tile.getWireView().isEmpty()) {
+                //if (!tile.getWireView().isEmpty()) {
                     tile.notifyNeighborsOfChangeExtensively();
-                }
+                //}
                 ItemStack stack = wirePart.getDropStack();
                 spawnAsEntity(world, pos, stack);
             }
@@ -184,10 +177,14 @@ public class BlockBundledElectricWire extends BlockBase implements ITileEntityPr
     public boolean onBlockActivatedC(World world, BlockPos pos, EntityPlayer player, EnumHand hand, IBlockState state, EnumFacing facing, float hitX, float hitY, float hitZ) {
         WirePart wp = getTile(world, pos, TileBundledElectricWire.class).getWire(facing.getOpposite());
 
-        if (wp != null && hand == EnumHand.MAIN_HAND){
-            //System.out.println(hand);
-            //PlayerHelper.sendMessageToPlayer(player, wp.placement.toString());
-            PlayerHelper.sendMessageToPlayer(player, wp.realConnections.toString());
+        if (wp != null && hand == EnumHand.MAIN_HAND && !world.isRemote){
+            List<String> info = Lists.newArrayList();
+            for (EnumFacing facing1 : EnumFacing.VALUES){
+                if (wp.realConnections.contains(facing1)){
+                    info.add(facing1+"  "+wp.corners.get(facing1.ordinal()));
+                }
+            }
+            PlayerHelper.sendMessageToPlayer(player, info.toString());
         }
         return super.onBlockActivatedC(world, pos, player, hand, state, facing, hitX, hitY, hitZ);
     }

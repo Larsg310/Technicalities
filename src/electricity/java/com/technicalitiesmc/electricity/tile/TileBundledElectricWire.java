@@ -1,30 +1,21 @@
 package com.technicalitiesmc.electricity.tile;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.technicalitiesmc.electricity.util.ColorHelper;
+import com.technicalitiesmc.electricity.init.BlockRegister;
 import com.technicalitiesmc.electricity.util.EnumBitSet;
-import com.technicalitiesmc.electricity.util.WireColor;
 import com.technicalitiesmc.lib.block.TileBase;
-import elec332.core.java.JavaHelper;
 import elec332.core.main.ElecCore;
-import elec332.core.util.NBTHelper;
 import elec332.core.util.NBTTypes;
 import elec332.core.world.WorldHelper;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -46,7 +37,7 @@ public class TileBundledElectricWire extends TileBase {
         dirs.forEach(new Consumer<EnumFacing>() {
             @Override
             public void accept(EnumFacing facing) {
-                beep[facing.ordinal()] = dirs.stream().filter(f -> f.getAxis() != facing.getAxis()).collect(Collectors.toList()).toArray(new EnumFacing[0]);
+                beep[facing.ordinal()] = dirs.stream().filter(f -> f.getAxis() != facing.getAxis()).toArray(EnumFacing[]::new);
             }
         });
         NS = EnumSet.of(EnumFacing.SOUTH, EnumFacing.NORTH);
@@ -114,9 +105,14 @@ public class TileBundledElectricWire extends TileBase {
     }
 
     public void notifyNeighborsOfChangeExtensively(){
-        WorldHelper.notifyNeighborsOfStateChange(this.getWorld(), this.pos.up(), this.blockType);
-        notifyNeighborsOfChange();
-        WorldHelper.notifyNeighborsOfStateChange(this.getWorld(), this.pos.down(), this.blockType);
+        BlockPos start = pos.add(-1, -1, -1);
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                for (int k = 0; k < 3; k++) {
+                    world.neighborChanged(start.add(i, j, k), BlockRegister.electric_bundled_wire, pos);
+                }
+            }
+        }
     }
 
     public void ping(){

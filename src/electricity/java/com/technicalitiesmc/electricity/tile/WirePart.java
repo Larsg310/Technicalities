@@ -14,13 +14,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 /**
@@ -40,8 +43,11 @@ public class WirePart {
     private static final EnumFacing[][] placementToIndex;
 
     private int colors = 0;
-    public EnumBitSet<EnumFacing> connections = EnumBitSet.noneOf(EnumFacing.class), change = EnumBitSet.noneOf(EnumFacing.class), realConnections = EnumBitSet.noneOf(EnumFacing.class);
-    public BitSet ud = new BitSet(EnumFacing.VALUES.length);
+    public EnumBitSet<EnumFacing> realConnections = EnumBitSet.noneOf(EnumFacing.class);
+    public NonNullList<EnumConnectionPlace> corners = NonNullList.withSize(EnumFacing.VALUES.length, EnumConnectionPlace.NORMAL);
+
+    public EnumBitSet<EnumFacing> connections = EnumBitSet.noneOf(EnumFacing.class), change = EnumBitSet.noneOf(EnumFacing.class);
+    public BitSet extended = new BitSet(EnumFacing.VALUES.length);
 
     @Nonnull
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
@@ -57,6 +63,7 @@ public class WirePart {
         System.out.println("send "+wire.getPos());
         tag.setLong("conn", connections.getSerialized());
         tag.setLong("change", change.getSerialized());
+        tag.setByteArray("extCon", extended.toByteArray());
         int i = new Random().nextInt();
         System.out.println(i);
         tag.setInteger("inte", i);
@@ -65,9 +72,9 @@ public class WirePart {
     @SideOnly(Side.CLIENT)
     public void readClientData(NBTTagCompound tag){
         System.out.println("receiuve");
-        connections = EnumBitSet.noneOf(EnumFacing.class);
         connections.deserialize(tag.getLong("conn"));
         change.deserialize(tag.getLong("change"));
+        extended = BitSet.valueOf(tag.getByteArray("extCon"));
         System.out.println(tag.getInteger("inte"));
     }
 
@@ -81,24 +88,39 @@ public class WirePart {
 
     public void pong(BlockPos pos_, World world){
         System.out.println("pong "+pos_);
+        realConnections.clear();
+        corners.clear();
+
         connections.clear();
         change.clear();
-        realConnections.clear();
+        extended.clear();
+
         for (int i = 0; i < 4; i++) {
             EnumFacing facing = placementToIndex[placement.ordinal()][i];
-
-            BlockPos pos = pos_.offset(facing);
-            if (WorldHelper.chunkLoaded(world, pos)) {
-                TileEntity tile = WorldHelper.getTileAt(world, pos);
-                if (tile instanceof TileBundledElectricWire) {
-                    TileBundledElectricWire wireO = (TileBundledElectricWire) tile;
-                    WirePart oWp = wireO.getWire(placement);
-                    if (oWp != null && JavaHelper.hasAtLeastOneMatch(ColorHelper.getColors(oWp.getColorBits()), ColorHelper.getColors(getColorBits()))) {
-                        connections.add(indexToFacing[i]);
-                        if (oWp.colors != colors) {
-                            change.add(indexToFacing[i]);
+            for (EnumConnectionPlace cp : EnumConnectionPlace.values()){
+                Pair<BlockPos, EnumFacing> pbf = cp.modify(pos_, placement, facing);
+                if (pbf == null){
+                    continue;
+                }
+                BlockPos pos = pbf.getLeft();
+                EnumFacing otherPlacement = pbf.getRight();
+                if (WorldHelper.chunkLoaded(world, pos)) {
+                    TileEntity tile = WorldHelper.getTileAt(world, pos);
+                    if (tile instanceof TileBundledElectricWire) {
+                        TileBundledElectricWire wireO = (TileBundledElectricWire) tile;
+                        WirePart oWp = wireO.getWire(otherPlacement);
+                        if (oWp != null && JavaHelper.hasAtLeastOneMatch(ColorHelper.getColors(oWp.getColorBits()), ColorHelper.getColors(getColorBits()))) {
+                            connections.add(indexToFacing[i]);
+                            if (oWp.colors != colors) {
+                                change.add(indexToFacing[i]);
+                            }
+                            realConnections.add(facing);
+                            corners.set(facing.ordinal(), cp);
+                            if (cp == EnumConnectionPlace.CORNER_DOWN){
+                                extended.set(indexToFacing[i].ordinal());
+                            }
+                            break;
                         }
-                        realConnections.add(facing);
                     }
                 }
             }
@@ -187,6 +209,39 @@ public class WirePart {
             addWire(color);
         }
         cS();
+    }
+
+    public enum EnumConnectionPlace {
+
+        CORNER_UP { // Cornering up, within the same block
+
+            @Override
+            public Pair<BlockPos, EnumFacing> modify(BlockPos myPos, EnumFacing myFace, EnumFacing to) {
+                return Pair.of(myPos, to);
+            }
+
+        },
+        NORMAL { //Straight forward
+
+            @Override
+            public Pair<BlockPos, EnumFacing> modify(BlockPos myPos, EnumFacing myFace, EnumFacing to) {
+                return Pair.of(myPos.offset(to), myFace);
+            }
+
+        },
+        CORNER_DOWN { //Cornering down, other block
+
+            @Override
+            @SuppressWarnings("all")
+            public Pair<BlockPos, EnumFacing> modify(BlockPos myPos, EnumFacing myFace, EnumFacing to) {
+                return Pair.of(myPos.offset(to).offset(myFace), to.getOpposite());
+            }
+
+        };
+
+        @Nullable
+        public abstract Pair<BlockPos, EnumFacing> modify(BlockPos myPos, EnumFacing myFace, EnumFacing to);
+
     }
 
     static {

@@ -1,7 +1,6 @@
 package com.technicalitiesmc.electricity.util;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import java.util.List;
 import java.util.stream.Collectors;

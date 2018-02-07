@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.technicalitiesmc.api.electricity.EnumElectricityType;
 import net.minecraft.item.EnumDyeColor;
-import net.minecraftforge.common.util.EnumHelper;
 
 import javax.annotation.Nonnull;
 import java.util.EnumMap;
