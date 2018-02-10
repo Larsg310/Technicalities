@@ -1,6 +1,7 @@
 package com.technicalitiesmc.electricity.tile;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.technicalitiesmc.electricity.init.BlockRegister;
 import com.technicalitiesmc.electricity.util.EnumBitSet;
 import com.technicalitiesmc.lib.block.TileBase;
@@ -15,31 +16,15 @@ import net.minecraft.util.math.BlockPos;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 /**
  * Created by Elec332 on 19-1-2018.
  */
 public class TileBundledElectricWire extends TileBase {
 
-    private static final Set<EnumFacing> surroundings;
-    private static final EnumFacing[][] beep;
-
-
     public static final EnumSet<EnumFacing> NS, EW;
 
-
     static {
-        List<EnumFacing> dirs = Lists.newArrayList(EnumFacing.VALUES);
-        surroundings = dirs.stream().filter(facing -> facing.getAxis() != EnumFacing.Axis.Y).collect(Collectors.toSet());
-        beep = new EnumFacing[dirs.size()][];
-        dirs.forEach(new Consumer<EnumFacing>() {
-            @Override
-            public void accept(EnumFacing facing) {
-                beep[facing.ordinal()] = dirs.stream().filter(f -> f.getAxis() != facing.getAxis()).toArray(EnumFacing[]::new);
-            }
-        });
         NS = EnumSet.of(EnumFacing.SOUTH, EnumFacing.NORTH);
         EW = EnumSet.of(EnumFacing.EAST, EnumFacing.WEST);
     }
@@ -47,6 +32,22 @@ public class TileBundledElectricWire extends TileBase {
     private final List<WirePart> wires = Lists.newArrayList();
     private final List<WirePart> wirez = Collections.unmodifiableList(wires);
     private boolean pingpong, send;
+    private long worldTime;
+    private Set<BlockPos> posSet = Sets.newHashSet();
+
+    public boolean shouldRefresh(long newTime, BlockPos otherPos){
+        if (worldTime != newTime){
+            posSet.clear();
+            worldTime = newTime;
+            posSet.add(otherPos);
+            return true;
+        }
+        if (posSet.contains(otherPos)){
+            return false;
+        }
+        posSet.add(otherPos);
+        return true;
+    }
 
     public boolean addWire(WirePart wire){
         return addWire(wire, true);

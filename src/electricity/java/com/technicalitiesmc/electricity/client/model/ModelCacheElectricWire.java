@@ -64,10 +64,12 @@ public class ModelCacheElectricWire extends ModelCache<BlockBundledElectricWire.
                 //boolean pNeg = ef.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE;
                 boolean change = data.change.contains(facing);
                 boolean extend = data.extended.get(facing.ordinal()) && !change;
-                boolean exnp = extend && ef.getAxis() == EnumFacing.Axis.Y || ef.getAxis() == EnumFacing.Axis.Z && facing.getAxis() == EnumFacing.Axis.X;
-                int zero8 = neg ? 0 : (exnp ? 7 : 8);
-                int eight16 = neg ? (exnp ? 9 : 8) : 16;
-                int extStart = exnp ? -1 : 0;
+                boolean exnp = extend && data.isExtended(facing);
+                boolean shortened = data.shortened.get(facing.ordinal());
+                boolean shrt = shortened && data.isExtended(facing) || change;
+                int zero8 = neg ? (shrt ? 1 : 0) : (exnp ? 7 : 8);
+                int eight16 = neg ? (exnp ? 9 : 8) : (shrt ? 15 : 16);
+                int extStart = exnp ? -1 : shrt ? 1 : 0;
                 posStart = ft + 1;
                 ITransformation baseTransformation = RenderHelper.defaultFor(facing);
                 ITransformation placedBaseTransformation = merge(baseTransformation, placementTransformation);
@@ -85,7 +87,7 @@ public class ModelCacheElectricWire extends ModelCache<BlockBundledElectricWire.
                     if (conn.size() == 1) {
                         quads.add(quadBakery.bakeQuad(new Vector3f(posStart, 0, 8), new Vector3f(posStart + 1, 1, 8), wire, EnumFacing.SOUTH, placedBaseTransformation, color.ordinal(), 0.0F, color.ordinal() + 1, 2.0F));
                     }
-                    quads.add(quadBakery.bakeQuad(new Vector3f(posStart, 1, extend ? -1 : 0), new Vector3f(posStart + 1, 1, 8), wire, EnumFacing.UP, placedBaseTransformation, color.ordinal(), zero8, color.ordinal() + 1, neg ? (extend ? 9 : 8) : 16));
+                    quads.add(quadBakery.bakeQuad(new Vector3f(posStart, 1, extend ? -1 : (shortened ? 1 : 0)), new Vector3f(posStart + 1, 1, 8), wire, EnumFacing.UP, placedBaseTransformation, color.ordinal(), neg ? (shortened ? 1 : 0) : (extend ? 7 : 8), color.ordinal() + 1, neg ? (extend ? 9 : 8) : (shortened ? 15 : 16)));
                     posStart += 1;
                     if (i == colors.size() - 1) {
                         ITransformation iCt = merge(RenderHelper.getTransformation(0, 180, 90), baseTransformation);
@@ -119,8 +121,8 @@ public class ModelCacheElectricWire extends ModelCache<BlockBundledElectricWire.
     }
 
     private static ITransformation merge(ITransformation t1, ITransformation t2){
-        Matrix4f m = ((Matrix4f) t2.getMatrix().clone());
-        m.mul(((Matrix4f) t1.getMatrix().clone()));
+        Matrix4f m = new Matrix4f(t2.getMatrix());
+        m.mul(t1.getMatrix());
         return new TRSRTransformation(m);
     }
 

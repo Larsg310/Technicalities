@@ -20,7 +20,7 @@ public class AABBHelper {
             case SOUTH:
                 return new AxisAlignedBB(aabb.minX, aabb.minZ, 1 - aabb.minY, aabb.maxX, aabb.maxZ, 1 - aabb.maxY);
             case WEST:
-                return new AxisAlignedBB(aabb.minY, aabb.minX, aabb.minZ, aabb.maxY, aabb.maxX, aabb.maxZ);
+                return new AxisAlignedBB(aabb.minY, 1 - aabb.minX, aabb.minZ, aabb.maxY, 1 - aabb.maxX, aabb.maxZ);
             default:
                 return aabb;
         }

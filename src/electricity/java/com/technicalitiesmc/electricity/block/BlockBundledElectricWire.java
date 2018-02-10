@@ -145,8 +145,20 @@ public class BlockBundledElectricWire extends BlockBase implements ITileEntityPr
 
     @Override
     public void neighborChangedC(World world, BlockPos pos, IBlockState state, Block neighbor, BlockPos p_189540_5_) {
+        neighborChanged(world, pos, state, neighbor, p_189540_5_, false);
+    }
+
+    @Override
+    public void observedNeighborChange(IBlockState observerState, World world, BlockPos observerPos, Block changedBlock, BlockPos changedBlockPos) {
+        neighborChanged(world, observerPos, observerState, changedBlock, changedBlockPos, true);
+    }
+
+    private void neighborChanged(World world, BlockPos pos, IBlockState state, Block neighbor, BlockPos neighborPos, boolean observer) {
         if (!world.isRemote) {
             TileBundledElectricWire tile = getTile(world, pos, TileBundledElectricWire.class);
+            if (observer && !tile.shouldRefresh(world.getTotalWorldTime(), neighborPos)){
+                return;
+            }
             List<WirePart> wp = Lists.newArrayList();
             for (WirePart p : tile.getWireView()){
                 if (!p.canStay(world, pos)){

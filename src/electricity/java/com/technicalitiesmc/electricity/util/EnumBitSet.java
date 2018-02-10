@@ -162,10 +162,12 @@ public class EnumBitSet<E extends Enum<E>> extends AbstractSet<E> implements Clo
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public EnumSet<E> clone() {
+    @SuppressWarnings("all")
+    public EnumBitSet<E> clone() {
         try {
-            return (EnumSet<E>) super.clone();
+            EnumBitSet<E> ret = new EnumBitSet<E>(type);
+            ret.deserialize(elements);
+            return ret;
         } catch(Exception e) {
             throw new RuntimeException(e);
         }
