@@ -38,6 +38,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -87,11 +88,11 @@ public class ItemBundledWire extends ItemBlockBase implements INoJsonItem, IHasS
                                 if (!world.isRemote) {
                                     EnumFacing rf = event.getFace().getOpposite();
                                     if (((TileBundledElectricWire) tile).getWire(rf) == null) {
-                                        WirePart wire = new WirePart(rf);
                                         ItemStack stack = event.getEntityPlayer().getHeldItem(event.getHand());
-                                        wire.setColors(getColorsFromStack(stack));
-                                        ((TileBundledElectricWire) tile).addWire(wire);
-                                        if (!PlayerHelper.isPlayerInCreative(event.getEntityPlayer())){
+                                        Pair<Integer, List<WireColor>> data = getColorsFromStack(stack);
+                                        WirePart wire = new WirePart(rf, data.getLeft());
+                                        wire.setColors(data.getRight());
+                                        if (((TileBundledElectricWire) tile).addWire(wire) && !PlayerHelper.isPlayerInCreative(event.getEntityPlayer())){
                                             stack.shrink(1);
                                         }
                                     }
@@ -113,7 +114,9 @@ public class ItemBundledWire extends ItemBlockBase implements INoJsonItem, IHasS
 
     @Override
     public void addInformationC(@Nonnull ItemStack stack, World world, List<String> tooltip, boolean advanced) {
-        for (WireColor color : getColorsFromStack(stack)){
+        Pair<Integer, List<WireColor>> data = getColorsFromStack(stack);
+        tooltip.add("Size: "+data.getLeft());
+        for (WireColor color : data.getRight()){
             tooltip.add(color.getType() + "  " + color.getColor().getDyeColorName()); //todo localize
         }
     }
@@ -125,23 +128,22 @@ public class ItemBundledWire extends ItemBlockBase implements INoJsonItem, IHasS
             TileEntity tile = WorldHelper.getTileAt(world, pos);
             if (tile != null){
                 TileBundledElectricWire wire = (TileBundledElectricWire) tile;
-                WirePart wp = new WirePart(side.getOpposite());
-                wp.setColors(getColorsFromStack(stack));
+                Pair<Integer, List<WireColor>> data = getColorsFromStack(stack);
+                WirePart wp = new WirePart(side.getOpposite(), data.getLeft());
+                wp.setColors(data.getRight());
                 wire.addWire(wp);
-                //System.out.println(side);
-                //wire.setColors(getColorsFromStack(stack));
             }
         }
         return ret;
     }
 
-    public static ItemStack withCables(@Nonnull WireColor color1, WireColor... colors){
+    public static ItemStack withCables(int size, @Nonnull WireColor color1, WireColor... colors){
         Set<WireColor> r = Sets.newHashSet(colors);
         r.add(color1);
-        return withCables(r);
+        return withCables(r, size);
     }
 
-    public static ItemStack withCables(@Nonnull Collection<WireColor> colors){
+    public static ItemStack withCables(@Nonnull Collection<WireColor> colors, int size){
         int clr = 0;
         Set<WireColor> clrs = Sets.newHashSet(colors);
         for (WireColor dye : clrs){
@@ -149,23 +151,25 @@ public class ItemBundledWire extends ItemBlockBase implements INoJsonItem, IHasS
         }
         NBTTagCompound tag = new NBTTagCompound();
         tag.setInteger("clrwr", clr);
+        tag.setInteger("clrsz", size);
         ItemStack ret = new ItemStack(ItemRegister.bundledWire, 1, 0);
         ret.setTagCompound(tag);
         return ret;
     }
 
-    public static List<WireColor> getColorsFromStack(@Nonnull ItemStack stack){
+    public static Pair<Integer, List<WireColor>> getColorsFromStack(@Nonnull ItemStack stack){
         if (stack.getItem() != ItemRegister.bundledWire){
             throw new IllegalArgumentException();
         }
         if (stack.getTagCompound() == null){
-            return ImmutableList.of(WireColor.getWireColor(EnumDyeColor.WHITE, EnumElectricityType.AC)); // -_- Thx JEI
+            return Pair.of(1, ImmutableList.of(WireColor.getWireColor(EnumDyeColor.WHITE, EnumElectricityType.AC))); // -_- Thx JEI
         }
         int i = stack.getTagCompound().getInteger("clrwr");
+        int s = stack.getTagCompound().getInteger("clrsz");
         if (i == 0){
             throw new IllegalArgumentException();
         }
-        return ColorHelper.getColors(i);
+        return Pair.of(s, ColorHelper.getColors(i));
     }
 
     @Override

@@ -32,27 +32,37 @@ import java.util.*;
  */
 public class WirePart {
 
-    public WirePart(EnumFacing placement){
+    public WirePart(EnumFacing placement, int size){
         this.placement = placement;
+        this.size = size;
         makeAABBMimicRenderLogic = false;
     }
 
-    public EnumFacing placement;
-
     protected TileBundledElectricWire wire;
+    private boolean makeAABBMimicRenderLogic;
 
-    private static final EnumFacing[] indexToFacing, st1, st2;
-    private static final EnumFacing[][] placementToIndex, placementToIndexReverse;
-
+    //Real data
+    private int size = 1;
     private int colors = 0;
+    private EnumFacing placement;
     public EnumBitSet<EnumFacing> realConnections = EnumBitSet.noneOf(EnumFacing.class);
     public NonNullList<EnumConnectionPlace> corners = NonNullList.withSize(EnumFacing.VALUES.length, EnumConnectionPlace.NORMAL);
 
+    //Derived variables (for Client)
     public EnumBitSet<EnumFacing> connections = EnumBitSet.noneOf(EnumFacing.class), change = EnumBitSet.noneOf(EnumFacing.class);
     public BitSet extended = new BitSet(EnumFacing.VALUES.length);
     public BitSet shortened = new BitSet(EnumFacing.VALUES.length);
 
-    private boolean makeAABBMimicRenderLogic;
+    private static final EnumFacing[] indexToFacing, st1, st2;
+    private static final EnumFacing[][] placementToIndex, placementToIndexReverse;
+
+    public int getWireSize() {
+        return size;
+    }
+
+    public EnumFacing getPlacement() {
+        return placement;
+    }
 
     @Nonnull
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
@@ -90,7 +100,7 @@ public class WirePart {
     }
 
     public ItemStack getDropStack(){
-        return ItemBundledWire.withCables(ColorHelper.getColors(getColorBits()));
+        return ItemBundledWire.withCables(ColorHelper.getColors(getColorBits()), size);
     }
 
     public void pong(BlockPos pos_, World world){
@@ -115,7 +125,7 @@ public class WirePart {
                     if (tile instanceof TileBundledElectricWire) {
                         TileBundledElectricWire wireO = (TileBundledElectricWire) tile;
                         WirePart oWp = wireO.getWire(otherPlacement);
-                        if (oWp != null && JavaHelper.hasAtLeastOneMatch(ColorHelper.getColors(oWp.getColorBits()), ColorHelper.getColors(getColorBits()))) {
+                        if (oWp != null && oWp.size == size && JavaHelper.hasAtLeastOneMatch(ColorHelper.getColors(oWp.getColorBits()), ColorHelper.getColors(getColorBits()))) {
                             connections.add(indexToFacing[i]);
                             if (oWp.colors != colors) {
                                 change.add(indexToFacing[i]);
@@ -133,33 +143,45 @@ public class WirePart {
                 }
             }
         }
-        wire.syncWireData();
+        if (wire != null) {
+            wire.syncWireData();
+        }
     }
 
-    public void addBoxes(IBlockState state, World world, BlockPos pos, List<AxisAlignedBB> boxes) {
-        addBoxes(boxes, false, connections);
+    public void addBoxes(IBlockState state, World world, BlockPos pos, List<AxisAlignedBB> boxes, boolean hitbox, boolean allowCenter) {
+        addBoxes(boxes, false, connections, hitbox, allowCenter);
     }
 
-    private void addBoxes(List<AxisAlignedBB> boxes, boolean extend, Set<EnumFacing> connections){
-        float width = ColorHelper.getColors(getColorBits()).size();
+    protected void addBoxes(List<AxisAlignedBB> boxes, boolean extend, Set<EnumFacing> connections, boolean hitbox, boolean allowCenter){
+        float width = ColorHelper.getColors(getColorBits()).size() * size;
         float stuff = ((16 - width) / 2) / 16;
         float stuff2 = .5f;
-        if (connections.size() != 1 && !TileBundledElectricWire.isStraightLine(connections)) {
+        float expansion = 0.1f / 16;
+        if (connections.size() != 1 && !TileBundledElectricWire.isStraightLine(connections) || !allowCenter) {
+            if (!allowCenter){
+                width -= 2;
+            }
             float ft = (16 - (width + 2)) / 32f;
-            boxes.add(new IndexedAABB(AABBHelper.rotateFromDown(new AxisAlignedBB(ft, 0, ft, 1 - ft, 1 / 16f, 1 - ft), placement), placement.ordinal()));
+            AxisAlignedBB blob = new AxisAlignedBB(ft, 0, ft, 1 - ft, 1/16f * size, 1 - ft);
+            blob = blob.grow(expansion, 0, expansion);
+            boxes.add(new IndexedAABB(AABBHelper.rotateFromDown(blob, placement), placement.ordinal()));
             stuff2 = stuff;
+        }
+        if (!allowCenter){
+            return;
         }
         for (EnumFacing facing : connections){
             boolean z = facing.getAxis() == EnumFacing.Axis.Z;
             boolean n = facing.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE;
-            boolean ext = extend || (isExtended(facing) || !makeAABBMimicRenderLogic) && extended.get(facing.ordinal());
-            boolean shrt = !makeAABBMimicRenderLogic && shortened.get(facing.ordinal()) && isExtended(facing);
-            float eadd = ext ? 1/16f : (shrt ? -1/16f : 0);
-            AxisAlignedBB aabb = new AxisAlignedBB(z ? stuff : 1 + eadd, 0, z ? 1 - stuff2 : stuff, 1 - (z ? stuff : stuff2), 1/16f, z ? 1 + eadd : 1 - stuff);
+            boolean ext = extend || (isExtended(facing) || (!makeAABBMimicRenderLogic && !hitbox)) && extended.get(facing.ordinal());
+            boolean shrt = (makeAABBMimicRenderLogic || hitbox) && shortened.get(facing.ordinal()) && isExtended(facing);
+            float eadd = ext ? 1/16f * size : (shrt ? -1/16f * size : 0);
+            AxisAlignedBB aabb = new AxisAlignedBB(z ? stuff : 1 + eadd, 0, z ? 1 - stuff2 : stuff, 1 - (z ? stuff : stuff2), 1/16f * size, z ? 1 + eadd : 1 - stuff);
             if (n){
                 float offset = -(1 - stuff2 + eadd);
                 aabb = aabb.offset(z ? 0 : offset, 0, z ? offset : 0);
             }
+            aabb = aabb.grow(expansion, 0, expansion);
             boxes.add(new IndexedAABB(AABBHelper.rotateFromDown(aabb, placement), placement.ordinal()));
         }
     }
@@ -176,9 +198,12 @@ public class WirePart {
         return ColorHelper.hasWire(color, colors);
     }
 
-    public boolean addWires(Collection<WireColor> colorz){
-        Set<WireColor> colors = Sets.newHashSet(colorz);
-        if (colors.size() != colorz.size()){
+    public boolean addWires(Pair<Integer, List<WireColor>> data){
+        if (data.getLeft() != size){
+            return false;
+        }
+        Set<WireColor> colors = Sets.newHashSet(data.getRight());
+        if (colors.size() != data.getRight().size()){
             return false;
         }
         for (WireColor color : colors){
@@ -191,13 +216,60 @@ public class WirePart {
         return true;
     }
 
-    public boolean addWire(WireColor color) {
+    private boolean addWire(WireColor color) {
+        WirePart copy = new WirePart(placement, size);
+        copy.colors = colors;
+        if (!copy.addWire_(color, false)){
+            return false;
+        }
+        if (wire == null){
+            addWire_(color, false);
+            return true;
+        }
+        IBlockState state = WorldHelper.getBlockState(wire.getWorld(), wire.getPos());
+        List<AxisAlignedBB> abl = Lists.newArrayList(), abs = Lists.newArrayList();
+        copy.addBoxes(abl, true, Collections.emptySet(), true, false);
+        for (AxisAlignedBB bb : abl) {
+            abs.clear();
+            if (bb instanceof IndexedAABB){
+                bb = new IndexedAABB(bb, ((IndexedAABB) bb).index + 10);
+            }
+            state.addCollisionBoxToList(wire.getWorld(), wire.getPos(), bb.offset(wire.getPos()), abs, null, false);
+            if (!abs.isEmpty()){
+                for (AxisAlignedBB aabb : abs){
+                    if (!(aabb instanceof IndexedAABB && ((IndexedAABB) aabb).index == placement.ordinal())){
+                        return false;
+                    }
+                }
+            }
+        }
+        addWire_(color, true);
+        return true;
+    }
+
+    private boolean addWire_(WireColor color, boolean notify){
         if (hasWire(color)){
             return false;
         }
+        if (size * Integer.bitCount(colors) > getMaxWires(size) - size){
+            return false;
+        }
         colors = ColorHelper.addWire(color, colors);
-        cS();
+        if (notify) {
+            cS();
+        }
         return true;
+    }
+
+    private static int getMaxWires(int size){
+        switch (size){
+            case 4:
+                return 2;
+            case 3:
+                return 3;
+            default:
+                return 12 / size;
+        }
     }
 
     private void cS(){
@@ -219,7 +291,7 @@ public class WirePart {
     public void setColors(List<WireColor> colors){
         this.colors = 0;
         for (WireColor color : colors){
-            addWire(color);
+            addWire_(color, false);
         }
         cS();
     }
@@ -247,17 +319,11 @@ public class WirePart {
             @Override
             @SuppressWarnings("all")
             public Pair<BlockPos, EnumFacing> modify(World world, BlockPos myPos, WirePart wire, EnumFacing to) {
-                BlockPos pos = myPos.offset(to);
-                IBlockState state = WorldHelper.getBlockState(world, pos);
-                List<AxisAlignedBB> abl = Lists.newArrayList(), abs = Lists.newArrayList();
                 Set<EnumFacing> f = wire.connections.clone();
                 f.add(placementToIndexReverse[wire.placement.ordinal()][to.ordinal()]);
-                wire.addBoxes(abl, true, f);
-                for (AxisAlignedBB bb : abl) {
-                    state.addCollisionBoxToList(world, pos, bb.offset(myPos), abs, null, false);
-                    if (!abs.isEmpty()){
-                        return null;
-                    }
+                BlockPos pos = myPos.offset(to);
+                if (occludes(wire, myPos, f, world, pos)){
+                    return null;
                 }
                 return Pair.of(pos.offset(wire.placement), to.getOpposite());
             }
@@ -271,6 +337,22 @@ public class WirePart {
 
     public boolean isExtended(EnumFacing horPaneFacing){
         return placement.getAxis() == EnumFacing.Axis.Y || placement.getAxis() == EnumFacing.Axis.Z && horPaneFacing.getAxis() == EnumFacing.Axis.X;
+    }
+
+    public static boolean occludes(WirePart wire, BlockPos wirePos, Set<EnumFacing> sides, World world, BlockPos otherPos){
+        IBlockState state = WorldHelper.getBlockState(world, otherPos);
+        List<AxisAlignedBB> abl = Lists.newArrayList(), abs = Lists.newArrayList();
+        wire.addBoxes(abl, true, sides, false, false);
+        for (AxisAlignedBB bb : abl) {
+            if (bb instanceof IndexedAABB){
+                bb = new IndexedAABB(bb, ((IndexedAABB) bb).index + 10);
+            }
+            state.addCollisionBoxToList(world, otherPos, bb.offset(wirePos), abs, null, false);
+            if (!abs.isEmpty()){
+                return true;
+            }
+        }
+        return false;
     }
 
     static {

@@ -13,6 +13,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistry;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -31,12 +32,19 @@ public class RecipeRegister implements IObjectRegister<IRecipe> {
             public boolean matches(InventoryCrafting inv, World worldIn) {
                 Set<WireColor> colors = Sets.newHashSet();
                 int items = 0;
+                int size = 0;
                 for (ItemStack stack : inv.stackList){
                     if (stack.isEmpty()){
                         continue;
                     }
                     if (stack.getItem() == ItemRegister.bundledWire){
-                        List<WireColor> c = ItemBundledWire.getColorsFromStack(stack);
+                        Pair<Integer, List<WireColor>> data = ItemBundledWire.getColorsFromStack(stack);
+                        if (size == 0){
+                            size = data.getLeft();
+                        } else if (size != data.getLeft()){
+                            return false;
+                        }
+                        List<WireColor> c = data.getRight();
                         for (WireColor color : c){
                             if (colors.contains(color)){
                                 return false;
@@ -54,15 +62,18 @@ public class RecipeRegister implements IObjectRegister<IRecipe> {
             @Override
             public ItemStack getCraftingResult(InventoryCrafting inv) {
                 Set<WireColor> colors = Sets.newHashSet();
+                int size = 1;
                 for (ItemStack stack : inv.stackList){
                     if (stack.isEmpty()){
                         continue;
                     }
                     if (stack.getItem() == ItemRegister.bundledWire){
-                        colors.addAll(ItemBundledWire.getColorsFromStack(stack));
+                        Pair<Integer, List<WireColor>> data = ItemBundledWire.getColorsFromStack(stack);
+                        size = data.getLeft();
+                        colors.addAll(data.getRight());
                     }
                 }
-                return ItemBundledWire.withCables(colors);
+                return ItemBundledWire.withCables(colors, size);
             }
 
             @Override
@@ -72,7 +83,7 @@ public class RecipeRegister implements IObjectRegister<IRecipe> {
 
             @Override
             public ItemStack getRecipeOutput() {
-                return ItemBundledWire.withCables(WireColor.getWireColor(EnumDyeColor.WHITE, EnumElectricityType.AC));
+                return ItemBundledWire.withCables(1, WireColor.getWireColor(EnumDyeColor.WHITE, EnumElectricityType.AC));
             }
 
             @Override

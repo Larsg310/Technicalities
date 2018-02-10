@@ -4,17 +4,24 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.technicalitiesmc.electricity.init.BlockRegister;
 import com.technicalitiesmc.electricity.util.EnumBitSet;
+import com.technicalitiesmc.lib.IndexedAABB;
 import com.technicalitiesmc.lib.block.TileBase;
 import elec332.core.main.ElecCore;
+import elec332.core.tile.TileEntityBase;
 import elec332.core.util.NBTTypes;
 import elec332.core.world.WorldHelper;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.reflect.Field;
 import java.util.*;
 
 /**
@@ -54,7 +61,22 @@ public class TileBundledElectricWire extends TileBase {
     }
 
     private boolean addWire(WirePart wire, boolean notify){
-        if (getWire(wire.placement) == null){
+        if (getWire(wire.getPlacement()) == null){
+            if (notify){
+                IBlockState state = WorldHelper.getBlockState(world, pos);
+                List<AxisAlignedBB> abl = Lists.newArrayList(), abs = Lists.newArrayList();
+                wire.addBoxes(abl, true, Collections.emptySet(), true, false);
+                for (AxisAlignedBB bb : abl) {
+                    abs.clear();
+                    if (bb instanceof IndexedAABB){
+                        bb = new IndexedAABB(bb, ((IndexedAABB) bb).index + 10);
+                    }
+                    state.addCollisionBoxToList(world, pos, bb.offset(pos), abs, null, false);
+                    if (!abs.isEmpty()){
+                        return false;
+                    }
+                }
+            }
             wires.add(wire);
             wire.wire = this;
             if (world != null && !world.isRemote){
@@ -98,7 +120,7 @@ public class TileBundledElectricWire extends TileBase {
     @Nullable
     public WirePart getWire(EnumFacing facing){
         for (WirePart wire : wires){
-            if (wire.placement == facing){
+            if (wire.getPlacement() == facing){
                 return wire;
             }
         }
@@ -137,9 +159,9 @@ public class TileBundledElectricWire extends TileBase {
         EnumBitSet<EnumFacing> faces = EnumBitSet.noneOf(EnumFacing.class);
         for (int i = 0; i < l.tagCount(); i++) {
             NBTTagCompound tag = l.getCompoundTagAt(i);
-            WirePart wirePart = new WirePart(EnumFacing.VALUES[tag.getByte("sbfww")]);
+            WirePart wirePart = new WirePart(EnumFacing.VALUES[tag.getByte("sbfww")], tag.getByte("sbfws"));
             if (client){
-                WirePart w = getWire(wirePart.placement);
+                WirePart w = getWire(wirePart.getPlacement());
                 if (w != null){
                     wirePart = w;
                 }
@@ -148,13 +170,13 @@ public class TileBundledElectricWire extends TileBase {
             if (client){
                 wirePart.readClientData(tag);
             }
-            faces.add(wirePart.placement);
+            faces.add(wirePart.getPlacement());
             addWire(wirePart, false);
         }
         if (client){
             List<WirePart> wp = Lists.newArrayList();
             for (WirePart p : getWireView()){
-                if (!faces.contains(p.placement)){
+                if (!faces.contains(p.getPlacement())){
                     wp.add(p);
                 }
             }
@@ -172,7 +194,8 @@ public class TileBundledElectricWire extends TileBase {
         NBTTagList l = new NBTTagList();
         wires.forEach(wire -> {
             NBTTagCompound tag = new NBTTagCompound();
-            tag.setByte("sbfww", (byte) wire.placement.ordinal());
+            tag.setByte("sbfww", (byte) wire.getPlacement().ordinal());
+            tag.setByte("sbfws", (byte) wire.getWireSize());
             wire.writeToNBT(tag);
             if (client){
                 wire.writeClientData(tag);
@@ -187,6 +210,15 @@ public class TileBundledElectricWire extends TileBase {
         if (pingpong){
             send = true;
             return;
+        }
+        try {
+            Field f = TileEntityBase.class.getDeclaredField("isGatheringPackets");
+            f.setAccessible(true);
+            if (!f.getBoolean(this)){
+                System.out.println("sendRealPacket "+pos);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
         }
         sendPacket(3, writeWiresToNBT(new NBTTagCompound(), true));
     }
@@ -213,163 +245,8 @@ public class TileBundledElectricWire extends TileBase {
         syncWireData();
     }
 
-    /*
-
-    @SuppressWarnings("all")
-    private void syncColors(boolean conn){
-        checkConnections(!conn);
-        if (!world.isRemote) {
-            NBTTagCompound tag = new NBTTagCompound();
-            if (conn){
-                tag.setLong("conn", connections.getSerialized());
-                tag.setLong("ch", change.getSerialized());
-            }
-            tag.setInteger("color", colors);
-            sendPacket(3, tag);
-        }
-    }
-
-    private void syncConnections() {
-        if (!world.isRemote) {
-            NBTTagCompound tag = new NBTTagCompound();
-            tag.setLong("conn", connections.getSerialized());
-            tag.setLong("ch", change.getSerialized());
-            tag.setByteArray("baoc", ud.toByteArray());
-            sendPacket(4, tag);
-        }
-    }
-
-    @Override
-    public void onLoad() {
-        if (!world.isRemote) {
-            //ElecCore.tickHandler.registerCall(new Runnable() {
-            //    @Override
-            //    public void run() {
-                    checkConnections(false);
-            //    }
-            //}, world);
-        }
-    }
-
-    public void checkConnections(boolean send){
-        if (world.isRemote){
-            return;
-        }
-        connections.clear();
-        change.clear();
-        ud.clear();
-        for (EnumFacing facing : EnumFacing.VALUES){
-            if (facing.getAxis() == EnumFacing.Axis.Y){
-                continue;
-            }
-            BlockPos pos = this.pos.offset(facing);
-            if (WorldHelper.chunkLoaded(world, pos)) {
-                TileEntity tile = WorldHelper.getTileAt(world, pos);
-                if (tile instanceof TileBundledElectricWire) {
-                    TileBundledElectricWire wire = (TileBundledElectricWire) tile;
-                    if (JavaHelper.hasAtLeastOneMatch(ColorHelper.getColors(wire.getColorBits()), ColorHelper.getColors(getColorBits()))) {
-                        connections.add(facing);
-                        if (((TileBundledElectricWire) tile).colors != colors) {
-                            change.add(facing);
-                        }
-                    }
-                } else {
-                    TileBundledElectricWire wire;
-                    if ((wire = connectUp(facing)) != null){
-                        connections.add(facing);
-                        ud.set(facing.ordinal());
-                        if (wire.colors != colors) {
-                            change.add(facing);
-                        }
-                    } else {
-                        tile = WorldHelper.getTileAt(world, pos.down());
-                        if (tile instanceof TileBundledElectricWire && ((TileBundledElectricWire) tile).connectUp(facing.getOpposite()) == this){
-                            connections.add(facing);
-                            if (((TileBundledElectricWire) tile).colors != colors) {
-                                change.add(facing);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if (send) {
-            syncConnections();
-        }
-    }
-
-    private TileBundledElectricWire connectUp(EnumFacing facing){
-        BlockPos pos = this.pos.offset(facing);
-        IBlockState state = WorldHelper.getBlockState(world, pos);
-        if (!state.isSideSolid(world, pos, facing.getOpposite())){
-            return null;
-        }
-        pos = pos.up();
-        TileEntity tile = WorldHelper.getTileAt(world, pos);
-        if (tile instanceof TileBundledElectricWire) {
-            TileBundledElectricWire wire = (TileBundledElectricWire) tile;
-            if (JavaHelper.hasAtLeastOneMatch(ColorHelper.getColors(wire.getColorBits()), ColorHelper.getColors(getColorBits()))) {
-                state = WorldHelper.getBlockState(world, pos.offset(facing.getOpposite()));
-                if (!state.isFullBlock() && !state.isFullCube()) {
-                    return (TileBundledElectricWire) tile;
-                }
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public void sendInitialLoadPackets() {
-        checkConnections(true);
-    }
-
-    @Override
-    public void onDataPacket(int id, NBTTagCompound tag) {
-        switch (id){
-            case 3:
-                int newColor = tag.getInteger("color");
-                if (newColor != colors){
-                    this.colors = newColor;
-                    if (!tag.hasKey("conn")) {
-                        doWhackyClientStuff();
-                        break;
-                    }
-                }
-            case 4:
-                long newConn = tag.getLong("conn");
-                boolean cg = false;
-                if (newConn != connections.getSerialized()){
-                    connections.deserialize(newConn);
-                    cg = true;
-                }
-                long ch = tag.getLong("ch");
-                if (ch != change.getSerialized()){
-                    change.deserialize(ch);
-                    cg = true;
-                }
-                byte[] ba = tag.getByteArray("baoc");
-                if (!Arrays.equals(ba, ud.toByteArray())){
-                    ud = BitSet.valueOf(ba);
-                    cg = true;
-                }
-                if (cg){
-                    doWhackyClientStuff();
-                }
-                break;
-            default:
-                super.onDataPacket(id, tag);
-        }
-    }*/
-
-    private void doWhackyClientStuff(){
-        //notifyNeighborsOfChange();
-        WorldHelper.markBlockForUpdate(world, pos);
-        //WorldHelper.markBlockForRenderUpdate(world, pos);
-    }
-
     public static boolean isStraightLine(Set<EnumFacing> connections){
         return connections.equals(NS) || connections.equals(EW);
     }
-
 
 }
