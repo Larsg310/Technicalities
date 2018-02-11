@@ -37,7 +37,7 @@ public class ModelCacheElectricWire extends ModelCache<BlockBundledElectricWire.
     }
 
     private IElecQuadBakery quadBakery;
-    private TextureAtlasSprite connector, black;
+    private TextureAtlasSprite black;
     private TextureAtlasSprite[] individualWires, wireTypes;
 
     @Override
@@ -52,6 +52,7 @@ public class ModelCacheElectricWire extends ModelCache<BlockBundledElectricWire.
             int z = ef.getAxis() == EnumFacing.Axis.X ? 180 - (90 * ef.getAxisDirection().getOffset()) : 0;
             ITransformation placementTransformation = RenderHelper.getTransformation(x, 0, z);
             List<WireColor> colors = ColorHelper.getColors(data.getColorBits());
+            boolean item = data_.isItem();
             if (data_.isItem() && Config.singleWirePNGRendering && colors.size() == 1) {
                 quads.addAll(quadBakery.getGeneralItemQuads(individualWires[colors.get(0).getColor().ordinal()]));
                 return;
@@ -64,9 +65,9 @@ public class ModelCacheElectricWire extends ModelCache<BlockBundledElectricWire.
                 boolean neg = facing.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE;
                 boolean change = data.change.contains(facing);
                 boolean extend = data.extended.get(facing.ordinal()) && !change;
-                boolean exnp = extend && data.isExtended(facing);
+                boolean exnp = extend && data.isExtendedHorizontal(facing);
                 boolean shortened = data.shortened.get(facing.ordinal());
-                boolean shrt = shortened && data.isExtended(facing);
+                boolean shrt = shortened && data.isExtendedHorizontal(facing);
                 int zero8 = neg ? (shrt ? size : 0) : (exnp ? 8 - size : 8);
                 int eight16 = neg ? (exnp ? 8 + size : 8) : (shrt ? 16 - size : 16);
                 int extStart = exnp ? -size : shrt ? size : 0;
@@ -84,10 +85,14 @@ public class ModelCacheElectricWire extends ModelCache<BlockBundledElectricWire.
                         ITransformation i0T = merge(RenderHelper.getTransformation(0, 0, 90), baseTransformation);
                         quads.add(quadBakery.bakeQuad(new Vector3f(size, 16 - posStart, 8), new Vector3f(0, 16 - posStart, extStart), wire, EnumFacing.UP, merge(i0T, placementTransformation), color.ordinal() + 1, eight16, color.ordinal(), zero8));
                     }
-                    if (conn.size() == 1) {
-                        quads.add(quadBakery.bakeQuad(new Vector3f(posStart, 0, 8), new Vector3f(posStart + size, size, 8), wire, EnumFacing.SOUTH, placedBaseTransformation, color.ordinal(), 0.0F, color.ordinal() + 1, 2.0F));
+                    if (conn.size() == 1 || item) {
+                        for (int j = 0; j < (item ? 2 : 1); j++) {
+                            quads.add(quadBakery.bakeQuad(new Vector3f(posStart, 0, !item ? 8 : j * 16), new Vector3f(posStart + size, size, !item ? 8 : j * 16), wire, EnumFacing.SOUTH, placedBaseTransformation, color.ordinal(), 0.0F, color.ordinal() + 1, 2.0F));
+                        }
                     }
-                    quads.add(quadBakery.bakeQuad(new Vector3f(posStart, size, extend ? -size : (shortened ? size : 0)), new Vector3f(posStart + size, size, 8), wire, EnumFacing.UP, placedBaseTransformation, color.ordinal(), neg ? (shortened ? size : 0) : (extend ? 8 - size : 8), color.ordinal() + 1, neg ? (extend ? 8 + size : 8) : (shortened ? 16 - size : 16)));
+                    for (int j = 1; j > (item ? -1 : 0); j--) {
+                        quads.add(quadBakery.bakeQuad(new Vector3f(posStart, size * j, extend ? -size : (shortened ? size : 0)), new Vector3f(posStart + size, size * j, 8), wire, j == 1 ? EnumFacing.UP : EnumFacing.DOWN, placedBaseTransformation, color.ordinal(), neg ? (shortened ? size : 0) : (extend ? 8 - size : 8), color.ordinal() + 1, neg ? (extend ? 8 + size : 8) : (shortened ? 16 - size : 16)));
+                    }
                     posStart += size;
                     if (i == colors.size() - 1) {
                         ITransformation iCt = merge(RenderHelper.getTransformation(0, 180, 90), baseTransformation);
@@ -97,6 +102,7 @@ public class ModelCacheElectricWire extends ModelCache<BlockBundledElectricWire.
                 if (change) {
                     extend = data.extended.get(facing.ordinal());
                     int min11 = extend ? -1 : 1;
+                    min11 *= (extend || shortened) ? size : 1;
                     quads.add(quadBakery.bakeQuad(new Vector3f(ft, 1.1f * size, 0), new Vector3f(16 - ft, 1.1f * size, 1.1f * min11), black, extend ? EnumFacing.DOWN : EnumFacing.UP, placedBaseTransformation));
                     if (extend){
                         quads.add(quadBakery.bakeQuad(new Vector3f(ft, 0, 0), new Vector3f(16 - ft, 0, -1.1f), black, EnumFacing.UP, placedBaseTransformation));
@@ -120,9 +126,9 @@ public class ModelCacheElectricWire extends ModelCache<BlockBundledElectricWire.
         }
     }
 
-    private static ITransformation merge(ITransformation t1, ITransformation t2){
-        Matrix4f m = new Matrix4f(t2.getMatrix());
-        m.mul(t1.getMatrix());
+    private static ITransformation merge(ITransformation first, ITransformation second){
+        Matrix4f m = new Matrix4f(second.getMatrix());
+        m.mul(first.getMatrix());
         return new TRSRTransformation(m);
     }
 
@@ -132,7 +138,6 @@ public class ModelCacheElectricWire extends ModelCache<BlockBundledElectricWire.
         for (int i = 0; i < wireTypes.length; i++) {
             wireTypes[i] = iiconRegistrar.registerSprite(new TKEResourceLocation("blocks/flatwire_"+EnumElectricityType.values()[i].toString().toLowerCase()));
         }
-        connector = iiconRegistrar.registerSprite(new TKEResourceLocation("blocks/flatwire_connector"));
         black = iiconRegistrar.registerSprite(new TKEResourceLocation("blocks/black"));
         individualWires = new TextureAtlasSprite[EnumDyeColor.values().length];
         for (int i = 0; i < individualWires.length; i++) {

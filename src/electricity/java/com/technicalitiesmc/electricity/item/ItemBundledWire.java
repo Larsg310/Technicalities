@@ -11,6 +11,7 @@ import com.technicalitiesmc.electricity.tile.WirePart;
 import com.technicalitiesmc.electricity.util.ColorHelper;
 import com.technicalitiesmc.electricity.util.TKEResourceLocation;
 import com.technicalitiesmc.electricity.util.WireColor;
+import com.technicalitiesmc.lib.RayTraceHelper;
 import com.technicalitiesmc.lib.item.ItemBlockBase;
 import elec332.core.api.client.IIconRegistrar;
 import elec332.core.api.client.model.IElecModelBakery;
@@ -31,6 +32,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -41,6 +44,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -55,56 +59,7 @@ public class ItemBundledWire extends ItemBlockBase implements INoJsonItem, IHasS
         setRegistryName(new TKEResourceLocation(string));
         setUnlocalizedNameFromName();
         setCreativeTab(TKElectricity.creativeTab);
-        MinecraftForge.EVENT_BUS.register(new Object(){
-
-            @SubscribeEvent //Using onRightClick doesn't work if there's a block directly above the wire
-            public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event){
-                if (event.getItemStack().getItem() != ItemRegister.bundledWire){
-                    return;
-                }
-                World world = event.getWorld();
-                BlockPos pos = event.getPos();
-                if (WorldHelper.chunkLoaded(world, pos)){ //You never know...
-                    TileEntity tile = WorldHelper.getTileAt(world, pos);
-                    if (tile instanceof TileBundledElectricWire){ //attempt to add wire
-                        //System.out.println("aw" + event.getFace());
-                        event.setUseItem(Event.Result.DENY);
-                        event.setCanceled(true);
-                        if (!world.isRemote) {
-                            ItemStack stack = event.getEntityPlayer().getHeldItem(event.getHand());
-                            WirePart wire = ((TileBundledElectricWire) tile).getWire(event.getFace().getOpposite());
-                            if (wire != null && wire.addWires(getColorsFromStack(stack)) && !PlayerHelper.isPlayerInCreative(event.getEntityPlayer())) {
-                                stack.shrink(1);
-                            }
-                        }
-                    } else if (event.getFace() != null){ //attempt to place at face
-                        //System.out.println("paf");
-                        IBlockState state = WorldHelper.getBlockState(world, pos);
-                        if (state.isSideSolid(world, pos, event.getFace())){
-                            tile = WorldHelper.getTileAt(world, pos.offset(event.getFace()));
-                            if (tile instanceof TileBundledElectricWire){
-                                event.setUseItem(Event.Result.DENY);
-                                event.setCanceled(true);
-                                if (!world.isRemote) {
-                                    EnumFacing rf = event.getFace().getOpposite();
-                                    if (((TileBundledElectricWire) tile).getWire(rf) == null) {
-                                        ItemStack stack = event.getEntityPlayer().getHeldItem(event.getHand());
-                                        Pair<Integer, List<WireColor>> data = getColorsFromStack(stack);
-                                        WirePart wire = new WirePart(rf, data.getLeft());
-                                        wire.setColors(data.getRight());
-                                        if (((TileBundledElectricWire) tile).addWire(wire) && !PlayerHelper.isPlayerInCreative(event.getEntityPlayer())){
-                                            stack.shrink(1);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-            }
-
-        });
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @Override
@@ -123,18 +78,77 @@ public class ItemBundledWire extends ItemBlockBase implements INoJsonItem, IHasS
 
     @Override
     public boolean placeBlockAt(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, World world, @Nonnull BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull IBlockState newState) {
-        boolean ret = WorldHelper.getBlockState(world, pos.offset(side.getOpposite())).isSideSolid(world, pos.offset(side.getOpposite()), side) && super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState);
+        WirePart wp = createWirePart(player, stack, side.getOpposite());
+        boolean ret = wp != null && WorldHelper.getBlockState(world, pos.offset(side.getOpposite())).isSideSolid(world, pos.offset(side.getOpposite()), side) && super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState);
         if (ret){
             TileEntity tile = WorldHelper.getTileAt(world, pos);
             if (tile != null){
-                TileBundledElectricWire wire = (TileBundledElectricWire) tile;
-                Pair<Integer, List<WireColor>> data = getColorsFromStack(stack);
-                WirePart wp = new WirePart(side.getOpposite(), data.getLeft());
-                wp.setColors(data.getRight());
-                wire.addWire(wp);
+                ((TileBundledElectricWire) tile).addWire(wp);
             }
         }
         return ret;
+    }
+
+    @Nullable
+    private WirePart createWirePart(EntityPlayer player, ItemStack stack, EnumFacing facing){
+        Pair<Integer, List<WireColor>> data = getColorsFromStack(stack);
+        WirePart wire = new WirePart(facing, data.getLeft());
+        if (!wire.setColors(data.getRight())){
+            if (!player.world.isRemote) {
+                PlayerHelper.sendMessageToPlayer(player, "Too many wires, please reduce the wire count in this item");
+            }
+            return null;
+        }
+        return wire;
+    }
+
+    @SubscribeEvent //Using onRightClick doesn't work if there's a block directly above the wire
+    @SuppressWarnings("all")
+    public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event){
+        if (event.getItemStack().getItem() != ItemRegister.bundledWire){
+            return;
+        }
+        World world = event.getWorld();
+        BlockPos pos = event.getPos();
+        EntityPlayer player = event.getEntityPlayer();
+        ItemStack stack = player.getHeldItem(event.getHand());
+        if (WorldHelper.chunkLoaded(world, pos)){ //You never know...
+            TileEntity tile = WorldHelper.getTileAt(world, pos);
+            EnumFacing face = event.getFace();
+            if (tile instanceof TileBundledElectricWire){ //attempt to add wire
+                event.setUseItem(Event.Result.DENY);
+                event.setCanceled(true);
+                if (!world.isRemote) { //All logic on the server side
+                    Pair<Vec3d, Vec3d> vec = RayTraceHelper.getRayTraceVectors(player);
+                    RayTraceResult hit = WorldHelper.getBlockState(world, pos).collisionRayTrace(world, pos, vec.getLeft(), vec.getRight());
+                    if (hit != null) { //Can be null
+                        WirePart wire = ((TileBundledElectricWire) tile).getWire(EnumFacing.VALUES[hit.subHit]);
+                        if (wire != null && wire.addWires(getColorsFromStack(stack)) && !PlayerHelper.isPlayerInCreative(player)) {
+                            stack.shrink(1);
+                        }
+                    }
+                }
+            } else if (face != null){ //attempt to place at face
+                IBlockState state = WorldHelper.getBlockState(world, pos);
+                if (state.isSideSolid(world, pos, face)){
+                    tile = WorldHelper.getTileAt(world, pos.offset(face));
+                    if (tile instanceof TileBundledElectricWire){
+                        event.setUseItem(Event.Result.DENY);
+                        event.setCanceled(true);
+                        if (!world.isRemote) { //All logic on the server side
+                            EnumFacing rf = face.getOpposite();
+                            if (((TileBundledElectricWire) tile).getWire(rf) == null) {
+                                WirePart wire = createWirePart(player, stack, rf);
+                                if (((TileBundledElectricWire) tile).addWire(wire) && !PlayerHelper.isPlayerInCreative(player)){
+                                    stack.shrink(1);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     public static ItemStack withCables(int size, @Nonnull WireColor color1, WireColor... colors){

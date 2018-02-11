@@ -10,7 +10,6 @@ import com.technicalitiesmc.electricity.util.WireColor;
 import com.technicalitiesmc.lib.IndexedAABB;
 import com.technicalitiesmc.lib.RayTraceHelper;
 import com.technicalitiesmc.lib.block.BlockBase;
-import elec332.core.api.client.IColoredBlock;
 import elec332.core.util.ItemStackHelper;
 import elec332.core.util.PlayerHelper;
 import elec332.core.util.UniversalUnlistedProperty;
@@ -42,20 +41,19 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Elec332 on 19-1-2018.
  */
-public class BlockBundledElectricWire extends BlockBase implements ITileEntityProvider, IColoredBlock {
-
-    public static final IUnlistedProperty<RenderData> PROPERTY_RENDERDATA = new UniversalUnlistedProperty<>("tkerenderdata", RenderData.class);
+public class BlockBundledElectricWire extends BlockBase implements ITileEntityProvider {
 
     public BlockBundledElectricWire() {
         super(Material.CIRCUITS);
         setCreativeTab(TKElectricity.creativeTab);
     }
+
+    public static final IUnlistedProperty<RenderData> PROPERTY_RENDERDATA = new UniversalUnlistedProperty<>("tkerenderdata", RenderData.class);
 
     @Nullable
     @Override
@@ -79,11 +77,11 @@ public class BlockBundledElectricWire extends BlockBase implements ITileEntityPr
         if (hit != null) {
             WirePart wire = tile.getWire(EnumFacing.VALUES[hit.subHit]);
             if (wire != null) {
-                wire.addBoxes(state, world, pos, boxes, false, true);
+                wire.addBoxes(state, world, pos, boxes, false, false);
             }
         } else {
             for (WirePart wirePart : tile.getWireView()){
-                wirePart.addBoxes(state, world, pos, boxes, false, true);
+                wirePart.addBoxes(state, world, pos, boxes, false, false);
             }
         }
     }
@@ -94,18 +92,13 @@ public class BlockBundledElectricWire extends BlockBase implements ITileEntityPr
         List<AxisAlignedBB> list = Lists.newArrayList();
         TileBundledElectricWire tile = getTile(world, pos, TileBundledElectricWire.class);
         for (WirePart wirePart : tile.getWireView()) {
-            wirePart.addBoxes(state, world, pos, list, true, !(entityBox instanceof IndexedAABB && ((IndexedAABB) entityBox).index > 9));
+            wirePart.addBoxes(state, world, pos, list, true, entityBox instanceof IndexedAABB && ((IndexedAABB) entityBox).index > 9);
         }
         for (AxisAlignedBB box : list) {
             if (box.intersects(entityBox)) {
                 collidingBoxes.add(box.offset(pos));
             }
         }
-    }
-
-    @Override
-    public void onBlockClicked(World worldIn, BlockPos pos, EntityPlayer playerIn) {
-        super.onBlockClicked(worldIn, pos, playerIn);
     }
 
     @Override
@@ -186,24 +179,15 @@ public class BlockBundledElectricWire extends BlockBase implements ITileEntityPr
                 tile.ping();
             }
         }
-
     }
 
     @Override
     public void getDrops(@Nonnull NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, @Nonnull IBlockState state, int fortune) {
-        //drops.add(ItemBundledWire.withCables(ColorHelper.getColors(getTile(world, pos, TileBundledElectricWire.class).getColorBits())));
-    }
-
-    @Override
-    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
-
-        //getTile(world, pos, TileBundledElectricWire.class).checkConnections(true);
     }
 
     @Override
     public boolean onBlockActivatedC(World world, BlockPos pos, EntityPlayer player, EnumHand hand, IBlockState state, EnumFacing facing, float hitX, float hitY, float hitZ) {
         WirePart wp = getTile(world, pos, TileBundledElectricWire.class).getWire(facing.getOpposite());
-
         if (wp != null && hand == EnumHand.MAIN_HAND && !world.isRemote){
             List<String> info = Lists.newArrayList();
             for (EnumFacing facing1 : EnumFacing.VALUES){

@@ -4,20 +4,14 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.technicalitiesmc.electricity.init.BlockRegister;
 import com.technicalitiesmc.electricity.util.EnumBitSet;
-import com.technicalitiesmc.lib.IndexedAABB;
 import com.technicalitiesmc.lib.block.TileBase;
 import elec332.core.main.ElecCore;
 import elec332.core.tile.TileEntityBase;
 import elec332.core.util.NBTTypes;
-import elec332.core.world.WorldHelper;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -56,31 +50,19 @@ public class TileBundledElectricWire extends TileBase {
         return true;
     }
 
-    public boolean addWire(WirePart wire){
-        return addWire(wire, true);
+    public boolean addWire(WirePart wire) {
+        return wire != null && addWire(wire, true);
     }
 
     private boolean addWire(WirePart wire, boolean notify){
         if (getWire(wire.getPlacement()) == null){
-            if (notify){
-                IBlockState state = WorldHelper.getBlockState(world, pos);
-                List<AxisAlignedBB> abl = Lists.newArrayList(), abs = Lists.newArrayList();
-                wire.addBoxes(abl, true, Collections.emptySet(), true, false);
-                for (AxisAlignedBB bb : abl) {
-                    abs.clear();
-                    if (bb instanceof IndexedAABB){
-                        bb = new IndexedAABB(bb, ((IndexedAABB) bb).index + 10);
-                    }
-                    state.addCollisionBoxToList(world, pos, bb.offset(pos), abs, null, false);
-                    if (!abs.isEmpty()){
-                        return false;
-                    }
-                }
+            if (notify && WirePart.occludes(wire, pos, Collections.emptySet(), world, pos)){
+                return false;
             }
             wires.add(wire);
             wire.wire = this;
             if (world != null && !world.isRemote){
-                wire.pong(pos, world);
+                wire.checkConnections(pos, world);
                 if (notify) {
                     notifyNeighborsOfChangeExtensively();
                     markDirty();
@@ -140,7 +122,7 @@ public class TileBundledElectricWire extends TileBase {
 
     public void ping(){
         pingpong = true;
-        wires.forEach(wirePart -> wirePart.pong(pos, world));
+        wires.forEach(wirePart -> wirePart.checkConnections(pos, world));
         pingpong = false;
         if (send){
             send = false;

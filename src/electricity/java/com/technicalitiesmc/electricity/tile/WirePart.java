@@ -26,6 +26,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * Created by Elec332 on 25-1-2018.
@@ -54,7 +55,8 @@ public class WirePart {
     public BitSet shortened = new BitSet(EnumFacing.VALUES.length);
 
     private static final EnumFacing[] indexToFacing, st1, st2;
-    private static final EnumFacing[][] placementToIndex, placementToIndexReverse;
+    public static final EnumFacing[][] placementToIndex, placementToIndexReverse;
+    public static final int[] horFacingToIndex;
 
     public int getWireSize() {
         return size;
@@ -62,6 +64,14 @@ public class WirePart {
 
     public EnumFacing getPlacement() {
         return placement;
+    }
+
+    public int getWireAmount(){
+        return Integer.bitCount(colors);
+    }
+
+    public int getMaxWires(){
+        return getMaxWires(size);
     }
 
     @Nonnull
@@ -103,8 +113,8 @@ public class WirePart {
         return ItemBundledWire.withCables(ColorHelper.getColors(getColorBits()), size);
     }
 
-    public void pong(BlockPos pos_, World world){
-        System.out.println("pong "+pos_);
+    public void checkConnections(BlockPos pos_, World world){
+        System.out.println("checkConnections "+pos_);
         realConnections.clear();
         corners.clear();
         connections.clear();
@@ -148,17 +158,17 @@ public class WirePart {
         }
     }
 
-    public void addBoxes(IBlockState state, World world, BlockPos pos, List<AxisAlignedBB> boxes, boolean hitbox, boolean allowCenter) {
-        addBoxes(boxes, false, connections, hitbox, allowCenter);
+    public void addBoxes(IBlockState state, World world, BlockPos pos, List<AxisAlignedBB> boxes, boolean hitbox, boolean onlySmallCenterBox) {
+        addBoxes(boxes, false, connections, hitbox, onlySmallCenterBox);
     }
 
-    protected void addBoxes(List<AxisAlignedBB> boxes, boolean extend, Set<EnumFacing> connections, boolean hitbox, boolean allowCenter){
+    private void addBoxes(List<AxisAlignedBB> boxes, boolean extend, Set<EnumFacing> connections, boolean hitbox, boolean onlySmallCenterBox){
         float width = ColorHelper.getColors(getColorBits()).size() * size;
         float stuff = ((16 - width) / 2) / 16;
         float stuff2 = .5f;
         float expansion = 0.1f / 16;
-        if (connections.size() != 1 && !TileBundledElectricWire.isStraightLine(connections) || !allowCenter) {
-            if (!allowCenter){
+        if (connections.size() != 1 && !TileBundledElectricWire.isStraightLine(connections) || onlySmallCenterBox) {
+            if (onlySmallCenterBox){
                 width -= 2;
             }
             float ft = (16 - (width + 2)) / 32f;
@@ -167,14 +177,14 @@ public class WirePart {
             boxes.add(new IndexedAABB(AABBHelper.rotateFromDown(blob, placement), placement.ordinal()));
             stuff2 = stuff;
         }
-        if (!allowCenter){
+        if (onlySmallCenterBox){
             return;
         }
         for (EnumFacing facing : connections){
             boolean z = facing.getAxis() == EnumFacing.Axis.Z;
             boolean n = facing.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE;
-            boolean ext = extend || (isExtended(facing) || (!makeAABBMimicRenderLogic && !hitbox)) && extended.get(facing.ordinal());
-            boolean shrt = (makeAABBMimicRenderLogic || hitbox) && shortened.get(facing.ordinal()) && isExtended(facing);
+            boolean ext = extend || (isExtendedHorizontal(facing) || (!makeAABBMimicRenderLogic && !hitbox)) && extended.get(facing.ordinal());
+            boolean shrt = (makeAABBMimicRenderLogic || hitbox) && shortened.get(facing.ordinal()) && isExtendedHorizontal(facing);
             float eadd = ext ? 1/16f * size : (shrt ? -1/16f * size : 0);
             AxisAlignedBB aabb = new AxisAlignedBB(z ? stuff : 1 + eadd, 0, z ? 1 - stuff2 : stuff, 1 - (z ? stuff : stuff2), 1/16f * size, z ? 1 + eadd : 1 - stuff);
             if (n){
@@ -203,7 +213,7 @@ public class WirePart {
             return false;
         }
         Set<WireColor> colors = Sets.newHashSet(data.getRight());
-        if (colors.size() != data.getRight().size()){
+        if (colors.size() != data.getRight().size() || colors.size() + getWireAmount() > getMaxWires()){
             return false;
         }
         for (WireColor color : colors){
@@ -226,23 +236,18 @@ public class WirePart {
             addWire_(color, false);
             return true;
         }
-        IBlockState state = WorldHelper.getBlockState(wire.getWorld(), wire.getPos());
-        List<AxisAlignedBB> abl = Lists.newArrayList(), abs = Lists.newArrayList();
-        copy.addBoxes(abl, true, Collections.emptySet(), true, false);
-        for (AxisAlignedBB bb : abl) {
-            abs.clear();
-            if (bb instanceof IndexedAABB){
-                bb = new IndexedAABB(bb, ((IndexedAABB) bb).index + 10);
-            }
-            state.addCollisionBoxToList(wire.getWorld(), wire.getPos(), bb.offset(wire.getPos()), abs, null, false);
-            if (!abs.isEmpty()){
-                for (AxisAlignedBB aabb : abs){
-                    if (!(aabb instanceof IndexedAABB && ((IndexedAABB) aabb).index == placement.ordinal())){
-                        return false;
-                    }
+
+        if (occludes(copy, wire.getPos(), Collections.emptySet(), wire.getWorld(), wire.getPos(), abl -> {
+            for (AxisAlignedBB aabb : abl){
+                if (!(aabb instanceof IndexedAABB && ((IndexedAABB) aabb).index == placement.ordinal())){
+                    return true;
                 }
             }
+            return false;
+        })) {
+            return false;
         }
+
         addWire_(color, true);
         return true;
     }
@@ -251,7 +256,7 @@ public class WirePart {
         if (hasWire(color)){
             return false;
         }
-        if (size * Integer.bitCount(colors) > getMaxWires(size) - size){
+        if (Integer.bitCount(colors) >= getMaxWires(size)){
             return false;
         }
         colors = ColorHelper.addWire(color, colors);
@@ -261,7 +266,7 @@ public class WirePart {
         return true;
     }
 
-    private static int getMaxWires(int size){
+    public static int getMaxWires(int size){
         switch (size){
             case 4:
                 return 2;
@@ -288,12 +293,14 @@ public class WirePart {
         return false;
     }
 
-    public void setColors(List<WireColor> colors){
+    public boolean setColors(List<WireColor> colors){
+        boolean ret = false;
         this.colors = 0;
         for (WireColor color : colors){
-            addWire_(color, false);
+            ret |= !addWire_(color, false);
         }
         cS();
+        return !ret;
     }
 
     enum EnumConnectionPlace {
@@ -335,20 +342,41 @@ public class WirePart {
 
     }
 
-    public boolean isExtended(EnumFacing horPaneFacing){
-        return placement.getAxis() == EnumFacing.Axis.Y || placement.getAxis() == EnumFacing.Axis.Z && horPaneFacing.getAxis() == EnumFacing.Axis.X;
+    public boolean isExtendedHorizontal(EnumFacing horPaneFacing){
+        //return placement.getAxis() == EnumFacing.Axis.Y || placement.getAxis() == EnumFacing.Axis.Z && horPaneFacing.getAxis() == EnumFacing.Axis.X;
+        return isExtendedReal(placementToIndex[placement.ordinal()][horFacingToIndex[horPaneFacing.ordinal()]]);
+    }
+
+    private boolean isExtendedReal(EnumFacing facing){
+        //if (true){
+        //    EnumFacing f = placementToIndexReverse[placement.ordinal()][facing.ordinal()];
+        //    return isExtendedHorizontal(f);
+        //}
+        if (placement.getAxis() == EnumFacing.Axis.Y){
+            boolean b = (placement.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE);
+            return b == (facing.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE);
+        }
+        boolean plNeg = (placement.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE) == (facing.getAxis() == EnumFacing.Axis.X);
+        return plNeg != (facing.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE);
     }
 
     public static boolean occludes(WirePart wire, BlockPos wirePos, Set<EnumFacing> sides, World world, BlockPos otherPos){
+        return occludes(wire, wirePos, sides, world, otherPos, axisAlignedBBS -> true);
+    }
+
+    public static boolean occludes(WirePart wire, BlockPos wirePos, Set<EnumFacing> sides, World world, BlockPos otherPos, Predicate<List<AxisAlignedBB>> occludeChecker){
         IBlockState state = WorldHelper.getBlockState(world, otherPos);
         List<AxisAlignedBB> abl = Lists.newArrayList(), abs = Lists.newArrayList();
-        wire.addBoxes(abl, true, sides, false, false);
+        wire.addBoxes(abl, true, sides, true, true);
         for (AxisAlignedBB bb : abl) {
+            abs.clear();
+            int startIndex = 10;
             if (bb instanceof IndexedAABB){
-                bb = new IndexedAABB(bb, ((IndexedAABB) bb).index + 10);
+                startIndex += ((IndexedAABB) bb).index;
             }
+            bb = new IndexedAABB(bb, startIndex);
             state.addCollisionBoxToList(world, otherPos, bb.offset(wirePos), abs, null, false);
-            if (!abs.isEmpty()){
+            if (!abs.isEmpty() && occludeChecker.test(abs)){
                 return true;
             }
         }
@@ -367,6 +395,8 @@ public class WirePart {
         };
         placementToIndex = new EnumFacing[EnumFacing.VALUES.length][];
         placementToIndexReverse = new EnumFacing[EnumFacing.VALUES.length][];
+        horFacingToIndex = new int[EnumFacing.VALUES.length];
+        Arrays.fill(horFacingToIndex, -1);
         for (EnumFacing placement : EnumFacing.VALUES){
             int p = placement.ordinal();
             placementToIndex[p] = new EnumFacing[4];
@@ -375,6 +405,9 @@ public class WirePart {
                 EnumFacing realfacing = getFacingStuff(placement, i);
                 placementToIndex[p][i] = realfacing;
                 placementToIndexReverse[p][realfacing.ordinal()] = indexToFacing[i];
+                if (placement == EnumFacing.NORTH){
+                    horFacingToIndex[indexToFacing[i].ordinal()] = i;
+                }
             }
         }
     }
