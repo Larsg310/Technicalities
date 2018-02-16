@@ -4,41 +4,41 @@
     "textures": {
       "0": "technicalities:blocks/heat_pipe_large",
       "1": "technicalities:blocks/heat_pipe_large_front",
-      "particle": "technicalities:blocks/heat_pipe_large"
+      "particle": "technicalities:blocks/heat_pipe"
     },
-    "model": "technicalities:heat_pipe/large/center",
+    "model": "technicalities:heat_pipe/large_center",
     "transform": "forge:default-block"
   },
   "variants": {
-    "up": {
-      "true": { "submodel": "technicalities:heat_pipe/large/up" },
+    "down": {
+      "true": { "submodel": "technicalities:heat_pipe/large_down" },
       "false": {}
     },
-    "down": {
-      "true": { "submodel": "technicalities:heat_pipe/large/down" },
+    "up": {
+      "true": { "submodel": "technicalities:heat_pipe/large_down", "uvlock": true, "x": 180 },
       "false": {}
     },
     "north": {
-      "true": { "submodel": "technicalities:heat_pipe/large/north" },
+      "true": { "submodel": "technicalities:heat_pipe/large_down", "uvlock": true, "x": -90 },
       "false": {}
     },
     "south": {
-      "true": { "submodel": "technicalities:heat_pipe/large/south" },
+      "true": { "submodel": "technicalities:heat_pipe/large_down", "uvlock": true, "x": 90 },
       "false": {}
     },
     "west": {
-      "true": { "submodel": "technicalities:heat_pipe/large/west" },
+      "true": { "submodel": "technicalities:heat_pipe/large_down", "uvlock": true, "x": -90, "y": -90  },
       "false": {}
     },
     "east": {
-      "true": { "submodel": "technicalities:heat_pipe/large/east" },
+      "true": { "submodel": "technicalities:heat_pipe/large_down", "uvlock": true, "x": -90, "y": 90 },
       "false": {}
     },
     "inventory": [
       {
         "submodel": {
-          "up": { "model": "technicalities:heat_pipe/large/up" },
-          "down": { "model": "technicalities:heat_pipe/large/down" }
+          "down": { "model": "technicalities:heat_pipe/large_down" },
+          "up":   { "model": "technicalities:heat_pipe/large_down", "uvlock": true, "x": 180 }
         }
       }
     ]

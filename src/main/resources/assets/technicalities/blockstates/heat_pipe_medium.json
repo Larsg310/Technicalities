@@ -4,41 +4,41 @@
     "textures": {
       "0": "technicalities:blocks/heat_pipe_medium",
       "1": "technicalities:blocks/heat_pipe_medium_front",
-      "particle": "technicalities:blocks/heat_pipe_medium"
+      "particle": "technicalities:blocks/heat_pipe"
     },
-    "model": "technicalities:heat_pipe/medium/center",
+    "model": "technicalities:heat_pipe/medium_center",
     "transform": "forge:default-block"
   },
   "variants": {
-    "up": {
-      "true": { "submodel": "technicalities:heat_pipe/medium/up" },
+    "down": {
+      "true": { "submodel": "technicalities:heat_pipe/medium_down" },
       "false": {}
     },
-    "down": {
-      "true": { "submodel": "technicalities:heat_pipe/medium/down" },
+    "up": {
+      "true": { "submodel": "technicalities:heat_pipe/medium_down", "uvlock": true, "x": 180 },
       "false": {}
     },
     "north": {
-      "true": { "submodel": "technicalities:heat_pipe/medium/north" },
+      "true": { "submodel": "technicalities:heat_pipe/medium_down", "uvlock": true, "x": -90 },
       "false": {}
     },
     "south": {
-      "true": { "submodel": "technicalities:heat_pipe/medium/south" },
+      "true": { "submodel": "technicalities:heat_pipe/medium_down", "uvlock": true, "x": 90 },
       "false": {}
     },
     "west": {
-      "true": { "submodel": "technicalities:heat_pipe/medium/west" },
+      "true": { "submodel": "technicalities:heat_pipe/medium_down", "uvlock": true, "x": -90, "y": -90  },
       "false": {}
     },
     "east": {
-      "true": { "submodel": "technicalities:heat_pipe/medium/east" },
+      "true": { "submodel": "technicalities:heat_pipe/medium_down", "uvlock": true, "x": -90, "y": 90 },
       "false": {}
     },
     "inventory": [
       {
         "submodel": {
-          "up": { "model": "technicalities:heat_pipe/medium/up" },
-          "down": { "model": "technicalities:heat_pipe/medium/down" }
+          "down": { "model": "technicalities:heat_pipe/medium_down" },
+          "up":   { "model": "technicalities:heat_pipe/medium_down", "uvlock": true, "x": 180 }
         }
       }
     ]
