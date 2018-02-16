@@ -14,7 +14,7 @@ public class TKHeatObjects {
 
     public static final DefaultThermalMaterial IRON, COPPER, GOLD, WATER, AIR, DEFAULT;
 
-    public static void init(){
+    public static void init() {
         IHeatPropertyRegistry registry = TechnicalitiesAPI.heatPropertyRegistry;
         registry.registerHeatMaterial(Blocks.IRON_BLOCK, IRON);
         registry.registerHeatMaterial(Blocks.GOLD_BLOCK, GOLD);
@@ -22,8 +22,8 @@ public class TKHeatObjects {
         registry.registerHeatMaterial(Blocks.AIR, AIR);
     }
 
-    private static DefaultThermalMaterial makeMaterial(String name, double specificHeatCapacity, double thermalConductivity , double density){
-        return new DefaultThermalMaterial(new ResourceLocation(Technicalities.MODID+"heat", name), specificHeatCapacity * 1000, thermalConductivity, density);
+    private static DefaultThermalMaterial makeMaterial(String name, double specificHeatCapacity, double thermalConductivity, double density) {
+        return new DefaultThermalMaterial(new ResourceLocation(Technicalities.MODID + "heat", name), specificHeatCapacity * 1000, thermalConductivity, density);
     }
 
     static {

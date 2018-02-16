@@ -1,0 +1,46 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "textures": {
+      "0": "technicalities:blocks/heat_pipe_large",
+      "1": "technicalities:blocks/heat_pipe_large_front",
+      "particle": "technicalities:blocks/heat_pipe_large"
+    },
+    "model": "technicalities:heat_pipe/large/center",
+    "transform": "forge:default-block"
+  },
+  "variants": {
+    "up": {
+      "true": { "submodel": "technicalities:heat_pipe/large/up" },
+      "false": {}
+    },
+    "down": {
+      "true": { "submodel": "technicalities:heat_pipe/large/down" },
+      "false": {}
+    },
+    "north": {
+      "true": { "submodel": "technicalities:heat_pipe/large/north" },
+      "false": {}
+    },
+    "south": {
+      "true": { "submodel": "technicalities:heat_pipe/large/south" },
+      "false": {}
+    },
+    "west": {
+      "true": { "submodel": "technicalities:heat_pipe/large/west" },
+      "false": {}
+    },
+    "east": {
+      "true": { "submodel": "technicalities:heat_pipe/large/east" },
+      "false": {}
+    },
+    "inventory": [
+      {
+        "submodel": {
+          "up": { "model": "technicalities:heat_pipe/large/up" },
+          "down": { "model": "technicalities:heat_pipe/large/down" }
+        }
+      }
+    ]
+  }
+}

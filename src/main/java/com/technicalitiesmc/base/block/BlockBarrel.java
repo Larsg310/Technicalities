@@ -10,6 +10,7 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -31,21 +32,21 @@ public class BlockBarrel extends BlockBase implements ITileEntityProvider {
 
     private static final EnumFacing.Axis[] AXIS_VALUES = EnumFacing.Axis.values();
     private static final AxisAlignedBB[][] BOXES = new AxisAlignedBB[][]{ //
-            { //
-                    new AxisAlignedBB(0 / 16D, 0 / 16D, 4 / 16D, 16 / 16D, 16 / 16D, 12 / 16D), //
-                    new AxisAlignedBB(0 / 16D, 1 / 16D, 2 / 16D, 16 / 16D, 15 / 16D, 14 / 16D), //
-                    new AxisAlignedBB(0 / 16D, 2 / 16D, 1 / 16D, 16 / 16D, 14 / 16D, 15 / 16D), //
-                    new AxisAlignedBB(0 / 16D, 4 / 16D, 0 / 16D, 16 / 16D, 12 / 16D, 16 / 16D)//
-            }, { //
-            new AxisAlignedBB(4 / 16D, 0 / 16D, 0 / 16D, 12 / 16D, 16 / 16D, 16 / 16D), //
-            new AxisAlignedBB(2 / 16D, 0 / 16D, 1 / 16D, 14 / 16D, 16 / 16D, 15 / 16D), //
-            new AxisAlignedBB(1 / 16D, 0 / 16D, 2 / 16D, 15 / 16D, 16 / 16D, 14 / 16D), //
-            new AxisAlignedBB(0 / 16D, 0 / 16D, 4 / 16D, 16 / 16D, 16 / 16D, 12 / 16D)//
-    }, { //
-            new AxisAlignedBB(4 / 16D, 0 / 16D, 0 / 16D, 12 / 16D, 16 / 16D, 16 / 16D), //
-            new AxisAlignedBB(2 / 16D, 1 / 16D, 0 / 16D, 14 / 16D, 15 / 16D, 16 / 16D), //
-            new AxisAlignedBB(1 / 16D, 2 / 16D, 0 / 16D, 15 / 16D, 14 / 16D, 16 / 16D), //
+        { //
+            new AxisAlignedBB(0 / 16D, 0 / 16D, 4 / 16D, 16 / 16D, 16 / 16D, 12 / 16D), //
+            new AxisAlignedBB(0 / 16D, 1 / 16D, 2 / 16D, 16 / 16D, 15 / 16D, 14 / 16D), //
+            new AxisAlignedBB(0 / 16D, 2 / 16D, 1 / 16D, 16 / 16D, 14 / 16D, 15 / 16D), //
             new AxisAlignedBB(0 / 16D, 4 / 16D, 0 / 16D, 16 / 16D, 12 / 16D, 16 / 16D)//
+        }, { //
+        new AxisAlignedBB(4 / 16D, 0 / 16D, 0 / 16D, 12 / 16D, 16 / 16D, 16 / 16D), //
+        new AxisAlignedBB(2 / 16D, 0 / 16D, 1 / 16D, 14 / 16D, 16 / 16D, 15 / 16D), //
+        new AxisAlignedBB(1 / 16D, 0 / 16D, 2 / 16D, 15 / 16D, 16 / 16D, 14 / 16D), //
+        new AxisAlignedBB(0 / 16D, 0 / 16D, 4 / 16D, 16 / 16D, 16 / 16D, 12 / 16D)//
+    }, { //
+        new AxisAlignedBB(4 / 16D, 0 / 16D, 0 / 16D, 12 / 16D, 16 / 16D, 16 / 16D), //
+        new AxisAlignedBB(2 / 16D, 1 / 16D, 0 / 16D, 14 / 16D, 15 / 16D, 16 / 16D), //
+        new AxisAlignedBB(1 / 16D, 2 / 16D, 0 / 16D, 15 / 16D, 14 / 16D, 16 / 16D), //
+        new AxisAlignedBB(0 / 16D, 4 / 16D, 0 / 16D, 16 / 16D, 12 / 16D, 16 / 16D)//
     }};
 
     public BlockBarrel() {
@@ -85,6 +86,11 @@ public class BlockBarrel extends BlockBase implements ITileEntityProvider {
         for (AxisAlignedBB box : BOXES[state.getValue(BlockRotatedPillar.AXIS).ordinal()]) {
             boxes.add(box);
         }
+    }
+
+    @Override
+    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis) {
+        return Blocks.LOG.rotateBlock(world, pos, axis);
     }
 
     @Override

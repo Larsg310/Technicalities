@@ -4,6 +4,7 @@ import com.technicalitiesmc.base.Technicalities;
 import com.technicalitiesmc.base.item.ItemBookManual;
 import com.technicalitiesmc.base.item.ItemHeatProbe;
 import com.technicalitiesmc.base.item.ItemRecipeBook;
+import com.technicalitiesmc.base.item.ItemWrench;
 import com.technicalitiesmc.lib.item.ItemBase;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -18,6 +19,7 @@ public class TKBaseItems {
     public static Item reed_stick = new ItemBase();
     public static Item recipe_book = new ItemRecipeBook();
     public static Item book_manual = new ItemBookManual();
+    public static Item wrench = new ItemWrench();
 
     private static Item heatProbe = new ItemHeatProbe();
 
@@ -28,6 +30,7 @@ public class TKBaseItems {
         register(registry, reed_stick, "reed_stick");
         register(registry, recipe_book, "recipe_book");
         register(registry, book_manual, "book_manual");
+        register(registry, wrench, "wrench");
 
         register(registry, heatProbe, "heat_probe");
     }

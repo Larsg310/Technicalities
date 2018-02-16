@@ -3,6 +3,9 @@ tile.technicalities.barrel.name=Wooden Barrel
 tile.technicalities.crafting_slab.name=Crafting Slab
 tile.technicalities.workbench.name=Workbench
 tile.technicalities.funnel.name=Funnel
+tile.technicalities.heat_pipe_small.name=Small Heat Pipe
+tile.technicalities.heat_pipe_medium.name=Medium Heat Pipe
+tile.technicalities.heat_pipe_large.name=Large Heat Pipe
 
 res.technicalities.provider.hammer.name=%s Hammer
 
@@ -16,6 +19,7 @@ res.technicalities.type.zinc.name=Zinc
 
 item.technicalities.reed_stick.name=Sugar Cane
 item.technicalities.recipe_book.name=Recipe Book
+item.technicalities.wrench.name=Wrench
 
 gui.technicalities.tip.workbench.required=Required
 gui.technicalities.tip.workbench.missing=Missing

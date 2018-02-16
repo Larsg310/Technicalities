@@ -1,5 +1,6 @@
 package com.technicalitiesmc.base.init;
 
+import com.technicalitiesmc.api.TechnicalitiesAPI;
 import com.technicalitiesmc.base.Technicalities;
 import com.technicalitiesmc.base.block.*;
 import com.technicalitiesmc.base.tile.*;
@@ -18,7 +19,6 @@ import net.minecraftforge.registries.IForgeRegistry;
 
 @Mod.EventBusSubscriber(modid = Technicalities.MODID)
 public class TKBaseBlocks {
-
     public static Block crate = new BlockCrate();
     public static Block barrel = new BlockBarrel();
     public static Block crafting_slab = new BlockCraftingSlab();
@@ -27,6 +27,10 @@ public class TKBaseBlocks {
     public static Block funnel = new BlockFunnel();
 
     public static Block channel = new BlockChannel();
+
+    public static Block heat_pipe_small = new BlockHeatPipe(4 / 16f);
+    public static Block heat_pipe_medium = new BlockHeatPipe(6 / 16f);
+    public static Block heat_pipe_large = new BlockHeatPipe(8 / 16f);
 
     private static Block heatTest = new BlockHeatTest(Material.CAKE);
 
@@ -40,7 +44,15 @@ public class TKBaseBlocks {
         register(registry, workbench, "workbench", TileWorkbench.class);
         register(registry, funnel, "funnel");
         register(registry, channel, "channel", TileChannel.class);
+        register(registry, heat_pipe_small, "heat_pipe_small");
+        register(registry, heat_pipe_medium, "heat_pipe_medium");
+        register(registry, heat_pipe_large, "heat_pipe_large");
+        registerTileEntity(TileHeatPipe.class, "heat_pipe");
         register(registry, heatTest, "heatTest");
+
+        TechnicalitiesAPI.heatPropertyRegistry.registerHeatMaterial(heat_pipe_small, BlockHeatPipe.ThermalMaterial.SMALL);
+        TechnicalitiesAPI.heatPropertyRegistry.registerHeatMaterial(heat_pipe_medium, BlockHeatPipe.ThermalMaterial.MEDIUM);
+        TechnicalitiesAPI.heatPropertyRegistry.registerHeatMaterial(heat_pipe_large, BlockHeatPipe.ThermalMaterial.LARGE);
     }
 
     @SubscribeEvent
@@ -53,6 +65,9 @@ public class TKBaseBlocks {
         registerItem(registry, workbench);
         registerItem(registry, funnel);
         registerItem(registry, channel);
+        registerItem(registry, heat_pipe_small);
+        registerItem(registry, heat_pipe_medium);
+        registerItem(registry, heat_pipe_large);
         registerItem(registry, heatTest);
     }
 
@@ -64,7 +79,7 @@ public class TKBaseBlocks {
         ResourceLocation resLoc = new ResourceLocation(Technicalities.MODID, name);
         registry.register(block.setRegistryName(resLoc));
         if (tile != null) {
-            GameRegistry.registerTileEntity(tile, resLoc.toString());
+            registerTileEntity(tile, name);
         }
     }
 
@@ -78,4 +93,10 @@ public class TKBaseBlocks {
         Technicalities.proxy.registerItemModel(item, 0, new ModelResourceLocation(resLoc, "inventory"));
     }
 
+    private static void registerTileEntity(Class<? extends TileEntity> tile, String name) {
+        ResourceLocation resLoc = new ResourceLocation(Technicalities.MODID, name);
+        if (tile != null) {
+            GameRegistry.registerTileEntity(tile, resLoc.toString());
+        }
+    }
 }
