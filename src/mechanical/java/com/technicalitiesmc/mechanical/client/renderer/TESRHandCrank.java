@@ -9,10 +9,12 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import org.lwjgl.opengl.GL11;
 
 import static net.minecraft.client.renderer.GlStateManager.*;
@@ -23,7 +25,6 @@ public class TESRHandCrank extends TileEntitySpecialRenderer<TileHandCrank> {
         IBakedModel model = TKMClientProxy.MODELS.get(TKMClientProxy.HAND_CRANK_LEVER);
 
         pushMatrix();
-        color(1, 1, 1, 1);
         translate(x, y, z);
         translate(0.5, 0.5, 0.5);
         rotate(te.getWorld().getBlockState(te.getPos()).getValue(BlockHandCrank.PROP_FACING));
@@ -33,19 +34,31 @@ public class TESRHandCrank extends TileEntitySpecialRenderer<TileHandCrank> {
         rotate(te.getCrankRotation(partialTicks) * 45, 1, 0, 0);
         translate(-0.5, 3 / 16.0, -0.5);
 
-        RenderHelper.disableStandardItemLighting();
-        GlStateManager.shadeModel(Minecraft.isAmbientOcclusionEnabled() ? GL11.GL_SMOOTH : GL11.GL_FLAT);
-
         Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buf = tessellator.getBuffer();
-        buf.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+        BufferBuilder buffer = tessellator.getBuffer();
 
-        buf.setTranslation(-te.getPos().getX(), -te.getPos().getY(), -te.getPos().getZ());
-        Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(te.getWorld(), model, Blocks.STONE.getDefaultState(), te.getPos(), buf, false, 0L);
-        buf.setTranslation(0, 0, 0);
+        BlockPos pos = te.getPos();
 
+        bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        RenderHelper.disableStandardItemLighting();
+        blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        enableBlend();
+        disableCull();
+
+        if (Minecraft.isAmbientOcclusionEnabled()) {
+            shadeModel(GL11.GL_SMOOTH);
+        } else {
+            shadeModel(GL11.GL_FLAT);
+        }
+
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+        buffer.setTranslation(-pos.getX(), -pos.getY(), -pos.getZ());
+        Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(te.getWorld(), model, Blocks.STONE.getDefaultState(), te.getPos(), buffer, false, 0L);
+        buffer.setTranslation(0, 0, 0);
         tessellator.draw();
+
         RenderHelper.enableStandardItemLighting();
+
         popMatrix();
     }
 
