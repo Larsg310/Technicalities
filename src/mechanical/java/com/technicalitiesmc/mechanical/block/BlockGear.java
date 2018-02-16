@@ -21,18 +21,19 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
 public class BlockGear extends BlockBase implements ITileEntityProvider {
 
     private static final AxisAlignedBB[] BOXES = new AxisAlignedBB[]{
-        new AxisAlignedBB(0, 0, 0, 1, 2 / 16F, 1),
-        new AxisAlignedBB(0, 14 / 16F, 0, 1, 1, 1),
-        new AxisAlignedBB(0, 0, 0, 1, 1, 2 / 16F),
-        new AxisAlignedBB(0, 0, 14 / 16F, 1, 1, 1),
-        new AxisAlignedBB(0, 0, 0, 2 / 16F, 1, 1),
-        new AxisAlignedBB(14 / 16F, 0, 0, 1, 1, 1)
+            new AxisAlignedBB(0, 0, 0, 1, 2 / 16F, 1),
+            new AxisAlignedBB(0, 14 / 16F, 0, 1, 1, 1),
+            new AxisAlignedBB(0, 0, 0, 1, 1, 2 / 16F),
+            new AxisAlignedBB(0, 0, 14 / 16F, 1, 1, 1),
+            new AxisAlignedBB(0, 0, 0, 2 / 16F, 1, 1),
+            new AxisAlignedBB(14 / 16F, 0, 0, 1, 1, 1)
     };
 
     public BlockGear() {
@@ -63,10 +64,16 @@ public class BlockGear extends BlockBase implements ITileEntityProvider {
     @Override
     public void onEntityCollidedWithBlock(World world, BlockPos pos, IBlockState state, Entity entity) {
         super.onEntityCollidedWithBlock(world, pos, state, entity);
+        AxisAlignedBB bb = Objects.requireNonNull(getCollisionBoundingBox(state, world, pos))
+                .offset(pos)
+                .expand(0.0, 0.1, 0.0);
+
+        if (!entity.getEntityBoundingBox().intersects(bb)) return;
+
         float velocity = Optional.ofNullable(world.getTileEntity(pos))
-            .filter(it -> it instanceof TileGear)
-            .map(it -> ((TileGear) it).getVelocity())
-            .orElse(0f);
+                .filter(it -> it instanceof TileGear)
+                .map(it -> ((TileGear) it).getVelocity())
+                .orElse(0f);
 
         float cosTheta = MathHelper.cos((float) Math.toRadians(-velocity));
         float sinTheta = MathHelper.sin((float) Math.toRadians(-velocity));
