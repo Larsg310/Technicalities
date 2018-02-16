@@ -89,6 +89,7 @@ public class BlockShaft extends BlockBase implements ITileEntityProvider {
     public void onDrawBlockHighlight(DrawBlockHighlightEvent event) {
         RayTraceResult hit = event.getTarget();
         if (hit == null) return;
+        if (hit.typeOfHit != RayTraceResult.Type.BLOCK) return;
         EntityPlayer player = event.getPlayer();
         IBlockState state = player.world.getBlockState(hit.getBlockPos());
         if (state.getBlock() != this) return;
