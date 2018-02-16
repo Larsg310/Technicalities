@@ -21,8 +21,6 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
@@ -63,32 +61,26 @@ public class BlockGear extends BlockBase implements ITileEntityProvider {
     }
 
     @Override
-    public void onEntityCollidedWithBlock(World world, BlockPos pos, IBlockState state, Entity entityIn) {
-        super.onEntityCollidedWithBlock(world, pos, state, entityIn);
+    public void onEntityCollidedWithBlock(World world, BlockPos pos, IBlockState state, Entity entity) {
+        super.onEntityCollidedWithBlock(world, pos, state, entity);
         float velocity = Optional.ofNullable(world.getTileEntity(pos))
             .filter(it -> it instanceof TileGear)
             .map(it -> ((TileGear) it).getVelocity())
             .orElse(0f);
 
-        AxisAlignedBB bb = Objects.requireNonNull(getCollisionBoundingBox(state, world, pos))
-            .offset(pos)
-            .expand(0.0, 0.1, 0.0);
-        Collection<Entity> entitiesOnBlock = world.getEntitiesWithinAABBExcludingEntity(null, bb);
         float cosTheta = MathHelper.cos((float) Math.toRadians(-velocity));
         float sinTheta = MathHelper.sin((float) Math.toRadians(-velocity));
 
-        entitiesOnBlock.forEach(it -> it.rotationYaw -= velocity);
+        entity.rotationYaw -= velocity;
         BiFunction<Float, Float, Float> fx = (x, y) -> x * cosTheta + y * -sinTheta;
         BiFunction<Float, Float, Float> fy = (x, y) -> x * sinTheta + y * cosTheta;
         float xoff = pos.getX() + 0.5f;
         float yoff = pos.getZ() + 0.5f;
-        entitiesOnBlock.forEach(it -> {
-            float relX = (float) (it.posX - xoff);
-            float relY = (float) (it.posZ - yoff);
-            float newX = fx.apply(relX, relY);
-            float newY = fy.apply(relX, relY);
-            it.setPosition(newX + xoff, it.posY, newY + yoff);
-        });
+        float relX = (float) (entity.posX - xoff);
+        float relY = (float) (entity.posZ - yoff);
+        float newX = fx.apply(relX, relY);
+        float newY = fy.apply(relX, relY);
+        entity.setPosition(newX + xoff, entity.posY, newY + yoff);
     }
 
     @Override
