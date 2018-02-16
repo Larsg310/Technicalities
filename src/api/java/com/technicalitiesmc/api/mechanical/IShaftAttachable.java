@@ -8,6 +8,6 @@ public interface IShaftAttachable {
     @CapabilityInject(IShaftAttachable.class)
     public static final Capability<IShaftAttachable> CAPABILITY = null;
 
-    public IKineticNode getNode(boolean internal);
+    public IKineticNode getNode();
 
 }

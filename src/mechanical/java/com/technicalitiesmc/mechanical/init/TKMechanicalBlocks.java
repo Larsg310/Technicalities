@@ -3,8 +3,14 @@ package com.technicalitiesmc.mechanical.init;
 import com.technicalitiesmc.base.Technicalities;
 import com.technicalitiesmc.lib.item.ItemBlockBase;
 import com.technicalitiesmc.mechanical.TKMechanical;
+import com.technicalitiesmc.mechanical.block.BlockFlywheel;
+import com.technicalitiesmc.mechanical.block.BlockGear;
+import com.technicalitiesmc.mechanical.block.BlockHandCrank;
 import com.technicalitiesmc.mechanical.block.BlockKineticTest;
 import com.technicalitiesmc.mechanical.block.BlockShaft;
+import com.technicalitiesmc.mechanical.tile.TileFlywheel;
+import com.technicalitiesmc.mechanical.tile.TileGear;
+import com.technicalitiesmc.mechanical.tile.TileHandCrank;
 import com.technicalitiesmc.mechanical.tile.TileKineticTest;
 import com.technicalitiesmc.mechanical.tile.TileShaft;
 import net.minecraft.block.Block;
@@ -20,8 +26,10 @@ import net.minecraftforge.registries.IForgeRegistry;
 
 @Mod.EventBusSubscriber(modid = TKMechanical.MODID)
 public class TKMechanicalBlocks {
-
     public static Block shaft = new BlockShaft();
+    public static Block flywheel = new BlockFlywheel();
+    public static Block hand_crank = new BlockHandCrank();
+    public static Block gear = new BlockGear();
 
     public static Block test = new BlockKineticTest();
 
@@ -30,6 +38,9 @@ public class TKMechanicalBlocks {
         IForgeRegistry<Block> registry = event.getRegistry();
 
         register(registry, shaft, "shaft", TileShaft.class);
+        register(registry, flywheel, "flywheel", TileFlywheel.class);
+        register(registry, hand_crank, "hand_crank", TileHandCrank.class);
+        register(registry, gear, "gear", TileGear.class);
         register(registry, test, "test", TileKineticTest.class);
     }
 
@@ -38,6 +49,9 @@ public class TKMechanicalBlocks {
         IForgeRegistry<Item> registry = event.getRegistry();
 
         registerItem(registry, shaft);
+        registerItem(registry, flywheel);
+        registerItem(registry, hand_crank);
+        registerItem(registry, gear);
         registerItem(registry, test);
     }
 
@@ -62,5 +76,4 @@ public class TKMechanicalBlocks {
         registry.register(item.setRegistryName(resLoc));
         Technicalities.proxy.registerItemModel(item, 0, new ModelResourceLocation(resLoc, "inventory"));
     }
-
 }
