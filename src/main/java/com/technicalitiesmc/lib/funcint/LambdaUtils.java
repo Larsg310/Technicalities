@@ -66,6 +66,21 @@ public class LambdaUtils {
     }
 
     /**
+     * Returns a function that casts given parameter of type T into type R if possible, otherwise returns null.
+     * Useful for Optional.map operations
+     */
+    public static <T, R> Function<T, R> cast(Class<R> in) {
+        return t -> {
+            if (in.isInstance(t)) {
+                // noinspection unchecked
+                return (R) t;
+            } else {
+                return null;
+            }
+        };
+    }
+
+    /**
      * Dummy interface that represents a consumer which may throw an exception.
      */
     public static interface UnsafeConsumer<T> {

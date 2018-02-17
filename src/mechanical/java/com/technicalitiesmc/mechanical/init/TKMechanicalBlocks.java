@@ -4,10 +4,7 @@ import com.technicalitiesmc.base.Technicalities;
 import com.technicalitiesmc.lib.item.ItemBlockBase;
 import com.technicalitiesmc.mechanical.TKMechanical;
 import com.technicalitiesmc.mechanical.block.*;
-import com.technicalitiesmc.mechanical.tile.TileConveyor;
-import com.technicalitiesmc.mechanical.tile.TileConveyorSmall;
-import com.technicalitiesmc.mechanical.tile.TileKineticTest;
-import com.technicalitiesmc.mechanical.tile.TileShaft;
+import com.technicalitiesmc.mechanical.tile.*;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -22,6 +19,9 @@ import net.minecraftforge.registries.IForgeRegistry;
 @Mod.EventBusSubscriber(modid = TKMechanical.MODID)
 public class TKMechanicalBlocks {
     public static Block shaft = new BlockShaft();
+    public static Block flywheel = new BlockFlywheel();
+    public static Block hand_crank = new BlockHandCrank();
+    public static Block gear = new BlockGear();
 
     public static Block conveyor = new BlockConveyor();
     public static Block conveyor_small = new BlockConveyorSmall();
@@ -37,6 +37,9 @@ public class TKMechanicalBlocks {
         register(registry, conveyor, "conveyor", TileConveyor.class);
         register(registry, conveyor_small, "conveyor_small", TileConveyorSmall.class);
         register(registry, grate, "grate"); //, TileGrate.class);
+        register(registry, flywheel, "flywheel", TileFlywheel.class);
+        register(registry, hand_crank, "hand_crank", TileHandCrank.class);
+        register(registry, gear, "gear", TileGear.class);
         register(registry, test, "test", TileKineticTest.class);
     }
 
@@ -48,6 +51,9 @@ public class TKMechanicalBlocks {
         registerItem(registry, conveyor);
         registerItem(registry, conveyor_small);
         registerItem(registry, grate);
+        registerItem(registry, flywheel);
+        registerItem(registry, hand_crank);
+        registerItem(registry, gear);
         registerItem(registry, test);
     }
 

@@ -8,10 +8,14 @@ import com.technicalitiesmc.api.util.ObjFloatConsumer;
 import elec332.core.api.registration.RegisteredTileEntity;
 import elec332.core.tile.TileBase;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.function.BiPredicate;
 
 /**
  * Created by Elec332 on 23-11-2017.
@@ -23,7 +27,7 @@ public class TileElectricalEngine extends TileBase implements IEnergyReceiver, I
 	private double currentVoltage, currentAmps;
 	private static final double efficiency = 0.97;
 	// :( impossible
-	// private IKineticNode outputNode = new KineticNode()
+	// private IKineticNode outputNode = new ServerKineticNode()
 
 	@Override
 	public void updateContainingBlockInfo() {
@@ -71,8 +75,13 @@ public class TileElectricalEngine extends TileBase implements IEnergyReceiver, I
 	}
 
 	@Override
-	public float getAppliedPower() {
-		return (float) (currentVoltage * currentAmps * efficiency);
+	public World getKineticWorld() {
+		return null;
+	}
+
+	@Override
+	public ChunkPos getKineticChunk() {
+		return null;
 	}
 
 	@Override
@@ -81,8 +90,13 @@ public class TileElectricalEngine extends TileBase implements IEnergyReceiver, I
 	}
 
 	@Override
-	public void addNeighbors(ObjFloatConsumer<IKineticNode> neighbors) {
-		//halp
+	public float getAppliedPower() {
+		return (float) (currentVoltage * currentAmps * efficiency);
+	}
+
+	@Override
+	public void addNeighbors(ObjFloatConsumer<IKineticNode> neighbors, BiPredicate<World, BlockPos> posValidator) {
+
 	}
 
 }
