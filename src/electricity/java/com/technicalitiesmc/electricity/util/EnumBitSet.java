@@ -9,16 +9,20 @@ import java.util.*;
 public class EnumBitSet<E extends Enum<E>> extends AbstractSet<E> implements Cloneable {
 
     @SuppressWarnings("unchecked")
-    public static <E extends Enum<E>> EnumBitSet<E> of(E one, E... values){
+    public static <E extends Enum<E>> EnumBitSet<E> of(E one, E... values) {
         EnumBitSet<E> ret = noneOf(one.getDeclaringClass());
         ret.add(one);
         ret.addAll(Arrays.asList(values));
         return ret;
     }
 
-    public static <E extends Enum<E>> EnumBitSet<E> noneOf(Class<E> clazz){
+    public static <E extends Enum<E>> EnumBitSet<E> noneOf(Class<E> clazz) {
         return new EnumBitSet<>(clazz);
     }
+
+    private final E[] values;
+    private final Class<E> type;
+    private long elements = 0L;
 
     private EnumBitSet(Class<E> type) {
         super();
@@ -26,15 +30,11 @@ public class EnumBitSet<E extends Enum<E>> extends AbstractSet<E> implements Clo
         this.type = type;
     }
 
-    private long elements = 0L;
-    private final E[] values;
-    private final Class<E> type;
-
     public long getSerialized() {
         return elements;
     }
 
-    public void deserialize(long serialized){
+    public void deserialize(long serialized) {
         this.elements = serialized;
     }
 
@@ -80,7 +80,7 @@ public class EnumBitSet<E extends Enum<E>> extends AbstractSet<E> implements Clo
             return false;
         }
         long oldElements = elements;
-        elements &= ~(1L << ((Enum)e).ordinal());
+        elements &= ~(1L << ((Enum) e).ordinal());
         return elements != oldElements;
     }
 
@@ -89,7 +89,7 @@ public class EnumBitSet<E extends Enum<E>> extends AbstractSet<E> implements Clo
         if (!(c instanceof EnumBitSet)) {
             return super.containsAll(c);
         }
-        EnumBitSet<?> es = (EnumBitSet<?>)c;
+        EnumBitSet<?> es = (EnumBitSet<?>) c;
         if (es.type != type) {
             return es.isEmpty();
         }
@@ -101,7 +101,7 @@ public class EnumBitSet<E extends Enum<E>> extends AbstractSet<E> implements Clo
         if (!(c instanceof EnumBitSet)) {
             return super.addAll(c);
         }
-        EnumBitSet<?> es = (EnumBitSet<?>)c;
+        EnumBitSet<?> es = (EnumBitSet<?>) c;
         if (es.type != type) {
             if (es.isEmpty()) {
                 return false;
@@ -119,7 +119,7 @@ public class EnumBitSet<E extends Enum<E>> extends AbstractSet<E> implements Clo
         if (!(c instanceof EnumBitSet)) {
             return super.removeAll(c);
         }
-        EnumBitSet<?> es = (EnumBitSet<?>)c;
+        EnumBitSet<?> es = (EnumBitSet<?>) c;
         if (es.type != type) {
             return false;
         }
@@ -133,7 +133,7 @@ public class EnumBitSet<E extends Enum<E>> extends AbstractSet<E> implements Clo
         if (!(c instanceof EnumBitSet)) {
             return super.retainAll(c);
         }
-        EnumBitSet<?> es = (EnumBitSet<?>)c;
+        EnumBitSet<?> es = (EnumBitSet<?>) c;
         if (es.type != type) {
             boolean changed = (elements != 0);
             elements = 0;
@@ -154,7 +154,7 @@ public class EnumBitSet<E extends Enum<E>> extends AbstractSet<E> implements Clo
         if (!(o instanceof EnumBitSet)) {
             return super.equals(o);
         }
-        EnumBitSet<?> es = (EnumBitSet<?>)o;
+        EnumBitSet<?> es = (EnumBitSet<?>) o;
         if (es.type != type) {
             return elements == 0 && es.elements == 0;
         }
@@ -168,13 +168,13 @@ public class EnumBitSet<E extends Enum<E>> extends AbstractSet<E> implements Clo
             EnumBitSet<E> ret = new EnumBitSet<E>(type);
             ret.deserialize(elements);
             return ret;
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     public void addRange(E from, E to) {
-        elements = (-1L >>>  (from.ordinal() - to.ordinal() - 1)) << from.ordinal();
+        elements = (-1L >>> (from.ordinal() - to.ordinal() - 1)) << from.ordinal();
     }
 
     public void addAll() {
@@ -192,11 +192,11 @@ public class EnumBitSet<E extends Enum<E>> extends AbstractSet<E> implements Clo
 
     private class EnumBitSetIterator implements Iterator<E> {
 
+        long lastReturned = 0, unseen;
+
         private EnumBitSetIterator() {
             unseen = elements;
         }
-
-        long lastReturned = 0, unseen;
 
         @Override
         public boolean hasNext() {

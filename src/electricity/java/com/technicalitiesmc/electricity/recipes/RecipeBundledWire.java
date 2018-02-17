@@ -30,20 +30,20 @@ public class RecipeBundledWire implements IRecipe {
         Set<WireColor> colors = Sets.newHashSet();
         int items = 0;
         int size = 0;
-        for (ItemStack stack : inv.stackList){
-            if (stack.isEmpty()){
+        for (ItemStack stack : inv.stackList) {
+            if (stack.isEmpty()) {
                 continue;
             }
-            if (stack.getItem() == ItemRegister.bundledWire){
+            if (stack.getItem() == ItemRegister.bundledWire) {
                 Pair<Integer, List<WireColor>> data = ItemBundledWire.getColorsFromStack(stack);
-                if (size == 0){
+                if (size == 0) {
                     size = data.getLeft();
-                } else if (size != data.getLeft()){
+                } else if (size != data.getLeft()) {
                     return false;
                 }
                 List<WireColor> c = data.getRight();
-                for (WireColor color : c){
-                    if (colors.contains(color)){
+                for (WireColor color : c) {
+                    if (colors.contains(color)) {
                         return false;
                     }
                 }
@@ -61,11 +61,11 @@ public class RecipeBundledWire implements IRecipe {
     public ItemStack getCraftingResult(@Nonnull InventoryCrafting inv) {
         Set<WireColor> colors = Sets.newHashSet();
         int size = 1;
-        for (ItemStack stack : inv.stackList){
-            if (stack.isEmpty()){
+        for (ItemStack stack : inv.stackList) {
+            if (stack.isEmpty()) {
                 continue;
             }
-            if (stack.getItem() == ItemRegister.bundledWire){
+            if (stack.getItem() == ItemRegister.bundledWire) {
                 Pair<Integer, List<WireColor>> data = ItemBundledWire.getColorsFromStack(stack);
                 size = data.getLeft();
                 colors.addAll(data.getRight());

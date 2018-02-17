@@ -11,40 +11,40 @@ import java.awt.*;
  */
 public enum EnumWireType implements IWireType {
 
-	TEST(1, Color.BLACK, 1e10);
+    TEST(1, Color.BLACK, 1e10);
 
-	EnumWireType(double resistivity, Color color, double massM3){
-		this.resistivity = resistivity;
-		this.color = color;
-		this.mass = massM3;
-	}
+    private final Color color;
+    private final double resistivity, mass;
 
-	private final Color color;
-	private final double resistivity, mass;
+    EnumWireType(double resistivity, Color color, double massM3) {
+        this.resistivity = resistivity;
+        this.color = color;
+        this.mass = massM3;
+    }
 
-	@Override
-	public double getResistivity() {
-		return this.resistivity;
-	}
+    @Override
+    public double getResistivity() {
+        return this.resistivity;
+    }
 
-	@Override
-	public double getMassM3() {
-		return this.mass;
-	}
+    @Override
+    public double getMassM3() {
+        return this.mass;
+    }
 
-	@Override
-	public Color getColor() {
-		return this.color;
-	}
+    @Override
+    public Color getColor() {
+        return this.color;
+    }
 
-	@Nonnull
-	@Override
-	public ResourceLocation getRegistryName() {
-		return new TKEResourceLocation(getName());
-	}
+    @Nonnull
+    @Override
+    public ResourceLocation getRegistryName() {
+        return new TKEResourceLocation(getName());
+    }
 
-	public String getName(){
-		return toString().toLowerCase();
-	}
+    public String getName() {
+        return toString().toLowerCase();
+    }
 
 }

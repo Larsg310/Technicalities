@@ -17,12 +17,12 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 @ElecModule(owner = TKElectricity.MODID, name = "Technicalities-Mechanical Compat", modDependencies = "tkmechanical")
 public class TKMechanicalCompat {
 
-	@Mod.EventHandler
-	public void preInit(FMLPreInitializationEvent event){
-		Block engine = new BlockTileBaseWithFacing(Material.CACTUS, TileElectricalEngine.class, new TKEResourceLocation("electrical_engine"));
-		engine.setCreativeTab(TKElectricity.creativeTab);
-		RegistryHelper.register(engine);
-		RegistryHelper.register(new ItemBlock(engine).setRegistryName(engine.getRegistryName()));
-	}
+    @Mod.EventHandler
+    public void preInit(FMLPreInitializationEvent event) {
+        Block engine = new BlockTileBaseWithFacing(Material.CACTUS, TileElectricalEngine.class, new TKEResourceLocation("electrical_engine"));
+        engine.setCreativeTab(TKElectricity.creativeTab);
+        RegistryHelper.register(engine);
+        RegistryHelper.register(new ItemBlock(engine).setRegistryName(engine.getRegistryName()));
+    }
 
 }

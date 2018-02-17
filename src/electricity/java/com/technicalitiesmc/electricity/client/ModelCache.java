@@ -35,10 +35,15 @@ import java.util.concurrent.TimeUnit;
 @SideOnly(Side.CLIENT)
 public abstract class ModelCache<K> implements IBakedModel {
 
-    public ModelCache(){
+    private final Cache<K, Map<EnumFacing, List<BakedQuad>>> quads;
+    private final Cache<K, IBakedModel> itemModels;
+    private final ItemOverrideList iol;
+    protected boolean debug;
+
+    public ModelCache() {
         quads = CacheBuilder.newBuilder().expireAfterAccess(2, TimeUnit.MINUTES).build();
         itemModels = CacheBuilder.newBuilder().expireAfterAccess(2, TimeUnit.MINUTES).build();
-        iol = new ItemOverrideList(ImmutableList.of()){
+        iol = new ItemOverrideList(ImmutableList.of()) {
 
             @Override
             @Nonnull
@@ -50,21 +55,16 @@ public abstract class ModelCache<K> implements IBakedModel {
         debug = false;
     }
 
-    protected boolean debug;
-    private final Cache<K, Map<EnumFacing, List<BakedQuad>>> quads;
-    private final Cache<K, IBakedModel> itemModels;
-    private final ItemOverrideList iol;
-
     protected abstract K get(IBlockState state);
 
     protected abstract K get(ItemStack stack);
 
     protected abstract void bakeQuads(List<BakedQuad> quads, EnumFacing side, K key);
 
-    protected final Map<EnumFacing, List<BakedQuad>> getQuads(K key){
+    protected final Map<EnumFacing, List<BakedQuad>> getQuads(K key) {
         Callable<Map<EnumFacing, List<BakedQuad>>> loader = () -> {
             Map<EnumFacing, List<BakedQuad>> ret = Maps.newHashMap();
-            for (EnumFacing f : EnumFacing.VALUES){
+            for (EnumFacing f : EnumFacing.VALUES) {
                 List<BakedQuad> q = Lists.newArrayList();
                 bakeQuads(q, f, key);
                 ret.put(f, ImmutableList.copyOf(q));
@@ -76,12 +76,12 @@ public abstract class ModelCache<K> implements IBakedModel {
         };
         try {
             return debug ? loader.call() : quads.get(key, loader);
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public final IBakedModel getModel(ItemStack stack){
+    public final IBakedModel getModel(ItemStack stack) {
         K key = get(stack);
         Callable<IBakedModel> loader = () -> new WrappedModel(ModelCache.this) {
 
@@ -95,7 +95,7 @@ public abstract class ModelCache<K> implements IBakedModel {
         };
         try {
             return debug ? loader.call() : itemModels.get(key, loader);
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -107,12 +107,12 @@ public abstract class ModelCache<K> implements IBakedModel {
     }
 
     @Override
-    public boolean isAmbientOcclusion(){
+    public boolean isAmbientOcclusion() {
         return true;
     }
 
     @Override
-    public boolean isGui3d(){
+    public boolean isGui3d() {
         return true;
     }
 

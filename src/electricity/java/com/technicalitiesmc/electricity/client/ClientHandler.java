@@ -20,23 +20,23 @@ import java.awt.*;
 @SideOnly(Side.CLIENT)
 public class ClientHandler {
 
-	@SubscribeEvent
-	public void renderStuff(RenderWorldLastEvent event){
-		int world = WorldHelper.getDimID(Minecraft.getMinecraft().world);
-		for (IEnergyObject o : Technicalities.electricityGridHandler.wirez){
-			System.out.println(o + "");
-			Wire wire = (Wire) o;
-			if (!wire.isOverhead() || wire.getConnectionPoint(0).getWorld() != world){
-				continue;
-			}
-			GlStateManager.pushMatrix();
-			Vec3d tr = RenderFunctions.getTranslationForRendering(wire.getStart());
-			GlStateManager.translate(tr.x, tr.y, tr.z);
-			GlStateManager.glLineWidth(3);
-			RenderFunctions.renderWire(wire.getStart(), wire.getEnd(), Color.BLACK, 1, false);
-			GlStateManager.popMatrix();
-		}
-		/*Minecraft.getMinecraft().world.getChunkProvider().chunkMapping.values().forEach(new Consumer<Chunk>() {
+    @SubscribeEvent
+    public void renderStuff(RenderWorldLastEvent event) {
+        int world = WorldHelper.getDimID(Minecraft.getMinecraft().world);
+        for (IEnergyObject o : Technicalities.electricityGridHandler.wirez) {
+            System.out.println(o + "");
+            Wire wire = (Wire) o;
+            if (!wire.isOverhead() || wire.getConnectionPoint(0).getWorld() != world) {
+                continue;
+            }
+            GlStateManager.pushMatrix();
+            Vec3d tr = RenderFunctions.getTranslationForRendering(wire.getStart());
+            GlStateManager.translate(tr.x, tr.y, tr.z);
+            GlStateManager.glLineWidth(3);
+            RenderFunctions.renderWire(wire.getStart(), wire.getEnd(), Color.BLACK, 1, false);
+            GlStateManager.popMatrix();
+        }
+        /*Minecraft.getMinecraft().world.getChunkProvider().chunkMapping.values().forEach(new Consumer<Chunk>() {
 			@Override
 			public void accept(Chunk chunk) {
 
@@ -54,6 +54,6 @@ public class ClientHandler {
 				GlStateManager.popMatrix();
 			}
 		}*/
-	}
+    }
 
 }

@@ -48,12 +48,16 @@ import java.util.List;
  */
 public class BlockBundledElectricWire extends BlockBase implements ITileEntityProvider {
 
+    public static final IUnlistedProperty<RenderData> PROPERTY_RENDERDATA = new UniversalUnlistedProperty<>("tkerenderdata", RenderData.class);
+
     public BlockBundledElectricWire() {
         super(Material.CIRCUITS);
         setCreativeTab(TKElectricity.creativeTab);
     }
 
-    public static final IUnlistedProperty<RenderData> PROPERTY_RENDERDATA = new UniversalUnlistedProperty<>("tkerenderdata", RenderData.class);
+    public static RenderData fromItem(@Nonnull ItemStack stack) {
+        return new RenderData(ItemBundledWire.getColorsFromStack(stack));
+    }
 
     @Nullable
     @Override
@@ -80,7 +84,7 @@ public class BlockBundledElectricWire extends BlockBase implements ITileEntityPr
                 wire.addBoxes(state, world, pos, boxes, false, false);
             }
         } else {
-            for (WirePart wirePart : tile.getWireView()){
+            for (WirePart wirePart : tile.getWireView()) {
                 wirePart.addBoxes(state, world, pos, boxes, false, false);
             }
         }
@@ -123,7 +127,7 @@ public class BlockBundledElectricWire extends BlockBase implements ITileEntityPr
     @Override
     public void getSubBlocksC(@Nonnull Item item, List<ItemStack> subBlocks, CreativeTabs creativeTab) {
         for (int i = 1; i < 5; i++) { //Add all 4 wire sizes, RIP creative tab
-            for (WireColor color : WireColor.values()){
+            for (WireColor color : WireColor.values()) {
                 subBlocks.add(ItemBundledWire.withCables(i, color));
             }
         }
@@ -131,7 +135,7 @@ public class BlockBundledElectricWire extends BlockBase implements ITileEntityPr
 
     @Override
     public boolean removedByPlayer(@Nonnull IBlockState state, World world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player, boolean willHarvest) {
-        if (world.isRemote){
+        if (world.isRemote) {
             return false;
         }
         TileBundledElectricWire tile = getTile(world, pos, TileBundledElectricWire.class);
@@ -142,7 +146,7 @@ public class BlockBundledElectricWire extends BlockBase implements ITileEntityPr
             if (wirePart != null) {
                 tile.remove(wirePart);
                 //if (!tile.getWireView().isEmpty()) {
-                    tile.notifyNeighborsOfChangeExtensively();
+                tile.notifyNeighborsOfChangeExtensively();
                 //}
                 ItemStack stack = wirePart.getDropStack();
                 spawnAsEntity(world, pos, stack);
@@ -164,18 +168,18 @@ public class BlockBundledElectricWire extends BlockBase implements ITileEntityPr
     private void neighborChanged(World world, BlockPos pos, IBlockState state, Block neighbor, BlockPos neighborPos, boolean observer) {
         if (!world.isRemote) {
             TileBundledElectricWire tile = getTile(world, pos, TileBundledElectricWire.class);
-            if (observer && !tile.shouldRefresh(world.getTotalWorldTime(), neighborPos)){
+            if (observer && !tile.shouldRefresh(world.getTotalWorldTime(), neighborPos)) {
                 return;
             }
             List<WirePart> wp = Lists.newArrayList();
-            for (WirePart p : tile.getWireView()){
-                if (!p.canStay(world, pos)){
+            for (WirePart p : tile.getWireView()) {
+                if (!p.canStay(world, pos)) {
                     spawnAsEntity(world, pos, p.getDropStack());
                     wp.add(p);
                 }
             }
             tile.removeAll(wp);
-            if (wp.isEmpty()){
+            if (wp.isEmpty()) {
                 tile.ping();
             }
         }
@@ -188,14 +192,14 @@ public class BlockBundledElectricWire extends BlockBase implements ITileEntityPr
     @Override
     public boolean onBlockActivatedC(World world, BlockPos pos, EntityPlayer player, EnumHand hand, IBlockState state, EnumFacing facing, float hitX, float hitY, float hitZ) {
         WirePart wp = getTile(world, pos, TileBundledElectricWire.class).getWire(facing.getOpposite());
-        if (wp != null && hand == EnumHand.MAIN_HAND && !world.isRemote){
+        if (wp != null && hand == EnumHand.MAIN_HAND && !world.isRemote) {
             List<String> info = Lists.newArrayList();
-            for (EnumFacing facing1 : EnumFacing.VALUES){
-                if (wp.realConnections.contains(facing1)){
-                    info.add(facing1+"  "+wp.corners.get(facing1.ordinal()));
+            for (EnumFacing facing1 : EnumFacing.VALUES) {
+                if (wp.realConnections.contains(facing1)) {
+                    info.add(facing1 + "  " + wp.corners.get(facing1.ordinal()));
                 }
             }
-            PlayerHelper.sendMessageToPlayer(player, wp.getWireSize()+"  "+info.toString());
+            PlayerHelper.sendMessageToPlayer(player, wp.getWireSize() + "  " + info.toString());
         }
         return super.onBlockActivatedC(world, pos, player, hand, state, facing, hitX, hitY, hitZ);
     }
@@ -212,24 +216,22 @@ public class BlockBundledElectricWire extends BlockBase implements ITileEntityPr
     public ItemStack getPickBlock(@Nonnull IBlockState state, RayTraceResult target, @Nonnull World world, @Nonnull BlockPos pos, EntityPlayer player) {
         TileBundledElectricWire tile = getTile(world, pos, TileBundledElectricWire.class);
         WirePart wire = tile.getWire(EnumFacing.VALUES[target.subHit]);
-        if (wire != null){
+        if (wire != null) {
             return wire.getDropStack();
         }
         return ItemStackHelper.NULL_STACK;
     }
 
-    public static RenderData fromItem(@Nonnull ItemStack stack){
-        return new RenderData(ItemBundledWire.getColorsFromStack(stack));
-    }
-
     public static class RenderData {
 
-        private RenderData(TileBundledElectricWire tile){
+        private final List<WirePart> wires;
+        private final boolean item;
+
+        private RenderData(TileBundledElectricWire tile) {
             this.wires = ImmutableList.copyOf(tile.getWireView());
             this.item = false;
         }
-
-        private RenderData(Pair<Integer, List<WireColor>> data){
+        private RenderData(Pair<Integer, List<WireColor>> data) {
             wires = Lists.newArrayList();
             WirePart wire = new WirePart(EnumFacing.DOWN, data.getLeft());
             wires.add(wire);
@@ -238,9 +240,6 @@ public class BlockBundledElectricWire extends BlockBase implements ITileEntityPr
             wire.setColors(data.getRight());
             this.item = true;
         }
-
-        private final List<WirePart> wires;
-        private final boolean item;
 
         public List<WirePart> getWires() {
             return wires;

@@ -15,20 +15,21 @@ import static com.technicalitiesmc.electricity.init.BlockRegister.*;
  */
 public class ItemRegister implements IItemRegister {
 
-	public static Item wireCoil;
-	public static Item bundledWire;
+    public static Item wireCoil;
+    public static Item bundledWire;
 
-	@Override
-	public void register(IForgeRegistry<Item> registry) {
-		registry.register(createItemBlock(generator));
-		registry.register(createItemBlock(receiver));
-		registry.register(wireCoil = new ItemOverheadWireCoil("ovhwirecoil"));
-		registry.register(bundledWire = new ItemBundledWire("bundled_wire", electric_bundled_wire));
-	}
+    @Override
+    public void register(IForgeRegistry<Item> registry) {
+        registry.register(createItemBlock(generator));
+        registry.register(createItemBlock(receiver));
+        registry.register(wireCoil = new ItemOverheadWireCoil("ovhwirecoil"));
+        registry.register(bundledWire = new ItemBundledWire("bundled_wire", electric_bundled_wire));
+        registry.register(createItemBlock(modelTest));
+    }
 
-	@SuppressWarnings("all")
-	private Item createItemBlock(Block block){
-		return new ItemBlock(block).setRegistryName(block.getRegistryName());
-	}
+    @SuppressWarnings("all")
+    private Item createItemBlock(Block block) {
+        return new ItemBlock(block).setRegistryName(block.getRegistryName());
+    }
 
 }

@@ -42,68 +42,68 @@ import java.util.function.Consumer;
  * Created by Elec332 on 23-11-2017.
  */
 @Mod(modid = TKElectricity.MODID, name = TKElectricity.MODNAME, version = TKElectricity.VERSION,
-		dependencies = "required-after:" + Technicalities.MODID)
+        dependencies = "required-after:" + Technicalities.MODID)
 public class TKElectricity implements IModuleController, IElecCoreMod {
 
-	public static final String MODID = "tkelectricity", MODNAME = "Technicalities Electricity", VERSION = "%VERSION%";
+    public static final String MODID = "tkelectricity", MODNAME = "Technicalities Electricity", VERSION = "%VERSION%";
 
-	@SidedProxy(serverSide = "com.technicalitiesmc.electricity.proxies.TKECommonProxy", clientSide = "com.technicalitiesmc.electricity.proxies.TKEClientProxy")
-	public static TKECommonProxy proxy;
+    @SidedProxy(serverSide = "com.technicalitiesmc.electricity.proxies.TKECommonProxy", clientSide = "com.technicalitiesmc.electricity.proxies.TKEClientProxy")
+    public static TKECommonProxy proxy;
 
-	@Mod.Instance(MODID)
-	public static TKElectricity instance;
-	@ModNetworkHandler
-	public static INetworkHandler networkHandler;
-	public static Configuration config;
-	public static CreativeTabs creativeTab;
-	public static Logger logger;
-	public static IConfigWrapper configWrapper;
-	public static IForgeRegistry<IWireType> wireTypeRegistry;
+    @Mod.Instance(MODID)
+    public static TKElectricity instance;
+    @ModNetworkHandler
+    public static INetworkHandler networkHandler;
+    public static Configuration config;
+    public static CreativeTabs creativeTab;
+    public static Logger logger;
+    public static IConfigWrapper configWrapper;
+    public static IForgeRegistry<IWireType> wireTypeRegistry;
 
-	private LoadTimer loadTimer;
+    private LoadTimer loadTimer;
 
-	@Mod.EventHandler
-	public void preInit(FMLPreInitializationEvent event) {
-		logger = LogManager.getLogger(MODNAME);
-		loadTimer = new LoadTimer(logger, MODNAME);
-		loadTimer.startPhase(event);
-		RegistryHelper.registerEmptyCapability(IEnergyObject.class);
-		wireTypeRegistry = RegistryHelper.createRegistry(new TKEResourceLocation("wire_typr_registry"), IWireType.class, RegistryHelper.getNullCallback());
-		creativeTab = AbstractCreativeTab.create(MODID, () -> new ItemStack(Blocks.ANVIL));
-		config = new Configuration(Technicalities.baseFolder, "Electricity.cfg");
-		configWrapper = new ConfigWrapper(config);
-		configWrapper.registerConfig(new Config());
-		MinecraftForge.EVENT_BUS.register(proxy);
-		proxy.initRendering();
-		loadTimer.endPhase(event);
-	}
+    @Mod.EventHandler
+    public void preInit(FMLPreInitializationEvent event) {
+        logger = LogManager.getLogger(MODNAME);
+        loadTimer = new LoadTimer(logger, MODNAME);
+        loadTimer.startPhase(event);
+        RegistryHelper.registerEmptyCapability(IEnergyObject.class);
+        wireTypeRegistry = RegistryHelper.createRegistry(new TKEResourceLocation("wire_typr_registry"), IWireType.class, RegistryHelper.getNullCallback());
+        creativeTab = AbstractCreativeTab.create(MODID, () -> new ItemStack(Blocks.ANVIL));
+        config = new Configuration(Technicalities.baseFolder, "Electricity.cfg");
+        configWrapper = new ConfigWrapper(config);
+        configWrapper.registerConfig(new Config());
+        MinecraftForge.EVENT_BUS.register(proxy);
+        proxy.initRendering();
+        loadTimer.endPhase(event);
+    }
 
-	@Mod.EventHandler
-	public void init(FMLInitializationEvent event) {
-		loadTimer.startPhase(event);
+    @Mod.EventHandler
+    public void init(FMLInitializationEvent event) {
+        loadTimer.startPhase(event);
 
-		WindowManager.INSTANCE.register(proxy);
-		MinecraftForge.EVENT_BUS.register(new PlayerEventHandler());
-		ElementRegister.init();
+        WindowManager.INSTANCE.register(proxy);
+        MinecraftForge.EVENT_BUS.register(new PlayerEventHandler());
+        ElementRegister.init();
 
-		loadTimer.endPhase(event);
-	}
+        loadTimer.endPhase(event);
+    }
 
-	@Mod.EventHandler
-	public void postInit(FMLPostInitializationEvent event) {
+    @Mod.EventHandler
+    public void postInit(FMLPostInitializationEvent event) {
 
-	}
+    }
 
-	@Override
-	public void registerRegisters(Consumer<IObjectRegister<?>> handler) {
-		handler.accept(new BlockRegister());
-		handler.accept(new ItemRegister());
-		handler.accept(new RecipeRegister());
-	}
+    @Override
+    public void registerRegisters(Consumer<IObjectRegister<?>> handler) {
+        handler.accept(new BlockRegister());
+        handler.accept(new ItemRegister());
+        handler.accept(new RecipeRegister());
+    }
 
-	@Override
-	public boolean isModuleEnabled(String s) {
-		return true;
-	}
+    @Override
+    public boolean isModuleEnabled(String s) {
+        return true;
+    }
 
 }

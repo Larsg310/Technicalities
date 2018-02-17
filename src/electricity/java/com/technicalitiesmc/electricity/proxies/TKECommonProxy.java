@@ -14,21 +14,21 @@ import net.minecraft.world.World;
  */
 public class TKECommonProxy implements IWindowHandler {
 
-	public void initRendering(){
-	}
+    public void initRendering() {
+    }
 
-	@Override
-	public Window createWindow(byte ID, EntityPlayer entityPlayer, World world, int x, int y, int z) {
-		final TileEntity tile = WorldHelper.getTileAt(world, new BlockPos(x, y, z));
-		switch (ID){
-			//eh
-			default:
-				if (tile instanceof IWindowFactory) {
-					return ((IWindowFactory) tile).createWindow();
-				}
-				return null;
-		}
+    @Override
+    public Window createWindow(byte ID, EntityPlayer entityPlayer, World world, int x, int y, int z) {
+        final TileEntity tile = WorldHelper.getTileAt(world, new BlockPos(x, y, z));
+        switch (ID) {
+            //eh
+            default:
+                if (tile instanceof IWindowFactory) {
+                    return ((IWindowFactory) tile).createWindow();
+                }
+                return null;
+        }
 
-	}
+    }
 
 }

@@ -8,8 +8,8 @@ import net.minecraft.util.ResourceLocation;
  */
 public class TKEResourceLocation extends ResourceLocation {
 
-	public TKEResourceLocation(String resourcePathIn) {
-		super(TKElectricity.MODID, resourcePathIn);
-	}
+    public TKEResourceLocation(String resourcePathIn) {
+        super(TKElectricity.MODID, resourcePathIn);
+    }
 
 }

@@ -32,13 +32,13 @@ import java.util.List;
  */
 public class ModelCacheElectricWire extends ModelCache<BlockBundledElectricWire.RenderData> implements IModelAndTextureLoader {
 
-    public ModelCacheElectricWire(){
-        debug = true;
-    }
-
     private IElecQuadBakery quadBakery;
     private TextureAtlasSprite black;
     private TextureAtlasSprite[] individualWires, wireTypes;
+
+    public ModelCacheElectricWire() {
+        debug = true;
+    }
 
     @Override
     protected void bakeQuads(List<BakedQuad> quads, EnumFacing side, BlockBundledElectricWire.RenderData data_) {
@@ -104,12 +104,12 @@ public class ModelCacheElectricWire extends ModelCache<BlockBundledElectricWire.
                     int min11 = extend ? -1 : 1;
                     min11 *= (extend || shortened) ? size : 1;
                     quads.add(quadBakery.bakeQuad(new Vector3f(ft, 1.1f * size, 0), new Vector3f(16 - ft, 1.1f * size, 1.1f * min11), black, extend ? EnumFacing.DOWN : EnumFacing.UP, placedBaseTransformation));
-                    if (extend){
+                    if (extend) {
                         quads.add(quadBakery.bakeQuad(new Vector3f(ft, 0, 0), new Vector3f(16 - ft, 0, -1.1f), black, EnumFacing.UP, placedBaseTransformation));
                     }
                     for (EnumFacing f : EnumFacing.VALUES) {
                         if (f.getAxis() != EnumFacing.Axis.Y) {
-                            quads.add(quadBakery.bakeQuad(new Vector3f(f == EnumFacing.EAST ? 16 - ft : ft, 0, f == EnumFacing.SOUTH ?  (1.1f * min11) : 0), new Vector3f(f == EnumFacing.WEST ? ft : 16 - ft, 1.1f * size, f == EnumFacing.NORTH ? 0 : (1.1f * min11)), black, extend ? f.getOpposite() : f, placedBaseTransformation));
+                            quads.add(quadBakery.bakeQuad(new Vector3f(f == EnumFacing.EAST ? 16 - ft : ft, 0, f == EnumFacing.SOUTH ? (1.1f * min11) : 0), new Vector3f(f == EnumFacing.WEST ? ft : 16 - ft, 1.1f * size, f == EnumFacing.NORTH ? 0 : (1.1f * min11)), black, extend ? f.getOpposite() : f, placedBaseTransformation));
                         }
                     }
                 }
@@ -126,7 +126,7 @@ public class ModelCacheElectricWire extends ModelCache<BlockBundledElectricWire.
         }
     }
 
-    private static ITransformation merge(ITransformation first, ITransformation second){
+    private static ITransformation merge(ITransformation first, ITransformation second) {
         Matrix4f m = new Matrix4f(second.getMatrix());
         m.mul(first.getMatrix());
         return new TRSRTransformation(m);
@@ -136,12 +136,12 @@ public class ModelCacheElectricWire extends ModelCache<BlockBundledElectricWire.
     public void registerTextures(IIconRegistrar iiconRegistrar) {
         wireTypes = new TextureAtlasSprite[EnumElectricityType.values().length];
         for (int i = 0; i < wireTypes.length; i++) {
-            wireTypes[i] = iiconRegistrar.registerSprite(new TKEResourceLocation("blocks/flatwire_"+EnumElectricityType.values()[i].toString().toLowerCase()));
+            wireTypes[i] = iiconRegistrar.registerSprite(new TKEResourceLocation("blocks/flatwire_" + EnumElectricityType.values()[i].toString().toLowerCase()));
         }
         black = iiconRegistrar.registerSprite(new TKEResourceLocation("blocks/black"));
         individualWires = new TextureAtlasSprite[EnumDyeColor.values().length];
         for (int i = 0; i < individualWires.length; i++) {
-            individualWires[i] = iiconRegistrar.registerSprite(new TKEResourceLocation("items/wire_"+EnumDyeColor.values()[i].getDyeColorName()));
+            individualWires[i] = iiconRegistrar.registerSprite(new TKEResourceLocation("items/wire_" + EnumDyeColor.values()[i].getDyeColorName()));
         }
     }
 

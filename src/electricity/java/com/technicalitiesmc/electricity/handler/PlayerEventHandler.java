@@ -10,11 +10,11 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
  */
 public class PlayerEventHandler {
 
-	@SubscribeEvent
-	public void onBlockActivated(PlayerInteractEvent.RightClickBlock event){
-		if (event.getItemStack().getItem() == ItemRegister.wireCoil){
-			event.setUseBlock(Event.Result.DENY);
-		}
-	}
+    @SubscribeEvent
+    public void onBlockActivated(PlayerInteractEvent.RightClickBlock event) {
+        if (event.getItemStack().getItem() == ItemRegister.wireCoil) {
+            event.setUseBlock(Event.Result.DENY);
+        }
+    }
 
 }

@@ -8,12 +8,12 @@ import com.technicalitiesmc.api.util.ConnectionPoint;
  */
 public class TransformerElement extends CircuitElement<IElectricityTransformer> {
 
+    @SuppressWarnings("all")
+    private final double couplingCoef = 0.9999;
+
     public TransformerElement(IElectricityTransformer energyTile) {
         super(energyTile);
     }
-
-    @SuppressWarnings("all")
-    private final double couplingCoef = 0.9999;
 
     @Override
     public ConnectionPoint getPost(int i) {
@@ -61,7 +61,7 @@ public class TransformerElement extends CircuitElement<IElectricityTransformer> 
         // first winding goes from node 0 to 2, second is from 1 to 3
         double l1 = energyTile.getInductance();
         double l2 = energyTile.getInductance() * energyTile.getRatio() * energyTile.getRatio();
-        double m = couplingCoef*Math.sqrt(l1*l2);
+        double m = couplingCoef * Math.sqrt(l1 * l2);
         // build inverted matrix
         double deti = 1 / (l1 * l2 - m * m);
         double ts = (1.0 / 20.0) / 10;

@@ -54,7 +54,7 @@ import java.util.Set;
  */
 public class ItemBundledWire extends ItemBlockBase implements INoJsonItem, IHasSpecialSubtypes {
 
-    public ItemBundledWire(String string, Block block){
+    public ItemBundledWire(String string, Block block) {
         super(block);
         setRegistryName(new TKEResourceLocation(string));
         setUnlocalizedNameFromName();
@@ -70,8 +70,8 @@ public class ItemBundledWire extends ItemBlockBase implements INoJsonItem, IHasS
     @Override
     public void addInformationC(@Nonnull ItemStack stack, World world, List<String> tooltip, boolean advanced) {
         Pair<Integer, List<WireColor>> data = getColorsFromStack(stack);
-        tooltip.add("Size: "+data.getLeft());
-        for (WireColor color : data.getRight()){
+        tooltip.add("Size: " + data.getLeft());
+        for (WireColor color : data.getRight()) {
             tooltip.add(color.getType() + "  " + color.getColor().getDyeColorName()); //todo localize
         }
     }
@@ -80,9 +80,9 @@ public class ItemBundledWire extends ItemBlockBase implements INoJsonItem, IHasS
     public boolean placeBlockAt(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, World world, @Nonnull BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull IBlockState newState) {
         WirePart wp = createWirePart(player, stack, side.getOpposite());
         boolean ret = wp != null && WorldHelper.getBlockState(world, pos.offset(side.getOpposite())).isSideSolid(world, pos.offset(side.getOpposite()), side) && super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState);
-        if (ret){
+        if (ret) {
             TileEntity tile = WorldHelper.getTileAt(world, pos);
-            if (tile != null){
+            if (tile != null) {
                 ((TileBundledElectricWire) tile).addWire(wp);
             }
         }
@@ -90,10 +90,10 @@ public class ItemBundledWire extends ItemBlockBase implements INoJsonItem, IHasS
     }
 
     @Nullable
-    private WirePart createWirePart(EntityPlayer player, ItemStack stack, EnumFacing facing){
+    private WirePart createWirePart(EntityPlayer player, ItemStack stack, EnumFacing facing) {
         Pair<Integer, List<WireColor>> data = getColorsFromStack(stack);
         WirePart wire = new WirePart(facing, data.getLeft());
-        if (!wire.setColors(data.getRight())){
+        if (!wire.setColors(data.getRight())) {
             if (!player.world.isRemote) {
                 PlayerHelper.sendMessageToPlayer(player, "Too many wires, please reduce the wire count in this item");
             }
@@ -104,18 +104,18 @@ public class ItemBundledWire extends ItemBlockBase implements INoJsonItem, IHasS
 
     @SubscribeEvent //Using onRightClick doesn't work if there's a block directly above the wire
     @SuppressWarnings("all")
-    public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event){
-        if (event.getItemStack().getItem() != ItemRegister.bundledWire){
+    public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        if (event.getItemStack().getItem() != ItemRegister.bundledWire) {
             return;
         }
         World world = event.getWorld();
         BlockPos pos = event.getPos();
         EntityPlayer player = event.getEntityPlayer();
         ItemStack stack = player.getHeldItem(event.getHand());
-        if (WorldHelper.chunkLoaded(world, pos)){ //You never know...
+        if (WorldHelper.chunkLoaded(world, pos)) { //You never know...
             TileEntity tile = WorldHelper.getTileAt(world, pos);
             EnumFacing face = event.getFace();
-            if (tile instanceof TileBundledElectricWire){ //attempt to add wire
+            if (tile instanceof TileBundledElectricWire) { //attempt to add wire
                 event.setUseItem(Event.Result.DENY);
                 event.setCanceled(true);
                 if (!world.isRemote) { //All logic on the server side
@@ -128,18 +128,18 @@ public class ItemBundledWire extends ItemBlockBase implements INoJsonItem, IHasS
                         }
                     }
                 }
-            } else if (face != null){ //attempt to place at face
+            } else if (face != null) { //attempt to place at face
                 IBlockState state = WorldHelper.getBlockState(world, pos);
-                if (state.isSideSolid(world, pos, face)){
+                if (state.isSideSolid(world, pos, face)) {
                     tile = WorldHelper.getTileAt(world, pos.offset(face));
-                    if (tile instanceof TileBundledElectricWire){
+                    if (tile instanceof TileBundledElectricWire) {
                         event.setUseItem(Event.Result.DENY);
                         event.setCanceled(true);
                         if (!world.isRemote) { //All logic on the server side
                             EnumFacing rf = face.getOpposite();
                             if (((TileBundledElectricWire) tile).getWire(rf) == null) {
                                 WirePart wire = createWirePart(player, stack, rf);
-                                if (((TileBundledElectricWire) tile).addWire(wire) && !PlayerHelper.isPlayerInCreative(player)){
+                                if (((TileBundledElectricWire) tile).addWire(wire) && !PlayerHelper.isPlayerInCreative(player)) {
                                     stack.shrink(1);
                                 }
                             }
@@ -151,16 +151,16 @@ public class ItemBundledWire extends ItemBlockBase implements INoJsonItem, IHasS
 
     }
 
-    public static ItemStack withCables(int size, @Nonnull WireColor color1, WireColor... colors){
+    public static ItemStack withCables(int size, @Nonnull WireColor color1, WireColor... colors) {
         Set<WireColor> r = Sets.newHashSet(colors);
         r.add(color1);
         return withCables(r, size);
     }
 
-    public static ItemStack withCables(@Nonnull Collection<WireColor> colors, int size){
+    public static ItemStack withCables(@Nonnull Collection<WireColor> colors, int size) {
         int clr = 0;
         Set<WireColor> clrs = Sets.newHashSet(colors);
-        for (WireColor dye : clrs){
+        for (WireColor dye : clrs) {
             clr = ColorHelper.addWire(dye, clr);
         }
         NBTTagCompound tag = new NBTTagCompound();
@@ -171,16 +171,16 @@ public class ItemBundledWire extends ItemBlockBase implements INoJsonItem, IHasS
         return ret;
     }
 
-    public static Pair<Integer, List<WireColor>> getColorsFromStack(@Nonnull ItemStack stack){
-        if (stack.getItem() != ItemRegister.bundledWire){
+    public static Pair<Integer, List<WireColor>> getColorsFromStack(@Nonnull ItemStack stack) {
+        if (stack.getItem() != ItemRegister.bundledWire) {
             throw new IllegalArgumentException();
         }
-        if (stack.getTagCompound() == null){
+        if (stack.getTagCompound() == null) {
             return Pair.of(1, ImmutableList.of(WireColor.getWireColor(EnumDyeColor.WHITE, EnumElectricityType.AC))); // -_- Thx JEI
         }
         int i = stack.getTagCompound().getInteger("clrwr");
         int s = stack.getTagCompound().getInteger("clrsz");
-        if (i == 0){
+        if (i == 0) {
             throw new IllegalArgumentException();
         }
         return Pair.of(s, ColorHelper.getColors(i));

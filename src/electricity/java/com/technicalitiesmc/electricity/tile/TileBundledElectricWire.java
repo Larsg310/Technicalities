@@ -25,25 +25,20 @@ public class TileBundledElectricWire extends TileBase {
 
     public static final EnumSet<EnumFacing> NS, EW;
 
-    static {
-        NS = EnumSet.of(EnumFacing.SOUTH, EnumFacing.NORTH);
-        EW = EnumSet.of(EnumFacing.EAST, EnumFacing.WEST);
-    }
-
     private final List<WirePart> wires = Lists.newArrayList();
     private final List<WirePart> wirez = Collections.unmodifiableList(wires);
     private boolean pingpong, send;
     private long worldTime;
     private Set<BlockPos> posSet = Sets.newHashSet();
 
-    public boolean shouldRefresh(long newTime, BlockPos otherPos){
-        if (worldTime != newTime){
+    public boolean shouldRefresh(long newTime, BlockPos otherPos) {
+        if (worldTime != newTime) {
             posSet.clear();
             worldTime = newTime;
             posSet.add(otherPos);
             return true;
         }
-        if (posSet.contains(otherPos)){
+        if (posSet.contains(otherPos)) {
             return false;
         }
         posSet.add(otherPos);
@@ -54,14 +49,14 @@ public class TileBundledElectricWire extends TileBase {
         return wire != null && addWire(wire, true);
     }
 
-    private boolean addWire(WirePart wire, boolean notify){
-        if (getWire(wire.getPlacement()) == null){
-            if (notify && WirePart.occludes(wire, pos, Collections.emptySet(), world, pos)){
+    private boolean addWire(WirePart wire, boolean notify) {
+        if (getWire(wire.getPlacement()) == null) {
+            if (notify && WirePart.occludes(wire, pos, Collections.emptySet(), world, pos)) {
                 return false;
             }
             wires.add(wire);
             wire.wire = this;
-            if (world != null && !world.isRemote){
+            if (world != null && !world.isRemote) {
                 wire.checkConnections(pos, world);
                 if (notify) {
                     notifyNeighborsOfChangeExtensively();
@@ -77,22 +72,22 @@ public class TileBundledElectricWire extends TileBase {
         return wirez;
     }
 
-    public void removeAll(Collection<WirePart> wireParts){
+    public void removeAll(Collection<WirePart> wireParts) {
         wires.removeAll(wireParts);
         onWiresRemoved();
     }
 
-    public void remove(WirePart wire){
+    public void remove(WirePart wire) {
         wires.remove(wire);
         onWiresRemoved();
     }
 
-    private void onWiresRemoved(){
-        if (world.isRemote){
+    private void onWiresRemoved() {
+        if (world.isRemote) {
             return;
         }
         markDirty();
-        if (wires.isEmpty()){
+        if (wires.isEmpty()) {
             world.setBlockToAir(pos);
         } else {
             ping();
@@ -100,16 +95,16 @@ public class TileBundledElectricWire extends TileBase {
     }
 
     @Nullable
-    public WirePart getWire(EnumFacing facing){
-        for (WirePart wire : wires){
-            if (wire.getPlacement() == facing){
+    public WirePart getWire(EnumFacing facing) {
+        for (WirePart wire : wires) {
+            if (wire.getPlacement() == facing) {
                 return wire;
             }
         }
         return null;
     }
 
-    public void notifyNeighborsOfChangeExtensively(){
+    public void notifyNeighborsOfChangeExtensively() {
         BlockPos start = pos.add(-1, -1, -1);
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -120,11 +115,11 @@ public class TileBundledElectricWire extends TileBase {
         }
     }
 
-    public void ping(){
+    public void ping() {
         pingpong = true;
         wires.forEach(wirePart -> wirePart.checkConnections(pos, world));
         pingpong = false;
-        if (send){
+        if (send) {
             send = false;
             syncWireData();
         }
@@ -136,29 +131,29 @@ public class TileBundledElectricWire extends TileBase {
         readWiresFromNBT(compound, false);
     }
 
-    private void readWiresFromNBT(NBTTagCompound compound, boolean client){
+    private void readWiresFromNBT(NBTTagCompound compound, boolean client) {
         NBTTagList l = compound.getTagList("wirestuff", NBTTypes.COMPOUND.getID());
         EnumBitSet<EnumFacing> faces = EnumBitSet.noneOf(EnumFacing.class);
         for (int i = 0; i < l.tagCount(); i++) {
             NBTTagCompound tag = l.getCompoundTagAt(i);
             WirePart wirePart = new WirePart(EnumFacing.VALUES[tag.getByte("sbfww")], tag.getByte("sbfws"));
-            if (client){
+            if (client) {
                 WirePart w = getWire(wirePart.getPlacement());
-                if (w != null){
+                if (w != null) {
                     wirePart = w;
                 }
             }
             wirePart.readFromNBT(tag);
-            if (client){
+            if (client) {
                 wirePart.readClientData(tag);
             }
             faces.add(wirePart.getPlacement());
             addWire(wirePart, false);
         }
-        if (client){
+        if (client) {
             List<WirePart> wp = Lists.newArrayList();
-            for (WirePart p : getWireView()){
-                if (!faces.contains(p.getPlacement())){
+            for (WirePart p : getWireView()) {
+                if (!faces.contains(p.getPlacement())) {
                     wp.add(p);
                 }
             }
@@ -172,14 +167,14 @@ public class TileBundledElectricWire extends TileBase {
         return writeWiresToNBT(super.writeToNBT(compound), false);
     }
 
-    private NBTTagCompound writeWiresToNBT(NBTTagCompound ret, boolean client){
+    private NBTTagCompound writeWiresToNBT(NBTTagCompound ret, boolean client) {
         NBTTagList l = new NBTTagList();
         wires.forEach(wire -> {
             NBTTagCompound tag = new NBTTagCompound();
             tag.setByte("sbfww", (byte) wire.getPlacement().ordinal());
             tag.setByte("sbfws", (byte) wire.getWireSize());
             wire.writeToNBT(tag);
-            if (client){
+            if (client) {
                 wire.writeClientData(tag);
             }
             l.appendTag(tag);
@@ -188,18 +183,18 @@ public class TileBundledElectricWire extends TileBase {
         return ret;
     }
 
-    public void syncWireData(){
-        if (pingpong){
+    public void syncWireData() {
+        if (pingpong) {
             send = true;
             return;
         }
         try {
             Field f = TileEntityBase.class.getDeclaredField("isGatheringPackets");
             f.setAccessible(true);
-            if (!f.getBoolean(this)){
-                System.out.println("sendRealPacket "+pos);
+            if (!f.getBoolean(this)) {
+                System.out.println("sendRealPacket " + pos);
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         sendPacket(3, writeWiresToNBT(new NBTTagCompound(), true));
@@ -207,7 +202,7 @@ public class TileBundledElectricWire extends TileBase {
 
     @Override
     public void onDataPacket(int id, NBTTagCompound tag) {
-        if (id == 3){
+        if (id == 3) {
             readWiresFromNBT(tag, true);
             world.markBlockRangeForRenderUpdate(pos.add(1, 1, 1), pos.add(-1, -1, -1));
         } else {
@@ -227,8 +222,13 @@ public class TileBundledElectricWire extends TileBase {
         syncWireData();
     }
 
-    public static boolean isStraightLine(Set<EnumFacing> connections){
+    public static boolean isStraightLine(Set<EnumFacing> connections) {
         return connections.equals(NS) || connections.equals(EW);
+    }
+
+    static {
+        NS = EnumSet.of(EnumFacing.SOUTH, EnumFacing.NORTH);
+        EW = EnumSet.of(EnumFacing.EAST, EnumFacing.WEST);
     }
 
 }

@@ -16,11 +16,11 @@ import java.util.List;
 public final class WireColor {
 
     @Nonnull
-    public static WireColor getWireColor(@Nonnull EnumDyeColor color, @Nonnull EnumElectricityType type){
+    public static WireColor getWireColor(@Nonnull EnumDyeColor color, @Nonnull EnumElectricityType type) {
         return data.get(Preconditions.checkNotNull(type)).get(Preconditions.checkNotNull(color));
     }
 
-    private WireColor(EnumDyeColor color, EnumElectricityType type){
+    private WireColor(EnumDyeColor color, EnumElectricityType type) {
         this.color = color;
         this.type = type;
         this.id = (type == EnumElectricityType.DC ? EnumDyeColor.values().length : 0) + color.ordinal();
@@ -52,10 +52,10 @@ public final class WireColor {
     static {
         data = new EnumMap<>(EnumElectricityType.class);
         List<WireColor> v = Lists.newArrayList();
-        for (EnumElectricityType type : EnumElectricityType.values()){
+        for (EnumElectricityType type : EnumElectricityType.values()) {
             EnumMap<EnumDyeColor, WireColor> m = new EnumMap<>(EnumDyeColor.class);
             data.put(type, m);
-            for (EnumDyeColor color : EnumDyeColor.values()){
+            for (EnumDyeColor color : EnumDyeColor.values()) {
                 //WireColor c = EnumHelper.addEnum(WireColor.class, color.getName().toUpperCase()+"_"+type.toString(), new Class[]{EnumDyeColor.class, EnumElectricityType.class}, color, type);
                 WireColor c = new WireColor(color, type);
                 m.put(color, c);

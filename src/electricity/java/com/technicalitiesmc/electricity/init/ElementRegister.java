@@ -9,8 +9,8 @@ import com.technicalitiesmc.energy.electricity.simulation.CircuitElementFactory;
  */
 public class ElementRegister {
 
-	public static void init(){
-		CircuitElementFactory.INSTANCE.registerComponentWrapper(Wire.class, WireElement.class, WireElement::new);
-	}
+    public static void init() {
+        CircuitElementFactory.INSTANCE.registerComponentWrapper(Wire.class, WireElement.class, WireElement::new);
+    }
 
 }

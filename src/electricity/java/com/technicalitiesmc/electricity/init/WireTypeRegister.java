@@ -10,14 +10,14 @@ import net.minecraftforge.registries.IForgeRegistry;
  */
 public class WireTypeRegister implements IObjectRegister<IWireType> {
 
-	@Override
-	public void register(IForgeRegistry<IWireType> registry) {
-		registry.registerAll(EnumWireType.values());
-	}
+    @Override
+    public void register(IForgeRegistry<IWireType> registry) {
+        registry.registerAll(EnumWireType.values());
+    }
 
-	@Override
-	public Class<IWireType> getType() {
-		return IWireType.class;
-	}
+    @Override
+    public Class<IWireType> getType() {
+        return IWireType.class;
+    }
 
 }

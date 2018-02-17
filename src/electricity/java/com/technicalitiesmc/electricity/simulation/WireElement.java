@@ -11,32 +11,32 @@ import javax.annotation.Nullable;
  */
 public class WireElement extends AbstractResistorElement<Wire> {
 
-	public WireElement(Wire energyTile) {
-		super(energyTile);
-		resistance = energyTile.getResistance();
-	}
+    private final double resistance;
 
-	private final double resistance;
+    public WireElement(Wire energyTile) {
+        super(energyTile);
+        resistance = energyTile.getResistance();
+    }
 
-	@Override
-	public double getResistance() {
-		return resistance;
-	}
+    @Override
+    public double getResistance() {
+        return resistance;
+    }
 
-	@Nullable
-	@Override
-	protected IEnergyReceiver getReceiver() {
-		return null;
-	}
+    @Nullable
+    @Override
+    protected IEnergyReceiver getReceiver() {
+        return null;
+    }
 
-	@Override
-	public void apply() {
-	}
+    @Override
+    public void apply() {
+    }
 
-	@Override
-	public boolean isWire() {
-		return super.isWire();
-	}
+    @Override
+    public boolean isWire() {
+        return super.isWire();
+    }
 
 	/*   Tests, don't remove
 

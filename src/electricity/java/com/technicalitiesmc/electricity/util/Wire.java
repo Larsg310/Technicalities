@@ -15,71 +15,71 @@ import javax.annotation.Nullable;
  */
 public class Wire implements IEnergyObject {
 
-	public Wire(ConnectionPoint start, Vec3d startV, ConnectionPoint end, Vec3d endV, WireData wireData){
-		boolean n = start.hashCode() > end.hashCode();
-		this.startPos = n ? start : end;
-		this.endPos = n ? end : start;
-		n = startV.hashCode() > endV.hashCode();
-		this.start = n ? startV : endV;
-		this.end = n ? endV : startV;
-		this.renderStart = this.start.addVector(startPos.getPos().getX(), startPos.getPos().getY(), startPos.getPos().getZ());
-		this.renderEnd = this.end.addVector(endPos.getPos().getX(), endPos.getPos().getY(), endPos.getPos().getZ());
-		this.wireData = wireData;
-	}
+    private Vec3d start, end, renderStart, renderEnd;
+    private ConnectionPoint startPos, endPos;
+    private WireData wireData;
 
-	private Vec3d start, end, renderStart, renderEnd;
-	private ConnectionPoint startPos, endPos;
-	private WireData wireData;
+    public Wire(ConnectionPoint start, Vec3d startV, ConnectionPoint end, Vec3d endV, WireData wireData) {
+        boolean n = start.hashCode() > end.hashCode();
+        this.startPos = n ? start : end;
+        this.endPos = n ? end : start;
+        n = startV.hashCode() > endV.hashCode();
+        this.start = n ? startV : endV;
+        this.end = n ? endV : startV;
+        this.renderStart = this.start.addVector(startPos.getPos().getX(), startPos.getPos().getY(), startPos.getPos().getZ());
+        this.renderEnd = this.end.addVector(endPos.getPos().getX(), endPos.getPos().getY(), endPos.getPos().getZ());
+        this.wireData = wireData;
+    }
 
-	public Vec3d getStart() {
-		return renderStart;
-	}
+    public Vec3d getStart() {
+        return renderStart;
+    }
 
-	public Vec3d getEnd() {
-		return renderEnd;
-	}
+    public Vec3d getEnd() {
+        return renderEnd;
+    }
 
-	public double getLength(){
-		return start.distanceTo(end);
-	}
+    public double getLength() {
+        return start.distanceTo(end);
+    }
 
-	public void drop(){
+    public void drop() {
 
-	}
+    }
 
-	public boolean isOverhead(){
-		return wireData.getConnectionMethod() == WireConnectionMethod.OVERHEAD;
-	}
+    public boolean isOverhead() {
+        return wireData.getConnectionMethod() == WireConnectionMethod.OVERHEAD;
+    }
 
-	public double getResistance() {
-		return wireData.getResistivity(getLength());
-	}
+    public double getResistance() {
+        return wireData.getResistivity(getLength());
+    }
 
-	@Nonnull
-	@Override
-	public EnumElectricityType getEnergyType(int post) {
-		return wireData.getEnergyType();
-	}
+    @Nonnull
+    @Override
+    public EnumElectricityType getEnergyType(int post) {
+        return wireData.getEnergyType();
+    }
 
-	@Nonnull
-	@Override
-	public ConnectionPoint getConnectionPoint(int post) {
-		return post == 0 ? startPos : endPos;
-	}
+    @Nonnull
+    @Override
+    public ConnectionPoint getConnectionPoint(int post) {
+        return post == 0 ? startPos : endPos;
+    }
 
-	@Nullable
-	@Override
-	public ConnectionPoint getConnectionPoint(EnumFacing side, Vec3d hitVec) {
-		return null;
-	}
+    @Nullable
+    @Override
+    public ConnectionPoint getConnectionPoint(EnumFacing side, Vec3d hitVec) {
+        return null;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		return obj instanceof Wire ? eq((Wire) obj) : super.equals(obj);
-	}
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Wire ? eq((Wire) obj) : super.equals(obj);
+    }
 
-	public boolean eq(Wire wire){
-		return start.equals(wire.start) && end.equals(wire.end) && startPos.equals(wire.startPos) && endPos.equals(wire.endPos) && wireData.equals(wire.wireData);
-	}
+    public boolean eq(Wire wire) {
+        return start.equals(wire.start) && end.equals(wire.end) && startPos.equals(wire.startPos) && endPos.equals(wire.endPos) && wireData.equals(wire.wireData);
+    }
 
 }

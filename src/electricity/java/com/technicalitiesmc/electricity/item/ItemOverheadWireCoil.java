@@ -28,62 +28,62 @@ import javax.annotation.Nonnull;
  */
 public class ItemOverheadWireCoil extends AbstractItem {
 
-	public ItemOverheadWireCoil(String name) {
-		super(new TKEResourceLocation(name));
-	}
+    public ItemOverheadWireCoil(String name) {
+        super(new TKEResourceLocation(name));
+    }
 
-	@Nonnull
-	@Override
-	public EnumActionResult onItemUseC(EntityPlayer player, EnumHand hand, World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		if (world.isRemote){
-			return EnumActionResult.SUCCESS;
-		}
-		ItemStack stack = player.getHeldItem(hand);
-		NBTTagCompound tag = stack.getTagCompound();
-		TileEntity tile = WorldHelper.getTileAt(world, pos);
-		IElectricityDevice energyObject = tile == null ? null : tile.getCapability(TechnicalitiesAPI.ELECTRICITY_CAP, null);
-		if (energyObject == null){
-			return EnumActionResult.SUCCESS;
-		}
-		Vec3d hitVec = new Vec3d(hitX, hitY, hitZ);
-		ConnectionPoint cp = null;
-		for (IEnergyObject obj : energyObject.getInternalComponents()){
-			cp = obj.getConnectionPoint(facing, hitVec);
-			if (cp != null){
-				break;
-			}
-		}
-		if (cp == null){
-			return EnumActionResult.SUCCESS;
-		}
-		if (tag == null){
-			tag = new NBTTagCompound();
-			stack.setTagCompound(tag);
-			tag.setLong("bpL", cp.getPos().toLong());
-			if (cp.getSide() != null) {
-				tag.setString("bpS", cp.getSide().getName());
-			}
-			tag.setInteger("bpN", cp.getSideNumber());
-			tag.setDouble("xH", hitVec.x);
-			tag.setDouble("yH", hitVec.y);
-			tag.setDouble("zH", hitVec.z);
-			//PlayerHelper.sendMessageToPlayer(player, "StartWire");
-		} else {
-			BlockPos bp = BlockPos.fromLong(tag.getLong("bpL"));
-			EnumFacing bpf = tag.hasKey("bpS") ? EnumFacing.byName(tag.getString("bpS")) : null;
-			int n = tag.getInteger("bpN");
-			Vec3d otherHVec = new Vec3d(tag.getDouble("xH"), tag.getDouble("yH"), tag.getDouble("zH"));
-			ConnectionPoint newcp = new ConnectionPoint(bp, world, bpf, n);
-			if (newcp.equals(cp)){
-				//PlayerHelper.sendMessageToPlayer(player, "clearWire");
-				return EnumActionResult.FAIL;
-			}
-			stack.setTagCompound(null);
-			Wire wire = new Wire(newcp, otherHVec, cp, hitVec, new WireData(EnumWireType.TEST, WireThickness.AWG_00, WireConnectionMethod.OVERHEAD, EnumElectricityType.AC));
-			Technicalities.electricityGridHandler.addWire(wire);
-			//PlayerHelper.sendMessageToPlayer(player, "addedWire");
-		}
-		return EnumActionResult.SUCCESS;
-	}
+    @Nonnull
+    @Override
+    public EnumActionResult onItemUseC(EntityPlayer player, EnumHand hand, World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        if (world.isRemote) {
+            return EnumActionResult.SUCCESS;
+        }
+        ItemStack stack = player.getHeldItem(hand);
+        NBTTagCompound tag = stack.getTagCompound();
+        TileEntity tile = WorldHelper.getTileAt(world, pos);
+        IElectricityDevice energyObject = tile == null ? null : tile.getCapability(TechnicalitiesAPI.ELECTRICITY_CAP, null);
+        if (energyObject == null) {
+            return EnumActionResult.SUCCESS;
+        }
+        Vec3d hitVec = new Vec3d(hitX, hitY, hitZ);
+        ConnectionPoint cp = null;
+        for (IEnergyObject obj : energyObject.getInternalComponents()) {
+            cp = obj.getConnectionPoint(facing, hitVec);
+            if (cp != null) {
+                break;
+            }
+        }
+        if (cp == null) {
+            return EnumActionResult.SUCCESS;
+        }
+        if (tag == null) {
+            tag = new NBTTagCompound();
+            stack.setTagCompound(tag);
+            tag.setLong("bpL", cp.getPos().toLong());
+            if (cp.getSide() != null) {
+                tag.setString("bpS", cp.getSide().getName());
+            }
+            tag.setInteger("bpN", cp.getSideNumber());
+            tag.setDouble("xH", hitVec.x);
+            tag.setDouble("yH", hitVec.y);
+            tag.setDouble("zH", hitVec.z);
+            //PlayerHelper.sendMessageToPlayer(player, "StartWire");
+        } else {
+            BlockPos bp = BlockPos.fromLong(tag.getLong("bpL"));
+            EnumFacing bpf = tag.hasKey("bpS") ? EnumFacing.byName(tag.getString("bpS")) : null;
+            int n = tag.getInteger("bpN");
+            Vec3d otherHVec = new Vec3d(tag.getDouble("xH"), tag.getDouble("yH"), tag.getDouble("zH"));
+            ConnectionPoint newcp = new ConnectionPoint(bp, world, bpf, n);
+            if (newcp.equals(cp)) {
+                //PlayerHelper.sendMessageToPlayer(player, "clearWire");
+                return EnumActionResult.FAIL;
+            }
+            stack.setTagCompound(null);
+            Wire wire = new Wire(newcp, otherHVec, cp, hitVec, new WireData(EnumWireType.TEST, WireThickness.AWG_00, WireConnectionMethod.OVERHEAD, EnumElectricityType.AC));
+            Technicalities.electricityGridHandler.addWire(wire);
+            //PlayerHelper.sendMessageToPlayer(player, "addedWire");
+        }
+        return EnumActionResult.SUCCESS;
+    }
 
 }
