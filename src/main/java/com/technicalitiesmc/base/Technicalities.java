@@ -3,6 +3,7 @@ package com.technicalitiesmc.base;
 import com.technicalitiesmc.api.TechnicalitiesAPI;
 import com.technicalitiesmc.api.heat.IHeatConductor;
 import com.technicalitiesmc.api.heat.IWorldHeatHandler;
+import com.technicalitiesmc.api.mechanical.IKineticNode;
 import com.technicalitiesmc.base.event.OreEventHandler;
 import com.technicalitiesmc.base.init.TKHeatObjects;
 import com.technicalitiesmc.base.network.PacketGuiButton;
@@ -12,6 +13,9 @@ import com.technicalitiesmc.base.weather.WeatherHandler;
 import com.technicalitiesmc.energy.electricity.grid.ElectricityGridHandler;
 import com.technicalitiesmc.energy.heat.HeatPropertyRegistry;
 import com.technicalitiesmc.energy.heat.WorldHeatHandler;
+import com.technicalitiesmc.energy.kinesis.KineticManager;
+import com.technicalitiesmc.energy.kinesis.KineticNode;
+import com.technicalitiesmc.energy.kinesis.PacketKineticUpdate;
 import com.technicalitiesmc.lib.simple.SimpleCapabilityManager;
 import com.technicalitiesmc.lib.simple.SimpleRegistryManager;
 import com.technicalitiesmc.lib.util.DefaultCapabilityProvider;
@@ -35,6 +39,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
+import java.util.function.Function;
 
 @Mod.EventBusSubscriber
 @Mod(modid = Technicalities.MODID, name = Technicalities.NAME, version = Technicalities.VERSION, dependencies = "required-after:" + ElecCore.MODID)
@@ -78,7 +83,10 @@ public class Technicalities {
 
         MinecraftForge.EVENT_BUS.register(new OreEventHandler());
         try {
-            ReflectionHelper.makeFinalFieldModifiable(TechnicalitiesAPI.class.getDeclaredField("heatPropertyRegistry")).set(null, HeatPropertyRegistry.INSTANCE);
+            ReflectionHelper.makeFinalFieldModifiable(TechnicalitiesAPI.class.getDeclaredField("heatPropertyRegistry"))
+                    .set(null, HeatPropertyRegistry.INSTANCE);
+            ReflectionHelper.makeFinalFieldModifiable(TechnicalitiesAPI.class.getDeclaredField("kineticNodeProvider"))
+                    .set(null, (Function<IKineticNode.Host, IKineticNode>) KineticNode::new);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -87,9 +95,11 @@ public class Technicalities {
         DefaultCapabilityProvider.registerWorldCapabilityProvider(new ResourceLocation(Technicalities.MODID, "heatapi"), TechnicalitiesAPI.WORLD_HEAT_CAP, world -> new WorldHeatHandler());
         WeatherHandler.preInit();
         TKHeatObjects.init();
+        KineticManager.init();
 
         // Register packets
         networkHandler.registerPacket(PacketGuiButton.class, Side.SERVER);
+        networkHandler.registerPacket(PacketKineticUpdate.class, Side.CLIENT);
         proxy.preInit();
     }
 

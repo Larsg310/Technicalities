@@ -1,0 +1,16 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "custom": { "flip-v": true },
+    "model": "tkmechanical:flywheel_table.obj",
+    "textures": {
+      "#flywheel": "tkmechanical:blocks/flywheel4"
+    },
+    "transform": "forge:default-block"
+  },
+  "variants": {
+    "normal": [{}],
+    "tesr": [{ "model": "tkmechanical:flywheel_shaft.obj" }],
+    "inventory": [{ "submodel": "tkmechanical:flywheel_shaft.obj" }]
+  }
+}

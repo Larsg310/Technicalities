@@ -110,6 +110,10 @@ public class PositionedHeatData implements IPositionable, IHeatObject, INBTSeria
         //System.out.println(this.temp+"   "+temp);
     }
 
+    boolean isConnected(EnumFacing side){
+        return heatStuff.touches(side);
+    }
+
     public void update(World world, WorldHeatHandler whh) {
         if (!this.isConductor()) {
             this.temp = this.ambientTemp;
@@ -119,6 +123,9 @@ public class PositionedHeatData implements IPositionable, IHeatObject, INBTSeria
             List<PositionedHeatData> neighborsC = Lists.newArrayList();
             for (EnumFacing facing : EnumFacing.VALUES){
                 PositionedHeatData hd = whh.getOrCreate(world, pos.offset(facing));
+                if (!hd.isConnected(facing.getOpposite())){
+                    continue;
+                }
                 if (hd.temp < temp){
                     neighborsC.add(hd);
                 } else if (!hd.isConductor()){

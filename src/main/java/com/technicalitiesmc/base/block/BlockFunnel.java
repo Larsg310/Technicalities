@@ -34,7 +34,9 @@ public class BlockFunnel extends BlockBase {
     public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
         super.onEntityCollidedWithBlock(worldIn, pos, state, entityIn);
         Vec3d toCenter = new Vec3d(pos).addVector(0.5, 0.5, 0.5).subtract(entityIn.getPositionVector());
-        entityIn.setVelocity(entityIn.motionX * 0.5 + toCenter.x, Math.max(-0.2, entityIn.motionY), entityIn.motionZ * 0.5 + toCenter.z);
+        entityIn.motionX = entityIn.motionX * 0.5 + toCenter.x;
+        entityIn.motionY = Math.max(-0.2, entityIn.motionY);
+        entityIn.motionZ = entityIn.motionZ * 0.5 + toCenter.z;
     }
 
     @Override

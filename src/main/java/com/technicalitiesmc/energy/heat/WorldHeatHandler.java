@@ -22,6 +22,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.stream.Collectors;
 
@@ -128,7 +129,14 @@ public final class WorldHeatHandler implements IWorldHeatHandler, INBTSerializab
                 }
             } else {
                 List<PositionedHeatData> dhdL = Lists.newArrayList(chi.dirs)
-                        .stream().map(f -> getOrCreate(world, pos.offset(f)))
+                        .stream().map(f -> {
+                            PositionedHeatData phd = getOrCreate(world, pos.offset(f));
+                            if (!phd.isConnected(f.getOpposite())){
+                                return null;
+                            }
+                            return phd;
+                        })
+                        .filter(Objects::nonNull)
                         //.sorted((o1, o2) -> (int) -(o1.getTemperature() - o2.getTemperature()))
                         .collect(Collectors.toList());
                 /*

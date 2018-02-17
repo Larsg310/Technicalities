@@ -3,53 +3,56 @@ package com.technicalitiesmc.mechanical.tile;
 import com.technicalitiesmc.api.mechanical.IKineticNode;
 import com.technicalitiesmc.api.mechanical.IShaftAttachable;
 import com.technicalitiesmc.api.util.ObjFloatConsumer;
-import com.technicalitiesmc.lib.block.TileBase;
-import com.technicalitiesmc.mechanical.kinesis.KineticManager;
-import com.technicalitiesmc.mechanical.kinesis.KineticNode;
+import com.technicalitiesmc.lib.client.SpecialRenderer;
+import com.technicalitiesmc.mechanical.client.TESRRotating;
 import net.minecraft.block.BlockRotatedPillar;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.AxisDirection;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 
-public class TileShaft extends TileBase implements IKineticNode.Host {
+import javax.annotation.Nonnull;
+import java.util.function.BiPredicate;
 
-    private final IKineticNode node = new KineticNode(this);
+@SpecialRenderer(TESRRotating.class)
+public class TileShaft extends TileRotating implements IKineticNode.Host {
 
-    public void debug() {
-        System.out.println("--------------------------------------------");
-        System.out.println("N > " + node);
+    private final IKineticNode node = IKineticNode.create(this);
+
+    @Override
+    public World getKineticWorld() {
+        return getWorld();
+    }
+
+    @Override
+    public ChunkPos getKineticChunk() {
+        return new ChunkPos(getPos());
     }
 
     @Override
     public void validate() {
-        if (!getWorld().isRemote) {
-            KineticManager.INSTANCE.add(node);
-        }
+        node.validate(getWorld().isRemote);
         super.validate();
     }
 
     @Override
     public void onLoad() {
-        if (!getWorld().isRemote) {
-            KineticManager.INSTANCE.add(node);
-        }
+        node.validate(getWorld().isRemote);
         super.onLoad();
     }
 
     @Override
     public void invalidate() {
-        if (!getWorld().isRemote) {
-            KineticManager.INSTANCE.remove(node);
-        }
+        node.invalidate();
         super.invalidate();
     }
 
     @Override
     public void onChunkUnload() {
-        if (!getWorld().isRemote) {
-            KineticManager.INSTANCE.remove(node);
-        }
+        node.invalidate();
         super.onChunkUnload();
     }
 
@@ -65,7 +68,7 @@ public class TileShaft extends TileBase implements IKineticNode.Host {
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
         if (capability == IShaftAttachable.CAPABILITY && facing.getAxis().ordinal() == getBlockMetadata()) {
-            return (T) (IShaftAttachable) b -> node;
+            return (T) (IShaftAttachable) () -> node;
         }
         return super.getCapability(capability, facing);
     }
@@ -81,20 +84,32 @@ public class TileShaft extends TileBase implements IKineticNode.Host {
     }
 
     @Override
-    public void addNeighbors(ObjFloatConsumer<IKineticNode> neighbors) {
+    public void addNeighbors(ObjFloatConsumer<IKineticNode> neighbors, BiPredicate<World, BlockPos> posValidator) {
         EnumFacing.Axis axis = getWorld().getBlockState(getPos()).getValue(BlockRotatedPillar.AXIS);
-        EnumFacing dir1 = EnumFacing.getFacingFromAxis(AxisDirection.NEGATIVE, axis);
-        EnumFacing dir2 = EnumFacing.getFacingFromAxis(AxisDirection.POSITIVE, axis);
-
-        TileEntity te = getWorld().getTileEntity(getPos().offset(dir1));
-        if (te != null && te.hasCapability(IShaftAttachable.CAPABILITY, dir2)) {
-            neighbors.accept(te.getCapability(IShaftAttachable.CAPABILITY, dir2).getNode(false), 1);
-        }
-
-        te = getWorld().getTileEntity(getPos().offset(dir2));
-        if (te != null && te.hasCapability(IShaftAttachable.CAPABILITY, dir1)) {
-            neighbors.accept(te.getCapability(IShaftAttachable.CAPABILITY, dir1).getNode(false), 1);
-        }
+        EnumFacing dir = EnumFacing.getFacingFromAxis(AxisDirection.NEGATIVE, axis);
+        IKineticNode.findShaft(getWorld(), getPos(), dir, 1, neighbors, posValidator);
+        IKineticNode.findShaft(getWorld(), getPos(), dir.getOpposite(), 1, neighbors, posValidator);
     }
 
+    @Nonnull
+    @Override
+    public NBTTagCompound getUpdateTag() {
+        NBTTagCompound tag = super.getUpdateTag();
+        tag.setTag("node", node.serializeNBT());
+        return tag;
+    }
+
+    @Override
+    public void onDataPacket(int id, NBTTagCompound tag) {
+        node.deserializeNBT(tag.getCompoundTag("node"));
+    }
+
+    public float getAngle(float partialTicks) {
+        return node.getAngle(partialTicks);
+    }
+
+    @Override
+    public float getScale() {
+        return 1;
+    }
 }

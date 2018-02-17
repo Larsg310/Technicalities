@@ -22,6 +22,7 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 import org.objectweb.asm.Type;
 
 import java.io.IOException;
@@ -98,5 +99,13 @@ public class TKClientProxy extends TKCommonProxy {
     @Override
     public InputStream readResource(ResourceLocation path) throws IOException {
         return Minecraft.getMinecraft().getResourceManager().getResource(path).getInputStream();
+    }
+
+    @Override
+    public void schedule(Side side, Runnable task) {
+        super.schedule(side, task);
+        if (side == Side.CLIENT) {
+            Minecraft.getMinecraft().addScheduledTask(task);
+        }
     }
 }
