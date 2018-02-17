@@ -24,49 +24,55 @@ import javax.annotation.Nonnull;
  */
 public final class WrappedHeatConductor implements IHeatConductor, IThermalMaterial, INBTSerializable<NBTTagCompound> {
 
-    private WrappedHeatConductor(){
+    private IBlockState state;
+    private IHeatConductor conductor;
+    private IThermalMaterial material;
+    private boolean c;
+
+    private WrappedHeatConductor() {
     }
 
-    public WrappedHeatConductor(IBlockState state, IHeatConductor conductor){
+    public WrappedHeatConductor(IBlockState state, IHeatConductor conductor) {
         this.state = state;
         this.conductor = conductor;
         this.material = Preconditions.checkNotNull(conductor.getMaterial());
-        Preconditions.checkState(TechnicalitiesAPI.heatPropertyRegistry.getMaterial(material.getRegistryName()) == material, "Invalid material: "+material);
+        Preconditions.checkState(TechnicalitiesAPI.heatPropertyRegistry.getMaterial(material.getRegistryName()) == material, "Invalid material: " + material);
         this.c = true;
     }
 
-    public WrappedHeatConductor(IBlockState state){
+    public WrappedHeatConductor(IBlockState state) {
         this.state = state;
         this.conductor = null;
         this.material = HeatPropertyRegistry.INSTANCE.getMaterial(state);
         this.c = false;
     }
 
-    private IBlockState state;
-    private IHeatConductor conductor;
-    private IThermalMaterial material;
-    private boolean c;
+    public static WrappedHeatConductor read(NBTTagCompound tag) {
+        WrappedHeatConductor ret = new WrappedHeatConductor();
+        ret.deserializeNBT(tag);
+        return ret;
+    }
 
-    protected boolean check(World world, BlockPos pos){
-        if (state != WorldHelper.getBlockState(world, pos)){
+    protected boolean check(World world, BlockPos pos) {
+        if (state != WorldHelper.getBlockState(world, pos)) {
             return false;
         }
-        if (!c || conductor != null){
+        if (!c || conductor != null) {
             return true;
         }
         TileEntity tile = WorldHelper.getTileAt(world, pos);
-        if (!tile.hasCapability(TechnicalitiesAPI.HEAT_CONDUCTOR_CAP, null)){
+        if (!tile.hasCapability(TechnicalitiesAPI.HEAT_CONDUCTOR_CAP, null)) {
             return false;
         }
         conductor = Preconditions.checkNotNull(tile.getCapability(TechnicalitiesAPI.HEAT_CONDUCTOR_CAP, null));
         return true;
     }
 
-    protected IBlockState getState(){
+    protected IBlockState getState() {
         return state;
     }
 
-    protected boolean hasTile(){
+    protected boolean hasTile() {
         return c;
     }
 
@@ -94,16 +100,10 @@ public final class WrappedHeatConductor implements IHeatConductor, IThermalMater
         return conductor == null || conductor.touches(side);
     }
 
-    public static WrappedHeatConductor read(NBTTagCompound tag){
-        WrappedHeatConductor ret = new WrappedHeatConductor();
-        ret.deserializeNBT(tag);
-        return ret;
-    }
-
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound ret = new NBTTagCompound();
-        System.out.println("serialize: "+state.getBlock().getRegistryName());
+        System.out.println("serialize: " + state.getBlock().getRegistryName());
         ret.setString("Bn", Preconditions.checkNotNull(state.getBlock().getRegistryName()).toString());
         ret.setInteger("Bm", state.getBlock().getMetaFromState(state));
         ret.setBoolean("c", c);
@@ -115,7 +115,7 @@ public final class WrappedHeatConductor implements IHeatConductor, IThermalMater
     @SuppressWarnings("deprecation")
     public void deserializeNBT(NBTTagCompound nbt) {
         Block b = RegistryHelper.getBlockRegistry().getValue(new ResourceLocation(nbt.getString("Bn")));
-        if (b == Blocks.AIR || b == null){
+        if (b == Blocks.AIR || b == null) {
             throw new RuntimeException();
         }
         this.state = b.getStateFromMeta(nbt.getInteger("Bm"));

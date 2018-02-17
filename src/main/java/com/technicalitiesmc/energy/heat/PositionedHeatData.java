@@ -19,18 +19,18 @@ import java.util.List;
  */
 public class PositionedHeatData implements IPositionable, IHeatObject, INBTSerializable<NBTTagCompound> {
 
-    public PositionedHeatData(World world, BlockPos pos, WrappedHeatConductor heatThing){
-        this.coord = new DimensionCoordinate(world, pos);
-        this.heatStuff = Preconditions.checkNotNull(heatThing);
-        this.setCheckedTemperature(HeatConstants.getAmbientTemperature(world, pos));
-    }
-
     private DimensionCoordinate coord;
     private WrappedHeatConductor heatStuff;
     private double temp, energy;
     private int worked;
 
     private double ambientTemp;
+
+    public PositionedHeatData(World world, BlockPos pos, WrappedHeatConductor heatThing) {
+        this.coord = new DimensionCoordinate(world, pos);
+        this.heatStuff = Preconditions.checkNotNull(heatThing);
+        this.setCheckedTemperature(HeatConstants.getAmbientTemperature(world, pos));
+    }
 
     @Nonnull
     @Override
@@ -53,25 +53,25 @@ public class PositionedHeatData implements IPositionable, IHeatObject, INBTSeria
         return false;
     }
 
-    protected boolean isConductor(){
+    protected boolean isConductor() {
         return heatStuff.conductsHeat(heatStuff.getState());
     }
 
-    protected boolean isSignificant(){
+    protected boolean isSignificant() {
         return heatStuff.hasTile();
     }
 
-    protected double getMass(){
+    protected double getMass() {
         return heatStuff.getMass(heatStuff.getState());
     }
 
-    protected double getMaxEnergyTransfer(double temp){
+    protected double getMaxEnergyTransfer(double temp) {
         return Math.pow((heatStuff.getThermalConductivity() * HeatConstants.getTransferScalar()), 1) * heatStuff.getM3(heatStuff.getState()) * temp;
     }
 
-    protected boolean shouldRemovePreTick(World world){
+    protected boolean shouldRemovePreTick(World world) {
         ambientTemp = HeatConstants.getAmbientTemperature(world, coord.getPos());
-        if (worked > 0){
+        if (worked > 0) {
             worked--;
         }
         boolean c = !heatStuff.check(world, coord.getPos());
@@ -79,30 +79,30 @@ public class PositionedHeatData implements IPositionable, IHeatObject, INBTSeria
         return c || !stay();
     }
 
-    private boolean stay(){
+    private boolean stay() {
         return (!isConductor() && worked > 0) || (Math.abs(ambientTemp - temp) > 0.1);
     }
 
-    void setCheckedTemperature(double temp){
-        if (!isConductor()){
+    private void setCheckedTemperature(double temp) {
+        if (!isConductor()) {
             worked = 20;
             return;
         }
-        if (temp < 0){
+        if (temp < 0) {
             temp = 0;
         }
         this.temp = temp;
         this.energy = getMass() * heatStuff.getSpecificHeatCapacity() * temp;
     }
 
-    void modifyEnergy(double modifier){
-        if (!isConductor()){
+    void modifyEnergy(double modifier) {
+        if (!isConductor()) {
             worked = 20;
             return;
         }
         //System.out.println("ME: "+modifier);
         energy += modifier;
-        if (this.energy < 0){
+        if (this.energy < 0) {
             this.energy = 0;
         }
         double temp = this.temp;
@@ -110,7 +110,7 @@ public class PositionedHeatData implements IPositionable, IHeatObject, INBTSeria
         //System.out.println(this.temp+"   "+temp);
     }
 
-    boolean isConnected(EnumFacing side){
+    boolean isConnected(EnumFacing side) {
         return heatStuff.touches(side);
     }
 
@@ -121,14 +121,14 @@ public class PositionedHeatData implements IPositionable, IHeatObject, INBTSeria
             BlockPos pos = coord.getPos();
             List<PositionedHeatData> neighborsH = Lists.newArrayList();
             List<PositionedHeatData> neighborsC = Lists.newArrayList();
-            for (EnumFacing facing : EnumFacing.VALUES){
+            for (EnumFacing facing : EnumFacing.VALUES) {
                 PositionedHeatData hd = whh.getOrCreate(world, pos.offset(facing));
-                if (!hd.isConnected(facing.getOpposite())){
+                if (!hd.isConnected(facing.getOpposite())) {
                     continue;
                 }
-                if (hd.temp < temp){
+                if (hd.temp < temp) {
                     neighborsC.add(hd);
-                } else if (!hd.isConductor()){
+                } else if (!hd.isConductor()) {
                     neighborsH.add(hd);
                 }
             }
@@ -137,11 +137,11 @@ public class PositionedHeatData implements IPositionable, IHeatObject, INBTSeria
         }
     }
 
-    private void transfer(PositionedHeatData other){
+    private void transfer(PositionedHeatData other) {
         transfer(this, other);
     }
 
-    private static void transfer(PositionedHeatData one, PositionedHeatData two){
+    private static void transfer(PositionedHeatData one, PositionedHeatData two) {
         double tempD = one.temp - two.temp;
         double maxE = Math.min(one.getMaxEnergyTransfer(tempD), two.getMaxEnergyTransfer(tempD));
         one.modifyEnergy(-maxE);
@@ -168,10 +168,10 @@ public class PositionedHeatData implements IPositionable, IHeatObject, INBTSeria
         //worked = nbt.getInteger("work");
     }
 
-    private PositionedHeatData(){
+    private PositionedHeatData() {
     }
 
-    public static PositionedHeatData fromNBT(NBTTagCompound tag){
+    public static PositionedHeatData fromNBT(NBTTagCompound tag) {
         PositionedHeatData ret = new PositionedHeatData();
         ret.deserializeNBT(tag);
         return ret;

@@ -9,6 +9,6 @@ import java.util.Collection;
  */
 public interface IElementChecker<T extends CircuitElement> {
 
-	public boolean elementsValid(Collection<T> elements);
+    public boolean elementsValid(Collection<T> elements);
 
 }

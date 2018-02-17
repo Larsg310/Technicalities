@@ -71,11 +71,10 @@ public class TileTestReceiver extends TileBase implements IEnergyReceiver, IInfo
         createConnectionPoints();
     }
 
-    protected void createConnectionPoints() {
+    private void createConnectionPoints() {
         cp1 = new ConnectionPoint(pos, world, getTileFacing().getOpposite(), 1);
         cp2 = new ConnectionPoint(pos, world, getTileFacing().getOpposite(), 2);
     }
-
 
     @Override
     public double getResistance() {

@@ -30,6 +30,7 @@ import java.util.function.Function;
 /**
  * Created by Elec332 on 12-2-2018.
  */
+@SuppressWarnings("all") //test class
 public class ModelCacheTest extends ModelCache<Integer> {
 
     private ModelResourceLocation[] mrl;

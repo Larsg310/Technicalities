@@ -44,7 +44,7 @@ public class Wire implements IEnergyObject {
     }
 
     public void drop() {
-
+        //todo
     }
 
     public boolean isOverhead() {

@@ -4,10 +4,7 @@ import com.technicalitiesmc.api.electricity.IEnergyObject;
 import com.technicalitiesmc.api.electricity.IWireType;
 import com.technicalitiesmc.base.Technicalities;
 import com.technicalitiesmc.electricity.handler.PlayerEventHandler;
-import com.technicalitiesmc.electricity.init.BlockRegister;
-import com.technicalitiesmc.electricity.init.ElementRegister;
-import com.technicalitiesmc.electricity.init.ItemRegister;
-import com.technicalitiesmc.electricity.init.RecipeRegister;
+import com.technicalitiesmc.electricity.init.*;
 import com.technicalitiesmc.electricity.proxies.TKECommonProxy;
 import com.technicalitiesmc.electricity.util.Config;
 import com.technicalitiesmc.electricity.util.TKEResourceLocation;
@@ -99,6 +96,7 @@ public class TKElectricity implements IModuleController, IElecCoreMod {
         handler.accept(new BlockRegister());
         handler.accept(new ItemRegister());
         handler.accept(new RecipeRegister());
+        handler.accept(new WireTypeRegister());
     }
 
     @Override

@@ -17,45 +17,45 @@ import java.util.List;
  */
 public abstract class CompressedCircuitElement<T extends CircuitElement> extends CircuitElement<IEnergyObject> {
 
-	protected CompressedCircuitElement(ConnectionPoint start, ConnectionPoint end, List<T> elements) {
-		this(new IEnergyObject() {
+    protected final List<T> elements;
 
-			@Nonnull
-			@Override
-			public EnumElectricityType getEnergyType(int post) {
-				throw new RuntimeException();
-			}
+    protected CompressedCircuitElement(ConnectionPoint start, ConnectionPoint end, List<T> elements) {
+        this(new IEnergyObject() {
 
-			@Nonnull
-			@Override
-			public ConnectionPoint getConnectionPoint(int post) {
-				return post == 0 ? start : end;
-			}
+            @Nonnull
+            @Override
+            public EnumElectricityType getEnergyType(int post) {
+                throw new RuntimeException();
+            }
 
-			@Nullable
-			@Override
-			public ConnectionPoint getConnectionPoint(EnumFacing side, Vec3d hitVec) {
-				throw new RuntimeException();
-			}
+            @Nonnull
+            @Override
+            public ConnectionPoint getConnectionPoint(int post) {
+                return post == 0 ? start : end;
+            }
 
-		}, elements);
-	}
+            @Nullable
+            @Override
+            public ConnectionPoint getConnectionPoint(EnumFacing side, Vec3d hitVec) {
+                throw new RuntimeException();
+            }
 
-	protected CompressedCircuitElement(IEnergyObject energyTile, List<T> elements) {
-		super(energyTile);
-		if (elements == null){
-			elements = Lists.newArrayList();
-		}
-		this.elements = elements;
-	}
+        }, elements);
+    }
 
-	protected final List<T> elements;
+    protected CompressedCircuitElement(IEnergyObject energyTile, List<T> elements) {
+        super(energyTile);
+        if (elements == null) {
+            elements = Lists.newArrayList();
+        }
+        this.elements = elements;
+    }
 
-	@Override
-	public final void apply() {
-		for (T t : elements){
-			t.apply();
-		}
-	}
+    @Override
+    public final void apply() {
+        for (T t : elements) {
+            t.apply();
+        }
+    }
 
 }

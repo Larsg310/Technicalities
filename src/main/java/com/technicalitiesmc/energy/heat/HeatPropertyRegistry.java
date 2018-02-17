@@ -20,34 +20,35 @@ public enum HeatPropertyRegistry implements IHeatPropertyRegistry {
 
     INSTANCE;
 
-    HeatPropertyRegistry(){
-        this.registry = Maps.newHashMap();
-        this.namez = Maps.newHashMap();
-    }
+    private static final ResourceLocation NULL_MAT_NAME;
+    private static final IThermalMaterial NULL_MATERIAL;
 
     private final Map<Block, Map<IBlockState, IThermalMaterial>> registry;
     private final Map<ResourceLocation, IThermalMaterial> namez;
-    private static final ResourceLocation NULL_MAT_NAME;
-    private static final IThermalMaterial NULL_MATERIAL;
+
+    HeatPropertyRegistry() {
+        this.registry = Maps.newHashMap();
+        this.namez = Maps.newHashMap();
+    }
 
     @Override
     public void registerHeatMaterial(IBlockState state, IThermalMaterial material) {
         Block block = state.getBlock();
         Preconditions.checkNotNull(material.getRegistryName());
         Map<IBlockState, IThermalMaterial> subreg = registry.computeIfAbsent(block, m -> Maps.newHashMap());
-        if (subreg.get(state) != null || !isValid(material, state)){
+        if (subreg.get(state) != null || !isValid(material, state)) {
             throw new RuntimeException();
         }
         subreg.put(state, material);
         IThermalMaterial now = namez.get(material.getRegistryName());
         if (now == null) {
             namez.put(material.getRegistryName(), material);
-        } else if (now != material){
+        } else if (now != material) {
             throw new RuntimeException();
         }
     }
 
-    private boolean isValid(IThermalMaterial material, IBlockState state){
+    private boolean isValid(IThermalMaterial material, IBlockState state) {
         boolean c1;
         c1 = material.getThermalConductivity() * material.getM3(state) * HeatConstants.getTransferScalar() < (material.getSpecificHeatCapacity() * material.getDensity() * material.getM3(state));
         //c1 &= material.

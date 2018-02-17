@@ -2,12 +2,9 @@ package com.technicalitiesmc.energy.heat;
 
 import com.google.common.base.Preconditions;
 import com.technicalitiesmc.api.TechnicalitiesAPI;
-import com.technicalitiesmc.base.Technicalities;
-import com.technicalitiesmc.lib.util.DefaultCapabilityProvider;
 import elec332.core.main.APIHandler;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
@@ -27,13 +24,13 @@ public enum GlobalHeatHandler {
 
     INSTANCE;
 
-    GlobalHeatHandler(){
+    GlobalHeatHandler() {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
     @SubscribeEvent
-    public void tickWorld(TickEvent.WorldTickEvent event){
-        if (event.side == Side.CLIENT || event.phase == TickEvent.Phase.END){
+    public void tickWorld(TickEvent.WorldTickEvent event) {
+        if (event.side == Side.CLIENT || event.phase == TickEvent.Phase.END) {
             return;
         }
         WorldHeatHandler h = (WorldHeatHandler) event.world.getCapability(TechnicalitiesAPI.WORLD_HEAT_CAP, null);
@@ -58,11 +55,11 @@ public enum GlobalHeatHandler {
     @SuppressWarnings("all")
     private class HeatCapHandler implements ICapabilitySerializable<NBTTagCompound> {
 
-        private HeatCapHandler(){
+        private final WorldHeatHandler handler;
+
+        private HeatCapHandler() {
             handler = new WorldHeatHandler();
         }
-
-        private final WorldHeatHandler handler;
 
         @Override
         public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {

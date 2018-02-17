@@ -4,14 +4,14 @@ import com.technicalitiesmc.api.util.ConnectionPoint;
 
 import java.util.Vector;
 
-public final class CircuitNode {
+final class CircuitNode {
 
-	CircuitNode() {
-		links = new Vector<>();
-	}
+    ConnectionPoint cp;
+    Vector<CircuitNodeLink> links;
+    boolean internal;
 
-	ConnectionPoint cp;
-	Vector<CircuitNodeLink> links;
-	boolean internal;
+    CircuitNode() {
+        links = new Vector<>();
+    }
 
 }

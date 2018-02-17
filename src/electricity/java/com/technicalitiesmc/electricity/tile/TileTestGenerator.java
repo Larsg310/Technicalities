@@ -245,7 +245,7 @@ public class TileTestGenerator extends TileBase implements IEnergySource, ISimpl
         createConnectionPoints();
     }
 
-    protected void createConnectionPoints() {
+    private void createConnectionPoints() {
         cp1 = new ConnectionPoint(pos, world, getTileFacing().getOpposite(), 1);
         cp2 = new ConnectionPoint(pos, world, getTileFacing().getOpposite(), 2);
     }

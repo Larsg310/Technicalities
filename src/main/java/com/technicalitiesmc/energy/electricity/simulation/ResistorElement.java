@@ -9,27 +9,27 @@ import javax.annotation.Nullable;
  */
 public class ResistorElement extends AbstractResistorElement<IEnergyReceiver> {
 
-	public ResistorElement(IEnergyReceiver receiver) {
-		super(receiver);
-		this.resistance = receiver.getResistance();
-	}
+    private double resistance;
 
-	private double resistance;
+    public ResistorElement(IEnergyReceiver receiver) {
+        super(receiver);
+        this.resistance = receiver.getResistance();
+    }
 
-	@Override
-	public double getResistance() {
-		return resistance;
-	}
+    @Override
+    public double getResistance() {
+        return resistance;
+    }
 
-	@Nullable
-	@Override
-	protected IEnergyReceiver getReceiver() {
-		return energyTile;
-	}
+    @Nullable
+    @Override
+    protected IEnergyReceiver getReceiver() {
+        return energyTile;
+    }
 
-	@Override
-	public void apply() {
-		energyTile.receivePower(getVoltageDiff(), current);
-	}
+    @Override
+    public void apply() {
+        energyTile.receivePower(getVoltageDiff(), current);
+    }
 
 }

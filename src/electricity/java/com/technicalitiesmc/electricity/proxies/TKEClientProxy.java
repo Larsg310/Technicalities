@@ -17,7 +17,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
  */
 public class TKEClientProxy extends TKECommonProxy {
 
-    public static ModelCache modelCacheElectricWire, modelCacheTest;
+    private static ModelCache modelCacheElectricWire, modelCacheTest;
 
     @Override
     public void initRendering() {

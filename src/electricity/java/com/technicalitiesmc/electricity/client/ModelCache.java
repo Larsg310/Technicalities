@@ -40,7 +40,7 @@ public abstract class ModelCache<K> implements IBakedModel {
     private final ItemOverrideList iol;
     protected boolean debug;
 
-    public ModelCache() {
+    protected ModelCache() {
         quads = CacheBuilder.newBuilder().expireAfterAccess(2, TimeUnit.MINUTES).build();
         itemModels = CacheBuilder.newBuilder().expireAfterAccess(2, TimeUnit.MINUTES).build();
         iol = new ItemOverrideList(ImmutableList.of()) {
@@ -61,7 +61,7 @@ public abstract class ModelCache<K> implements IBakedModel {
 
     protected abstract void bakeQuads(List<BakedQuad> quads, EnumFacing side, K key);
 
-    protected final Map<EnumFacing, List<BakedQuad>> getQuads(K key) {
+    private Map<EnumFacing, List<BakedQuad>> getQuads(K key) {
         Callable<Map<EnumFacing, List<BakedQuad>>> loader = () -> {
             Map<EnumFacing, List<BakedQuad>> ret = Maps.newHashMap();
             for (EnumFacing f : EnumFacing.VALUES) {

@@ -8,8 +8,8 @@ import com.technicalitiesmc.api.util.ConnectionPoint;
 /**
  * Created by Elec332 on 18-11-2017.
  */
-public class CPPosObj {
+class CPPosObj {
 
-	Multimap<ConnectionPoint, CircuitElement> connections = HashMultimap.create();
+    Multimap<ConnectionPoint, CircuitElement> connections = HashMultimap.create();
 
 }

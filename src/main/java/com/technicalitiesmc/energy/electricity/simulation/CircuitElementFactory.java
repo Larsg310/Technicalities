@@ -24,89 +24,89 @@ import java.util.function.Function;
 @APIHandler.StaticLoad
 public enum CircuitElementFactory {
 
-	INSTANCE;
+    INSTANCE;
 
-	CircuitElementFactory(){
-		this.cache = Maps.newHashMap();
-		this.elementCheckers = Maps.newHashMap();
-	}
+    static {
+        INSTANCE.registerComponentWrapper(IEnergyReceiver.class, ResistorElement.class, ResistorElement::new);
+        INSTANCE.registerComponentWrapper(IEnergySource.class, VoltageElement.class, VoltageElement::new);
+        INSTANCE.optimizers.add(new ResistorOptimizer());
+    }
 
-	private Map<Class<?>, BiConsumer<IEnergyObject, Collection<CircuitElement<?>>>> cache;
-	private List<ICircuitCompressor> optimizers = Lists.newArrayList();
-	private Map<Integer, Pair<Class, IElementChecker>> elementCheckers;
-	private int hc = 1000;
+    private Map<Class<?>, BiConsumer<IEnergyObject, Collection<CircuitElement<?>>>> cache;
+    private List<ICircuitCompressor> optimizers = Lists.newArrayList();
+    private Map<Integer, Pair<Class, IElementChecker>> elementCheckers;
+    private int hc = 1000;
 
-	@Nonnull
-	public Collection<CircuitElement<?>> wrapComponent(IElectricityDevice component){
-		if (component == null){
-			return Collections.emptySet();
-		}
-		Set<IEnergyObject> objects = component instanceof IEnergyObject ? Sets.newHashSet((IEnergyObject) component) : component.getInternalComponents();
-		Set<CircuitElement<?>> ret = Sets.newHashSet();
-		objects.forEach(object -> ret.addAll(wrapComponent(object)));
-		return ret;
-	}
+    CircuitElementFactory() {
+        this.cache = Maps.newHashMap();
+        this.elementCheckers = Maps.newHashMap();
+    }
 
-	@Nonnull
-	public Set<CircuitElement<?>> wrapComponent(IEnergyObject component){
-		List<BiConsumer<IEnergyObject, Collection<CircuitElement<?>>>> wrappers = Lists.newArrayList();
-		cache.forEach((type, wrapper) -> {
-			if (type.isAssignableFrom(component.getClass())) {
-				wrappers.add(wrapper);
-			}
-		});
-		int i = wrappers.size();
-		if (i == 1){
-			Set<CircuitElement<?>> ret = Sets.newHashSet();
-			wrappers.get(0).accept(component, ret);
-			Preconditions.checkArgument(!ret.isEmpty());
-			return ret;
-		} else if (i == 0){
-			throw new IllegalArgumentException(component.toString());
-		} else {
-			throw new IllegalStateException(component.toString());
-		}
-	}
+    @Nonnull
+    public Collection<CircuitElement<?>> wrapComponent(IElectricityDevice component) {
+        if (component == null) {
+            return Collections.emptySet();
+        }
+        Set<IEnergyObject> objects = component instanceof IEnergyObject ? Sets.newHashSet((IEnergyObject) component) : component.getInternalComponents();
+        Set<CircuitElement<?>> ret = Sets.newHashSet();
+        objects.forEach(object -> ret.addAll(wrapComponent(object)));
+        return ret;
+    }
 
-	public boolean isPassiveConnector(IElectricityDevice device){
-		for (IEnergyObject obj : device.getInternalComponents()){
-			if (!obj.isPassiveConnector()){
-				return false;
-			}
-		}
-		return true;
-	}
+    @Nonnull
+    public Set<CircuitElement<?>> wrapComponent(IEnergyObject component) {
+        List<BiConsumer<IEnergyObject, Collection<CircuitElement<?>>>> wrappers = Lists.newArrayList();
+        cache.forEach((type, wrapper) -> {
+            if (type.isAssignableFrom(component.getClass())) {
+                wrappers.add(wrapper);
+            }
+        });
+        int i = wrappers.size();
+        if (i == 1) {
+            Set<CircuitElement<?>> ret = Sets.newHashSet();
+            wrappers.get(0).accept(component, ret);
+            Preconditions.checkArgument(!ret.isEmpty());
+            return ret;
+        } else if (i == 0) {
+            throw new IllegalArgumentException(component.toString());
+        } else {
+            throw new IllegalStateException(component.toString());
+        }
+    }
 
-	@SuppressWarnings("all")
-	public <O extends IEnergyObject, E extends CircuitElement<?>> void registerComponentWrapper(Class<O> clazz, BiConsumer<O, Collection<CircuitElement<?>>> wrapper){
-		cache.put(clazz, (BiConsumer<IEnergyObject, Collection<CircuitElement<?>>>) wrapper);
-	}
+    public boolean isPassiveConnector(IElectricityDevice device) {
+        for (IEnergyObject obj : device.getInternalComponents()) {
+            if (!obj.isPassiveConnector()) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-	@SuppressWarnings("all")
-	public <O extends IEnergyObject, E extends CircuitElement<O>> void registerComponentWrapper(Class<O> clazz, Class<E> eClass, Function<O, E> wrapper, int weight, IElementChecker<E> checker){
-		cache.put(clazz, (energyObject, circuitElements) -> circuitElements.add(wrapper.apply((O)energyObject)));
-		if (elementCheckers.containsKey(weight)){
-			throw new IllegalArgumentException();
-		}
-		elementCheckers.put(weight, Pair.of(eClass, checker));
-	}
+    @SuppressWarnings("all")
+    public <O extends IEnergyObject, E extends CircuitElement<?>> void registerComponentWrapper(Class<O> clazz, BiConsumer<O, Collection<CircuitElement<?>>> wrapper) {
+        cache.put(clazz, (BiConsumer<IEnergyObject, Collection<CircuitElement<?>>>) wrapper);
+    }
 
-	public <O extends IEnergyObject, E extends CircuitElement<O>> void registerComponentWrapper(Class<O> clazz, Class<E> eClass, Function<O, E> wrapper){
-		registerComponentWrapper(clazz, eClass, wrapper, hc++, elements -> true);
-	}
+    @SuppressWarnings("all")
+    public <O extends IEnergyObject, E extends CircuitElement<O>> void registerComponentWrapper(Class<O> clazz, Class<E> eClass, Function<O, E> wrapper, int weight, IElementChecker<E> checker) {
+        cache.put(clazz, (energyObject, circuitElements) -> circuitElements.add(wrapper.apply((O) energyObject)));
+        if (elementCheckers.containsKey(weight)) {
+            throw new IllegalArgumentException();
+        }
+        elementCheckers.put(weight, Pair.of(eClass, checker));
+    }
 
-	public List<ICircuitCompressor> getCircuitOptimizers(){
-		return optimizers;
-	}
+    public <O extends IEnergyObject, E extends CircuitElement<O>> void registerComponentWrapper(Class<O> clazz, Class<E> eClass, Function<O, E> wrapper) {
+        registerComponentWrapper(clazz, eClass, wrapper, hc++, elements -> true);
+    }
 
-	public Collection<Pair<Class, IElementChecker>> getElementCheckers() {
-		return elementCheckers.values();
-	}
+    public List<ICircuitCompressor> getCircuitOptimizers() {
+        return optimizers;
+    }
 
-	static {
-		INSTANCE.registerComponentWrapper(IEnergyReceiver.class, ResistorElement.class, ResistorElement::new);
-		INSTANCE.registerComponentWrapper(IEnergySource.class, VoltageElement.class, VoltageElement::new);
-		INSTANCE.optimizers.add(new ResistorOptimizer());
-	}
+    public Collection<Pair<Class, IElementChecker>> getElementCheckers() {
+        return elementCheckers.values();
+    }
 
 }
