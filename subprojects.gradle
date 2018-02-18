@@ -8,6 +8,7 @@ subprojects {
     // Make all subprojects depend on the root
     dependencies {
         compile rootProject
+        compile rootProject.sourceSets.main.compileClasspath
     }
 
     // Add source directories, as well as the AT
@@ -22,12 +23,6 @@ subprojects {
         }
     }
 
-	// Add all the root project's libs to the subproject (namely Forge)
-	// This means we don't need to make this another Forge project!
-    afterEvaluate {
-        sourceSets.main.compileClasspath += rootProject.sourceSets.main.compileClasspath
-    }
-	
 	// Store the jar, with the right name and version, in the deobf directory
     jar {
         destinationDir = file("$rootDir/build/libs/deobf")
