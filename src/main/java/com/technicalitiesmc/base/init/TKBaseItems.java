@@ -16,6 +16,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 
 @Mod.EventBusSubscriber(modid = Technicalities.MODID)
 public class TKBaseItems {
+
     public static Item reed_stick = new ItemBase();
     public static Item recipe_book = new ItemRecipeBook();
     public static Item book_manual = new ItemBookManual();

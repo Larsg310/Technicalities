@@ -76,4 +76,5 @@ public class TKMechanicalBlocks {
         registry.register(item.setRegistryName(resLoc));
         Technicalities.proxy.registerItemModel(item, 0, new ModelResourceLocation(resLoc, "inventory"));
     }
+
 }

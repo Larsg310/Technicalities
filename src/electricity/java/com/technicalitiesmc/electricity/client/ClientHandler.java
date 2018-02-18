@@ -2,7 +2,7 @@ package com.technicalitiesmc.electricity.client;
 
 import com.technicalitiesmc.api.electricity.IEnergyObject;
 import com.technicalitiesmc.base.Technicalities;
-import com.technicalitiesmc.electricity.util.Wire;
+import com.technicalitiesmc.electricity.wires.overhead.Wire;
 import elec332.core.world.WorldHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;

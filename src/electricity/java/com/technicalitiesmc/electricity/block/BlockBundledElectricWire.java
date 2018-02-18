@@ -5,8 +5,8 @@ import com.google.common.collect.Lists;
 import com.technicalitiesmc.electricity.TKElectricity;
 import com.technicalitiesmc.electricity.item.ItemBundledWire;
 import com.technicalitiesmc.electricity.tile.TileBundledElectricWire;
-import com.technicalitiesmc.electricity.tile.WirePart;
-import com.technicalitiesmc.electricity.util.WireColor;
+import com.technicalitiesmc.electricity.wires.ground.WirePart;
+import com.technicalitiesmc.electricity.wires.WireColor;
 import com.technicalitiesmc.lib.IndexedAABB;
 import com.technicalitiesmc.lib.RayTraceHelper;
 import com.technicalitiesmc.lib.block.BlockBase;
@@ -180,7 +180,7 @@ public class BlockBundledElectricWire extends BlockBase implements ITileEntityPr
             }
             tile.removeAll(wp);
             if (wp.isEmpty()) {
-                tile.ping();
+                tile.checkConnections();
             }
         }
     }

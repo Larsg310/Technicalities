@@ -3,8 +3,10 @@ package com.technicalitiesmc.electricity.client.model;
 import com.technicalitiesmc.api.electricity.EnumElectricityType;
 import com.technicalitiesmc.electricity.block.BlockBundledElectricWire;
 import com.technicalitiesmc.electricity.client.ModelCache;
-import com.technicalitiesmc.electricity.tile.WirePart;
+import com.technicalitiesmc.electricity.wires.ground.WirePart;
 import com.technicalitiesmc.electricity.util.*;
+import com.technicalitiesmc.electricity.wires.WireColor;
+import com.technicalitiesmc.electricity.wires.WireColorHelper;
 import elec332.core.api.client.IIconRegistrar;
 import elec332.core.api.client.model.IElecModelBakery;
 import elec332.core.api.client.model.IElecQuadBakery;
@@ -51,7 +53,7 @@ public class ModelCacheElectricWire extends ModelCache<BlockBundledElectricWire.
             int x = ef.getAxis() == EnumFacing.Axis.Z ? 180 - (90 * ef.getAxisDirection().getOffset()) : ef == EnumFacing.UP ? 180 : 0;
             int z = ef.getAxis() == EnumFacing.Axis.X ? 180 - (90 * ef.getAxisDirection().getOffset()) : 0;
             ITransformation placementTransformation = RenderHelper.getTransformation(x, 0, z);
-            List<WireColor> colors = ColorHelper.getColors(data.getColorBits());
+            List<WireColor> colors = WireColorHelper.getColors(data.getColorBits());
             boolean item = data_.isItem();
             if (data_.isItem() && Config.singleWirePNGRendering && colors.size() == 1) {
                 quads.addAll(quadBakery.getGeneralItemQuads(individualWires[colors.get(0).getColor().ordinal()]));

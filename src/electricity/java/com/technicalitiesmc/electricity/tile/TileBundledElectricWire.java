@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.technicalitiesmc.electricity.init.BlockRegister;
 import com.technicalitiesmc.electricity.util.EnumBitSet;
+import com.technicalitiesmc.electricity.wires.ground.WirePart;
 import com.technicalitiesmc.lib.block.TileBase;
 import elec332.core.main.ElecCore;
 import elec332.core.tile.TileEntityBase;
@@ -22,8 +23,6 @@ import java.util.*;
  * Created by Elec332 on 19-1-2018.
  */
 public class TileBundledElectricWire extends TileBase {
-
-    public static final EnumSet<EnumFacing> NS, EW;
 
     private final List<WirePart> wires = Lists.newArrayList();
     private final List<WirePart> wirez = Collections.unmodifiableList(wires);
@@ -57,7 +56,7 @@ public class TileBundledElectricWire extends TileBase {
             wires.add(wire);
             wire.wire = this;
             if (world != null && !world.isRemote) {
-                wire.checkConnections(pos, world);
+                checkConnections_(true);
                 if (notify) {
                     notifyNeighborsOfChangeExtensively();
                     markDirty();
@@ -90,7 +89,7 @@ public class TileBundledElectricWire extends TileBase {
         if (wires.isEmpty()) {
             world.setBlockToAir(pos);
         } else {
-            ping();
+            checkConnections();
         }
     }
 
@@ -115,11 +114,15 @@ public class TileBundledElectricWire extends TileBase {
         }
     }
 
-    public void ping() {
+    public void checkConnections() {
+        checkConnections_(false);
+    }
+
+    private void checkConnections_(boolean send_) {
         pingpong = true;
         wires.forEach(wirePart -> wirePart.checkConnections(pos, world));
         pingpong = false;
-        if (send) {
+        if (send || send_) {
             send = false;
             syncWireData();
         }
@@ -213,22 +216,13 @@ public class TileBundledElectricWire extends TileBase {
     @Override
     public void onLoad() {
         if (!world.isRemote) {
-            ElecCore.tickHandler.registerCall(this::ping, world);
+            ElecCore.tickHandler.registerCall(this::checkConnections, world);
         }
     }
 
     @Override
     public void sendInitialLoadPackets() {
         syncWireData();
-    }
-
-    public static boolean isStraightLine(Set<EnumFacing> connections) {
-        return connections.equals(NS) || connections.equals(EW);
-    }
-
-    static {
-        NS = EnumSet.of(EnumFacing.SOUTH, EnumFacing.NORTH);
-        EW = EnumSet.of(EnumFacing.EAST, EnumFacing.WEST);
     }
 
 }

@@ -1,6 +1,7 @@
-package com.technicalitiesmc.electricity.util;
+package com.technicalitiesmc.electricity.wires;
 
 import com.technicalitiesmc.api.electricity.IWireType;
+import com.technicalitiesmc.electricity.util.TKEResourceLocation;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;

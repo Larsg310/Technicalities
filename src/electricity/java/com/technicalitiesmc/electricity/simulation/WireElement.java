@@ -1,7 +1,7 @@
 package com.technicalitiesmc.electricity.simulation;
 
 import com.technicalitiesmc.api.electricity.IEnergyReceiver;
-import com.technicalitiesmc.electricity.util.Wire;
+import com.technicalitiesmc.electricity.wires.overhead.Wire;
 import com.technicalitiesmc.energy.electricity.simulation.AbstractResistorElement;
 
 import javax.annotation.Nullable;

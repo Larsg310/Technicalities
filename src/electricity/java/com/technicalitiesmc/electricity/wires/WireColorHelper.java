@@ -1,6 +1,7 @@
-package com.technicalitiesmc.electricity.util;
+package com.technicalitiesmc.electricity.wires;
 
 import com.google.common.collect.ImmutableList;
+import com.technicalitiesmc.electricity.wires.WireColor;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -8,7 +9,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Elec332 on 19-1-2018.
  */
-public class ColorHelper {
+public class WireColorHelper {
 
     private static final List<WireColor> colorz;
 

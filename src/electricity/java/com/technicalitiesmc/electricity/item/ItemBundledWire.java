@@ -7,10 +7,10 @@ import com.technicalitiesmc.electricity.TKElectricity;
 import com.technicalitiesmc.electricity.init.ItemRegister;
 import com.technicalitiesmc.electricity.proxies.TKEClientProxy;
 import com.technicalitiesmc.electricity.tile.TileBundledElectricWire;
-import com.technicalitiesmc.electricity.tile.WirePart;
-import com.technicalitiesmc.electricity.util.ColorHelper;
+import com.technicalitiesmc.electricity.wires.ground.WirePart;
+import com.technicalitiesmc.electricity.wires.WireColorHelper;
 import com.technicalitiesmc.electricity.util.TKEResourceLocation;
-import com.technicalitiesmc.electricity.util.WireColor;
+import com.technicalitiesmc.electricity.wires.WireColor;
 import com.technicalitiesmc.lib.RayTraceHelper;
 import com.technicalitiesmc.lib.item.ItemBlockBase;
 import elec332.core.api.client.IIconRegistrar;
@@ -52,11 +52,12 @@ import java.util.Set;
 /**
  * Created by Elec332 on 19-1-2018.
  */
-public class ItemBundledWire extends ItemBlockBase implements INoJsonItem, IHasSpecialSubtypes {
+public class ItemBundledWire extends ItemBlockBase implements IHasSpecialSubtypes, INoJsonItem {
 
-    public ItemBundledWire(String string, Block block) {
+    @SuppressWarnings("all")
+    public ItemBundledWire(Block block) {
         super(block);
-        setRegistryName(new TKEResourceLocation(string));
+        setRegistryName(block.getRegistryName());
         setUnlocalizedNameFromName();
         setCreativeTab(TKElectricity.creativeTab);
         MinecraftForge.EVENT_BUS.register(this);
@@ -161,7 +162,7 @@ public class ItemBundledWire extends ItemBlockBase implements INoJsonItem, IHasS
         int clr = 0;
         Set<WireColor> clrs = Sets.newHashSet(colors);
         for (WireColor dye : clrs) {
-            clr = ColorHelper.addWire(dye, clr);
+            clr = WireColorHelper.addWire(dye, clr);
         }
         NBTTagCompound tag = new NBTTagCompound();
         tag.setInteger("clrwr", clr);
@@ -183,7 +184,7 @@ public class ItemBundledWire extends ItemBlockBase implements INoJsonItem, IHasS
         if (i == 0) {
             throw new IllegalArgumentException();
         }
-        return Pair.of(s, ColorHelper.getColors(i));
+        return Pair.of(s, WireColorHelper.getColors(i));
     }
 
     @Override

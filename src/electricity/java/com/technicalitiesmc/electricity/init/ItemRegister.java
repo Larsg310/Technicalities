@@ -23,7 +23,7 @@ public class ItemRegister implements IItemRegister {
         registry.register(createItemBlock(generator));
         registry.register(createItemBlock(receiver));
         registry.register(wireCoil = new ItemOverheadWireCoil("ovhwirecoil"));
-        registry.register(bundledWire = new ItemBundledWire("bundled_wire", electric_bundled_wire));
+        registry.register(bundledWire = new ItemBundledWire(electric_bundled_wire));
         registry.register(createItemBlock(modelTest));
     }
 

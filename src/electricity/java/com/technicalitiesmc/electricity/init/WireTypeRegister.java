@@ -1,7 +1,7 @@
 package com.technicalitiesmc.electricity.init;
 
 import com.technicalitiesmc.api.electricity.IWireType;
-import com.technicalitiesmc.electricity.util.EnumWireType;
+import com.technicalitiesmc.electricity.wires.EnumWireType;
 import elec332.core.api.registration.IObjectRegister;
 import net.minecraftforge.registries.IForgeRegistry;
 

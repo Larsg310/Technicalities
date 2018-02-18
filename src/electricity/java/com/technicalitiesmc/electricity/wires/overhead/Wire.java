@@ -1,4 +1,4 @@
-package com.technicalitiesmc.electricity.util;
+package com.technicalitiesmc.electricity.wires.overhead;
 
 import com.technicalitiesmc.api.electricity.EnumElectricityType;
 import com.technicalitiesmc.api.electricity.IEnergyObject;

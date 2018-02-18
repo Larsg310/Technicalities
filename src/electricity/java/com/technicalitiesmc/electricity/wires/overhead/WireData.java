@@ -1,4 +1,4 @@
-package com.technicalitiesmc.electricity.util;
+package com.technicalitiesmc.electricity.wires.overhead;
 
 import com.google.common.base.Preconditions;
 import com.technicalitiesmc.api.electricity.EnumElectricityType;

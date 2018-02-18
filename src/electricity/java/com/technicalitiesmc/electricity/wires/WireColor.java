@@ -1,4 +1,4 @@
-package com.technicalitiesmc.electricity.util;
+package com.technicalitiesmc.electricity.wires;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;

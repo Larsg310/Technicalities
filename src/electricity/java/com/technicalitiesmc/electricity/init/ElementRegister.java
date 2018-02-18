@@ -1,7 +1,7 @@
 package com.technicalitiesmc.electricity.init;
 
 import com.technicalitiesmc.electricity.simulation.WireElement;
-import com.technicalitiesmc.electricity.util.Wire;
+import com.technicalitiesmc.electricity.wires.overhead.Wire;
 import com.technicalitiesmc.energy.electricity.simulation.CircuitElementFactory;
 
 /**
