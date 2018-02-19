@@ -7,10 +7,9 @@ import com.technicalitiesmc.electricity.TKElectricity;
 import com.technicalitiesmc.electricity.init.ItemRegister;
 import com.technicalitiesmc.electricity.proxies.TKEClientProxy;
 import com.technicalitiesmc.electricity.tile.TileBundledElectricWire;
-import com.technicalitiesmc.electricity.wires.ground.WirePart;
-import com.technicalitiesmc.electricity.wires.WireColorHelper;
-import com.technicalitiesmc.electricity.util.TKEResourceLocation;
 import com.technicalitiesmc.electricity.wires.WireColor;
+import com.technicalitiesmc.electricity.wires.WireColorHelper;
+import com.technicalitiesmc.electricity.wires.ground.WirePart;
 import com.technicalitiesmc.lib.RayTraceHelper;
 import com.technicalitiesmc.lib.item.ItemBlockBase;
 import elec332.core.api.client.IIconRegistrar;
@@ -86,6 +85,7 @@ public class ItemBundledWire extends ItemBlockBase implements IHasSpecialSubtype
             if (tile != null) {
                 System.out.println("addInBlPlace");
                 ((TileBundledElectricWire) tile).addWire(wp);
+                ((TileBundledElectricWire) tile).placed = true;
             }
         }
         return ret;

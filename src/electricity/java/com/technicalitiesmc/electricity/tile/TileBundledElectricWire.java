@@ -19,7 +19,10 @@ import net.minecraft.util.math.BlockPos;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Elec332 on 19-1-2018.
@@ -31,6 +34,7 @@ public class TileBundledElectricWire extends TileBase {
     private boolean pingpong, send;
     private long worldTime;
     private Set<BlockPos> posSet = Sets.newHashSet();
+    public boolean placed;
 
     public boolean shouldRefresh(long newTime, BlockPos otherPos) {
         if (worldTime != newTime) {
@@ -52,9 +56,9 @@ public class TileBundledElectricWire extends TileBase {
 
     @Override
     public void invalidate() {
-        if (world != null && WorldHelper.chunkLoaded(world, pos)){
+        if (world != null && WorldHelper.chunkLoaded(world, pos)) {
             IBlockState state = WorldHelper.getBlockState(world, pos);
-            if (state.getBlock() != BlockRegister.electric_bundled_wire){
+            if (state.getBlock() != BlockRegister.electric_bundled_wire) {
                 notifyNeighborsOfChangeExtensively();
             }
         }
@@ -84,6 +88,9 @@ public class TileBundledElectricWire extends TileBase {
     }
 
     public void removeAll(Collection<WirePart> wireParts) {
+        if (wireParts.isEmpty()){
+            return;
+        }
         wires.removeAll(wireParts);
         onWiresRemoved();
     }
@@ -120,7 +127,10 @@ public class TileBundledElectricWire extends TileBase {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 for (int k = 0; k < 3; k++) {
-                    world.neighborChanged(start.add(i, j, k), BlockRegister.electric_bundled_wire, pos);
+                    BlockPos poz = start.add(i, j, k);
+                    if (!pos.equals(poz)) {
+                        world.neighborChanged(poz, BlockRegister.electric_bundled_wire, pos);
+                    }
                 }
             }
         }
@@ -228,7 +238,13 @@ public class TileBundledElectricWire extends TileBase {
     @Override
     public void onLoad() {
         if (!world.isRemote) {
-            ElecCore.tickHandler.registerCall(this::checkConnections, world);
+            ElecCore.tickHandler.registerCall(() -> {
+                if (placed){
+                    placed = false;
+                    return;
+                }
+                checkConnections();
+            }, world);
         }
     }
 
