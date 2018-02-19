@@ -84,6 +84,7 @@ public class ItemBundledWire extends ItemBlockBase implements IHasSpecialSubtype
         if (ret) {
             TileEntity tile = WorldHelper.getTileAt(world, pos);
             if (tile != null) {
+                System.out.println("addInBlPlace");
                 ((TileBundledElectricWire) tile).addWire(wp);
             }
         }

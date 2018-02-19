@@ -3,6 +3,7 @@ package com.technicalitiesmc.electricity.block;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.technicalitiesmc.electricity.TKElectricity;
+import com.technicalitiesmc.electricity.init.ItemRegister;
 import com.technicalitiesmc.electricity.item.ItemBundledWire;
 import com.technicalitiesmc.electricity.tile.TileBundledElectricWire;
 import com.technicalitiesmc.electricity.wires.ground.WirePart;
@@ -22,6 +23,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -57,6 +59,14 @@ public class BlockBundledElectricWire extends BlockBase implements ITileEntityPr
 
     public static RenderData fromItem(@Nonnull ItemStack stack) {
         return new RenderData(ItemBundledWire.getColorsFromStack(stack));
+    }
+
+    @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, RayTraceResult hit) {
+        if (!world.isRemote && player.getHeldItem(hand).getItem() == Items.STICK){
+            world.setBlockToAir(pos);
+        }
+        return false;
     }
 
     @Nullable
@@ -168,7 +178,7 @@ public class BlockBundledElectricWire extends BlockBase implements ITileEntityPr
     private void neighborChanged(World world, BlockPos pos, BlockPos neighborPos, boolean observer) {
         if (!world.isRemote) {
             TileBundledElectricWire tile = getTile(world, pos, TileBundledElectricWire.class);
-            if (observer && !tile.shouldRefresh(world.getTotalWorldTime(), neighborPos)) {
+            if (!tile.shouldRefresh(world.getTotalWorldTime(), neighborPos) && observer) {
                 return;
             }
             List<WirePart> wp = Lists.newArrayList();

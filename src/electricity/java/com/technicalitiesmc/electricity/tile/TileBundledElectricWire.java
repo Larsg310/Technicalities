@@ -9,6 +9,8 @@ import com.technicalitiesmc.lib.block.TileBase;
 import elec332.core.main.ElecCore;
 import elec332.core.tile.TileEntityBase;
 import elec332.core.util.NBTTypes;
+import elec332.core.world.WorldHelper;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
@@ -46,6 +48,16 @@ public class TileBundledElectricWire extends TileBase {
 
     public boolean addWire(WirePart wire) {
         return wire != null && addWire(wire, true);
+    }
+
+    @Override
+    public void invalidate() {
+        if (world != null && WorldHelper.chunkLoaded(world, pos)){
+            IBlockState state = WorldHelper.getBlockState(world, pos);
+            if (state.getBlock() != BlockRegister.electric_bundled_wire){
+                notifyNeighborsOfChangeExtensively();
+            }
+        }
     }
 
     private boolean addWire(WirePart wire, boolean notify) {

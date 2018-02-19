@@ -116,7 +116,7 @@ public class WirePart {
     }
 
     public void checkConnections(BlockPos pos_, World world) {
-        System.out.println("checkConnections " + pos_);
+        System.out.println("checkConnections " + pos_ + "  "+ placement);
         moveToLastAndClear();
         for (int i = 0; i < 4; i++) {
             EnumFacing facing = WireFacingHelper.getRealSide(placement, i);
