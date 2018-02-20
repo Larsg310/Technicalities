@@ -3,6 +3,7 @@ package com.technicalitiesmc.mechanical.tile;
 import com.technicalitiesmc.api.mechanical.IKineticNode;
 import com.technicalitiesmc.api.mechanical.IShaftAttachable;
 import com.technicalitiesmc.api.util.ObjFloatConsumer;
+import com.technicalitiesmc.lib.block.TileBase;
 import com.technicalitiesmc.lib.client.SpecialRenderer;
 import com.technicalitiesmc.mechanical.client.TESRFlywheel;
 import com.technicalitiesmc.mechanical.init.TKMechanicalItems;
@@ -21,7 +22,7 @@ import javax.annotation.Nonnull;
 import java.util.function.BiPredicate;
 
 @SpecialRenderer(TESRFlywheel.class)
-public class TileFlywheel extends TileRotating implements IKineticNode.Host {
+public class TileFlywheel extends TileBase implements IKineticNode.Host {
     private static final int MAX_DISKS = 5;
     private int diskCount = 0; // cheapo counter since we currently only have 1 type of disk
 
@@ -95,14 +96,8 @@ public class TileFlywheel extends TileRotating implements IKineticNode.Host {
         return true;
     }
 
-    @Override
     public float getAngle(float partialTicks) {
         return node.getAngle(partialTicks);
-    }
-
-    @Override
-    public float getScale() {
-        return 1.0f;
     }
 
     @Override

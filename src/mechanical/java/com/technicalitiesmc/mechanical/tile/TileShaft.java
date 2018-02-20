@@ -84,8 +84,13 @@ public class TileShaft extends TileRotating implements IKineticNode.Host {
     }
 
     @Override
+    public EnumFacing.Axis getRotationAxis() {
+        return getWorld().getBlockState(getPos()).getValue(BlockRotatedPillar.AXIS);
+    }
+
+    @Override
     public void addNeighbors(ObjFloatConsumer<IKineticNode> neighbors, BiPredicate<World, BlockPos> posValidator) {
-        EnumFacing.Axis axis = getWorld().getBlockState(getPos()).getValue(BlockRotatedPillar.AXIS);
+        EnumFacing.Axis axis = getRotationAxis();
         EnumFacing dir = EnumFacing.getFacingFromAxis(AxisDirection.NEGATIVE, axis);
         IKineticNode.findShaft(getWorld(), getPos(), dir, 1, neighbors, posValidator);
         IKineticNode.findShaft(getWorld(), getPos(), dir.getOpposite(), 1, neighbors, posValidator);

@@ -56,8 +56,9 @@ public class TileGear extends TileRotating implements IKineticNode.Host {
         super.onChunkUnload();
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+    public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
         if (capability == IShaftAttachable.CAPABILITY && facing.ordinal() == getBlockMetadata()) {
             return true;
         } else if (capability == IGearAttachable.CAPABILITY && facing.getAxis() != EnumFacing.VALUES[getBlockMetadata()].getAxis()) {
@@ -66,9 +67,9 @@ public class TileGear extends TileRotating implements IKineticNode.Host {
         return super.hasCapability(capability, facing);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "ConstantConditions"})
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         EnumFacing face = EnumFacing.VALUES[getBlockMetadata()];
         if (capability == IShaftAttachable.CAPABILITY && facing.ordinal() == getBlockMetadata()) {
             return (T) (IShaftAttachable) () -> node;
@@ -86,6 +87,11 @@ public class TileGear extends TileRotating implements IKineticNode.Host {
     @Override
     public float getInertia() {
         return 4;
+    }
+
+    @Override
+    public EnumFacing.Axis getRotationAxis() {
+        return EnumFacing.VALUES[getBlockMetadata()].getAxis();
     }
 
     @Override

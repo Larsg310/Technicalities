@@ -87,6 +87,7 @@ public class BlockGear extends BlockBase implements ITileEntityProvider {
         float relY = (float) (entity.posZ - yoff);
         float newX = fx.apply(relX, relY);
         float newY = fy.apply(relX, relY);
+//        entity.move(MoverType.SELF, newX + xoff - entity.posX, 0, newY + yoff - entity.posZ);
         entity.setPosition(newX + xoff, entity.posY, newY + yoff);
     }
 

@@ -31,9 +31,7 @@ public class TESRFlywheel extends TileEntitySpecialRenderer<TileFlywheel> {
         pushMatrix();
         translate(x + 0.5, y + 0.5, z + 0.5);
         rotate(te.getAngle(partialTicks), 0, 1, 0);
-        float scale = te.getScale();
-        scale(scale, scale, scale);
-        translate(-0.5, -0.5 + (scale - 1) / 2F, -0.5);
+        translate(-0.5, -1f, -0.5);
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();

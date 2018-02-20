@@ -116,6 +116,10 @@ public class TileKineticTest extends TileBase {
         @Override
         public void addNeighbors(ObjFloatConsumer<IKineticNode> neighbors, BiPredicate<World, BlockPos> posValidator) {
             IKineticNode.findShaft(getWorld(), getPos(), EnumFacing.UP, 1, neighbors, posValidator);
+            IKineticNode.findShaft(getWorld(), getPos(), EnumFacing.NORTH, 1, neighbors, posValidator);
+            IKineticNode.findShaft(getWorld(), getPos(), EnumFacing.SOUTH, 1, neighbors, posValidator);
+            IKineticNode.findShaft(getWorld(), getPos(), EnumFacing.WEST, 1, neighbors, posValidator);
+            IKineticNode.findShaft(getWorld(), getPos(), EnumFacing.EAST, 1, neighbors, posValidator);
         }
 
     }
