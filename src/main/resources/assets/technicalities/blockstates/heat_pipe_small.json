@@ -3,6 +3,7 @@
   "defaults": {
     "textures": {
       "0": "technicalities:blocks/heat_pipe",
+      "1": "technicalities:blocks/heat_pipe_front",
       "particle": "technicalities:blocks/heat_pipe"
     },
     "model": "technicalities:heat_pipe/small_center",
