@@ -20,6 +20,7 @@ import org.lwjgl.opengl.GL11;
 import static net.minecraft.client.renderer.GlStateManager.*;
 
 public class TESRFlywheel extends TileEntitySpecialRenderer<TileFlywheel> {
+
     public static final ModelResourceLocation SHAFT_MODEL = new ModelResourceLocation(new ResourceLocation(TKMechanical.MODID, "flywheel"), "tesr");
     public static final ModelResourceLocation DISK_MODEL = new ModelResourceLocation(new ResourceLocation(TKMechanical.MODID, "stone_disk"), "inventory");
 
@@ -29,9 +30,9 @@ public class TESRFlywheel extends TileEntitySpecialRenderer<TileFlywheel> {
         IBakedModel diskModel = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getModelManager().getModel(DISK_MODEL);
         BlockModelRenderer renderer = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer();
         pushMatrix();
-        translate(x + 0.5, y + 0.5, z + 0.5);
+        translate(x + 0.5, y, z + 0.5);
         rotate(te.getAngle(partialTicks), 0, 1, 0);
-        translate(-0.5, -1f, -0.5);
+        translate(-0.5, 0.0, -0.5);
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
@@ -55,7 +56,7 @@ public class TESRFlywheel extends TileEntitySpecialRenderer<TileFlywheel> {
         renderer.renderModel(te.getWorld(), model, Blocks.STONE.getDefaultState(), te.getPos(), buffer, false, 0L);
 
         for (int i = 0; i < te.getDiskCount(); i++) {
-            buffer.setTranslation(-te.getPos().getX(), -te.getPos().getY() + 2/16f * i, -te.getPos().getZ());
+            buffer.setTranslation(-te.getPos().getX(), -te.getPos().getY() + 2 / 16f * i, -te.getPos().getZ());
             renderer.renderModel(te.getWorld(), diskModel, Blocks.STONE.getDefaultState(), te.getPos(), buffer, false, 0L);
         }
         buffer.setTranslation(0, 0, 0);
@@ -65,4 +66,5 @@ public class TESRFlywheel extends TileEntitySpecialRenderer<TileFlywheel> {
 
         popMatrix();
     }
+
 }
