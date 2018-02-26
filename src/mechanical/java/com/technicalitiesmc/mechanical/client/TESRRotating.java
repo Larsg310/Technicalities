@@ -15,6 +15,7 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
+import static java.lang.Math.abs;
 import static net.minecraft.client.renderer.GlStateManager.*;
 
 public class TESRRotating extends TileEntitySpecialRenderer<TileRotating> {
@@ -24,7 +25,7 @@ public class TESRRotating extends TileEntitySpecialRenderer<TileRotating> {
         pushMatrix();
         translate(x + 0.5, y + 0.5, z + 0.5);
         Vec3i axis = te.getRotationFacing().getDirectionVec();
-        rotate(te.getAngle(partialTicks), axis.getX(), axis.getY(), axis.getZ());
+        rotate(te.getAngle(partialTicks), abs(axis.getX()), abs(axis.getY()), abs(axis.getZ()));
         float scale = te.getScale();
         scale(scale, scale, scale);
         translate(
