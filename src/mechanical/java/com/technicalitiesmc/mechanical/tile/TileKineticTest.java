@@ -5,89 +5,89 @@ import com.technicalitiesmc.api.mechanical.IShaftAttachable;
 import com.technicalitiesmc.api.util.ObjFloatConsumer;
 import com.technicalitiesmc.lib.block.TileBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import java.util.function.BiPredicate;
+import java.util.stream.Stream;
 
 public class TileKineticTest extends TileBase {
 
-    private final IKineticNode top = IKineticNode.create(new TopHost());
-    private final IKineticNode bottom = IKineticNode.create(new BottomHost());
+    private final IKineticNode generator = IKineticNode.create(new GenHost());
+    private final IKineticNode receiver = IKineticNode.create(new RecvHost());
 
     public void debug() {
         System.out.println("--------------------------------------------");
-        System.out.println("T > " + top);
-        System.out.println("B > " + bottom);
+        System.out.println("T > " + generator);
+        System.out.println("B > " + receiver);
     }
 
     @Override
     public void validate() {
-        top.validate(getWorld().isRemote);
-        bottom.validate(getWorld().isRemote);
+        generator.validate(getWorld().isRemote);
+        receiver.validate(getWorld().isRemote);
         super.validate();
     }
 
     @Override
     public void onLoad() {
-        top.validate(getWorld().isRemote);
-        bottom.validate(getWorld().isRemote);
+        generator.validate(getWorld().isRemote);
+        receiver.validate(getWorld().isRemote);
         super.onLoad();
     }
 
     @Override
     public void invalidate() {
-        top.invalidate();
-        bottom.invalidate();
+        generator.invalidate();
+        receiver.invalidate();
         super.invalidate();
     }
 
     @Override
     public void onChunkUnload() {
-        top.invalidate();
-        bottom.invalidate();
+        generator.invalidate();
+        receiver.invalidate();
         super.onChunkUnload();
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == IShaftAttachable.CAPABILITY && facing.getAxis() == Axis.Y) {
-            return true;
-        }
+    public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
+        if (capability == IShaftAttachable.CAPABILITY) return true;
         return super.hasCapability(capability, facing);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "ConstantConditions"})
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == IShaftAttachable.CAPABILITY && facing.getAxis() == Axis.Y) {
-            return (T) (IShaftAttachable) () -> (facing == EnumFacing.UP ? top : bottom);
+    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
+        if (capability == IShaftAttachable.CAPABILITY) {
+            return (T) (IShaftAttachable) () -> (facing == EnumFacing.DOWN ? receiver : generator);
         }
         return super.getCapability(capability, facing);
     }
 
+    @SuppressWarnings("deprecation")
     @Nonnull
     @Override
     public NBTTagCompound getUpdateTag() {
         NBTTagCompound tag = getDefaultUpdateTag();
-        tag.setTag("top", top.serializeNBT());
-        tag.setTag("bottom", bottom.serializeNBT());
+        tag.setTag("generator", generator.serializeNBT());
+        tag.setTag("receiver", receiver.serializeNBT());
         return tag;
     }
 
     @Override
     public void onDataPacket(int id, NBTTagCompound tag) {
-        top.deserializeNBT(tag.getCompoundTag("top"));
-        bottom.deserializeNBT(tag.getCompoundTag("bottom"));
+        generator.deserializeNBT(tag.getCompoundTag("generator"));
+        receiver.deserializeNBT(tag.getCompoundTag("receiver"));
     }
 
-    private class TopHost implements IKineticNode.Host {
+    private class GenHost implements IKineticNode.Host {
 
         @Override
         public World getKineticWorld() {
@@ -101,11 +101,11 @@ public class TileKineticTest extends TileBase {
 
         @Override
         public float getAppliedPower() {
-            TileEntity te = getWorld().getTileEntity(getPos().up());
-            if (te != null && te.hasCapability(IShaftAttachable.CAPABILITY, EnumFacing.DOWN)) {
-                return 20;
-            }
-            return 0;
+            boolean shouldProducePower = Stream.of(EnumFacing.UP, EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.EAST, EnumFacing.WEST)
+                    .map(f -> Pair.of(f, getWorld().getTileEntity(getPos().offset(f))))
+                    .filter(f -> f.getRight() != null)
+                    .anyMatch(f -> f.getRight().hasCapability(IShaftAttachable.CAPABILITY, f.getLeft().getOpposite()));
+            return shouldProducePower ? 20 : 0;
         }
 
         @Override
@@ -115,16 +115,13 @@ public class TileKineticTest extends TileBase {
 
         @Override
         public void addNeighbors(ObjFloatConsumer<IKineticNode> neighbors, BiPredicate<World, BlockPos> posValidator) {
-            IKineticNode.findShaft(getWorld(), getPos(), EnumFacing.UP, 1, neighbors, posValidator);
-            IKineticNode.findShaft(getWorld(), getPos(), EnumFacing.NORTH, 1, neighbors, posValidator);
-            IKineticNode.findShaft(getWorld(), getPos(), EnumFacing.SOUTH, 1, neighbors, posValidator);
-            IKineticNode.findShaft(getWorld(), getPos(), EnumFacing.WEST, 1, neighbors, posValidator);
-            IKineticNode.findShaft(getWorld(), getPos(), EnumFacing.EAST, 1, neighbors, posValidator);
+            Stream.of(EnumFacing.UP, EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.EAST, EnumFacing.WEST)
+                    .forEach(f -> IKineticNode.findShaft(getWorld(), getPos(), f, 1, neighbors, posValidator));
         }
 
     }
 
-    private class BottomHost implements IKineticNode.Host {
+    private class RecvHost implements IKineticNode.Host {
 
         @Override
         public World getKineticWorld() {

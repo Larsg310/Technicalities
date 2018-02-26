@@ -89,9 +89,16 @@ public class TileGear extends TileRotating implements IKineticNode.Host {
         return 4;
     }
 
+    @Nonnull
+    @Override
+    public EnumFacing getRotationFacing() {
+        return EnumFacing.VALUES[getBlockMetadata()];
+    }
+
+    @Nonnull
     @Override
     public EnumFacing.Axis getRotationAxis() {
-        return EnumFacing.VALUES[getBlockMetadata()].getAxis();
+        return getRotationFacing().getAxis();
     }
 
     @Override
@@ -104,6 +111,7 @@ public class TileGear extends TileRotating implements IKineticNode.Host {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Nonnull
     @Override
     public NBTTagCompound getUpdateTag() {

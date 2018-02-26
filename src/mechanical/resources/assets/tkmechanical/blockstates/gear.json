@@ -9,12 +9,12 @@
 	},
 	"variants": {
         "facing": {
-			"down":  { },
-			"up":    { },
-			"north": { },
-			"south": { },
-			"west":  { },
-			"east":  { }
+			"down":  {                    },
+			"up":    { "x": 180           },
+			"north": { "x": -90           },
+			"south": { "x":  90           },
+			"west":  { "x": -90, "y": -90 },
+			"east":  { "x": -90, "y":  90 }
         },
         "inventory": [{ }]
     }

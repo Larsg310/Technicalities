@@ -56,17 +56,18 @@ public class TileShaft extends TileRotating implements IKineticNode.Host {
         super.onChunkUnload();
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+    public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
         if (capability == IShaftAttachable.CAPABILITY && facing.getAxis().ordinal() == getBlockMetadata()) {
             return true;
         }
         return super.hasCapability(capability, facing);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "ConstantConditions"})
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (capability == IShaftAttachable.CAPABILITY && facing.getAxis().ordinal() == getBlockMetadata()) {
             return (T) (IShaftAttachable) () -> node;
         }
@@ -83,6 +84,7 @@ public class TileShaft extends TileRotating implements IKineticNode.Host {
         return 1;
     }
 
+    @Nonnull
     @Override
     public EnumFacing.Axis getRotationAxis() {
         return getWorld().getBlockState(getPos()).getValue(BlockRotatedPillar.AXIS);
@@ -96,6 +98,7 @@ public class TileShaft extends TileRotating implements IKineticNode.Host {
         IKineticNode.findShaft(getWorld(), getPos(), dir.getOpposite(), 1, neighbors, posValidator);
     }
 
+    @SuppressWarnings("deprecation")
     @Nonnull
     @Override
     public NBTTagCompound getUpdateTag() {
@@ -113,8 +116,4 @@ public class TileShaft extends TileRotating implements IKineticNode.Host {
         return node.getAngle(partialTicks);
     }
 
-    @Override
-    public float getScale() {
-        return 1;
-    }
 }
