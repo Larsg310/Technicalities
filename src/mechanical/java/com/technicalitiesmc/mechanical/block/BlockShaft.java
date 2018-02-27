@@ -17,6 +17,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
@@ -77,7 +78,7 @@ public class BlockShaft extends BlockBase implements ITileEntityProvider {
     @Nonnull
     @Override
     public IBlockState getBlockStateForPlacementC(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, @Nullable EnumHand hand) {
-        return getDefaultState().withProperty(BlockRotatedPillar.AXIS, EnumFacing.Axis.Y);//facing.getAxis());
+        return getDefaultState().withProperty(BlockRotatedPillar.AXIS, facing.getAxis());
     }
 
     @Override
@@ -108,7 +109,8 @@ public class BlockShaft extends BlockBase implements ITileEntityProvider {
         double offZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * (double) partialTicks - hit.getBlockPos().getZ();
 
         translate(0.5 - offX, 0.5 - offY, 0.5 - offZ);
-        rotate(te.getAngle(partialTicks), 0, 1, 0);
+        Vec3i axis = EnumFacing.getFacingFromAxis(EnumFacing.AxisDirection.POSITIVE, te.getRotationAxis()).getDirectionVec();
+        rotate(te.getAngle(partialTicks), axis.getX(), axis.getY(), axis.getZ());
         translate(-0.5, -0.5, -0.5);
         RenderGlobal.drawSelectionBoundingBox(BOXES[state.getValue(BlockRotatedPillar.AXIS).ordinal()].grow(0.002), 0.0F, 0.0F, 0.0F, 0.4F);
 

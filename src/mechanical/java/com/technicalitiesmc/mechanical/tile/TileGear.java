@@ -56,8 +56,9 @@ public class TileGear extends TileRotating implements IKineticNode.Host {
         super.onChunkUnload();
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+    public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
         if (capability == IShaftAttachable.CAPABILITY && facing.ordinal() == getBlockMetadata()) {
             return true;
         } else if (capability == IGearAttachable.CAPABILITY && facing.getAxis() != EnumFacing.VALUES[getBlockMetadata()].getAxis()) {
@@ -66,9 +67,9 @@ public class TileGear extends TileRotating implements IKineticNode.Host {
         return super.hasCapability(capability, facing);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "ConstantConditions"})
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         EnumFacing face = EnumFacing.VALUES[getBlockMetadata()];
         if (capability == IShaftAttachable.CAPABILITY && facing.ordinal() == getBlockMetadata()) {
             return (T) (IShaftAttachable) () -> node;
@@ -88,6 +89,18 @@ public class TileGear extends TileRotating implements IKineticNode.Host {
         return 4;
     }
 
+    @Nonnull
+    @Override
+    public EnumFacing getRotationFacing() {
+        return EnumFacing.VALUES[getBlockMetadata()];
+    }
+
+    @Nonnull
+    @Override
+    public EnumFacing.Axis getRotationAxis() {
+        return getRotationFacing().getAxis();
+    }
+
     @Override
     public void addNeighbors(ObjFloatConsumer<IKineticNode> neighbors, BiPredicate<World, BlockPos> posValidator) {
         EnumFacing face = getWorld().getBlockState(getPos()).getValue(BlockDirectional.FACING);
@@ -98,6 +111,7 @@ public class TileGear extends TileRotating implements IKineticNode.Host {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Nonnull
     @Override
     public NBTTagCompound getUpdateTag() {

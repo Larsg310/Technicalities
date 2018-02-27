@@ -42,15 +42,18 @@ public class BlockGear extends BlockBase implements ITileEntityProvider {
     }
 
     @Override
-    public TileEntity createNewTileEntity(World world, int meta) {
+    public TileEntity createNewTileEntity(@Nonnull World world, int meta) {
         return new TileGear();
     }
 
+    @Nonnull
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer.Builder(this).add(BlockDirectional.FACING).build();
     }
 
+    @SuppressWarnings("deprecation")
+    @Nonnull
     @Override
     public IBlockState getStateFromMeta(int meta) {
         return getDefaultState().withProperty(BlockDirectional.FACING, EnumFacing.VALUES[meta]);
@@ -64,6 +67,8 @@ public class BlockGear extends BlockBase implements ITileEntityProvider {
     @Override
     public void onEntityCollidedWithBlock(World world, BlockPos pos, IBlockState state, Entity entity) {
         super.onEntityCollidedWithBlock(world, pos, state, entity);
+        // TODO: maybe implement for sideways gears, making players slip off?
+        if (state.getValue(BlockDirectional.FACING) != EnumFacing.DOWN) return;
         AxisAlignedBB bb = Objects.requireNonNull(getCollisionBoundingBox(state, world, pos))
                 .offset(pos)
                 .expand(0.0, 0.1, 0.0);
@@ -87,9 +92,14 @@ public class BlockGear extends BlockBase implements ITileEntityProvider {
         float relY = (float) (entity.posZ - yoff);
         float newX = fx.apply(relX, relY);
         float newY = fy.apply(relX, relY);
+        // TODO: player clips into walls with Entity#setPosition which is annoying
+        // TODO: Entity#move would fix that, calls this method however, resulting in an infinite loop. FML
+        // entity.move(MoverType.SELF, newX + xoff - entity.posX, 0, newY + yoff - entity.posZ);
         entity.setPosition(newX + xoff, entity.posY, newY + yoff);
     }
 
+    @SuppressWarnings("deprecation")
+    @Nonnull
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         return BOXES[state.getValue(BlockDirectional.FACING).ordinal()];
@@ -100,13 +110,14 @@ public class BlockGear extends BlockBase implements ITileEntityProvider {
         return false;
     }
 
-
     @Nonnull
     @Override
     public IBlockState getBlockStateForPlacementC(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, @Nullable EnumHand hand) {
-        return getDefaultState().withProperty(BlockDirectional.FACING, EnumFacing.DOWN);//facing.getOpposite());
+        return getDefaultState().withProperty(BlockDirectional.FACING, facing.getOpposite());
     }
 
+    @SuppressWarnings("deprecation")
+    @Nonnull
     @Override
     public EnumBlockRenderType getRenderType(IBlockState state) {
         return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;

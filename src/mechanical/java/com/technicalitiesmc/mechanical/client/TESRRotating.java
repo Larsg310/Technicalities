@@ -11,9 +11,11 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
+import static java.lang.Math.abs;
 import static net.minecraft.client.renderer.GlStateManager.*;
 
 public class TESRRotating extends TileEntitySpecialRenderer<TileRotating> {
@@ -22,10 +24,15 @@ public class TESRRotating extends TileEntitySpecialRenderer<TileRotating> {
     public void render(TileRotating te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         pushMatrix();
         translate(x + 0.5, y + 0.5, z + 0.5);
-        rotate(te.getAngle(partialTicks), 0, 1, 0);
+        Vec3i axis = te.getRotationFacing().getDirectionVec();
+        rotate(te.getAngle(partialTicks), abs(axis.getX()), abs(axis.getY()), abs(axis.getZ()));
         float scale = te.getScale();
         scale(scale, scale, scale);
-        translate(-0.5, -0.5 + (scale - 1) / 2F, -0.5);
+        translate(
+                -0.5 - ((scale - 1) / 2F) * axis.getX(),
+                -0.5 - ((scale - 1) / 2F) * axis.getY(),
+                -0.5 - ((scale - 1) / 2F) * axis.getZ()
+        );
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
