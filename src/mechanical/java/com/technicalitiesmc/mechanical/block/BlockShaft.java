@@ -23,6 +23,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -45,15 +47,18 @@ public class BlockShaft extends BlockBase implements ITileEntityProvider {
     }
 
     @Override
-    public TileEntity createNewTileEntity(World world, int meta) {
+    public TileEntity createNewTileEntity(@Nonnull World world, int meta) {
         return new TileShaft();
     }
 
+    @Nonnull
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer.Builder(this).add(BlockRotatedPillar.AXIS).build();
     }
 
+    @SuppressWarnings("deprecation")
+    @Nonnull
     @Override
     public IBlockState getStateFromMeta(int meta) {
         return getDefaultState().withProperty(BlockRotatedPillar.AXIS, EnumFacing.Axis.values()[meta]);
@@ -64,6 +69,8 @@ public class BlockShaft extends BlockBase implements ITileEntityProvider {
         return state.getValue(BlockRotatedPillar.AXIS).ordinal();
     }
 
+    @SuppressWarnings("deprecation")
+    @Nonnull
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         return BOXES[state.getValue(BlockRotatedPillar.AXIS).ordinal()];
@@ -81,12 +88,15 @@ public class BlockShaft extends BlockBase implements ITileEntityProvider {
         return getDefaultState().withProperty(BlockRotatedPillar.AXIS, facing.getAxis());
     }
 
+    @SuppressWarnings("deprecation")
+    @Nonnull
     @Override
     public EnumBlockRenderType getRenderType(IBlockState state) {
         return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
     }
 
     @SubscribeEvent
+    @SideOnly(Side.CLIENT)
     public void onDrawBlockHighlight(DrawBlockHighlightEvent event) {
         RayTraceResult hit = event.getTarget();
         if (hit == null) return;
